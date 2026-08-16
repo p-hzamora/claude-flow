@@ -1,0 +1,29 @@
+{
+  "$schema": "https://anthropic.com/claude-code/marketplace.schema.json",
+  "name": "claude-flow",
+  "description": "Private marketplace of SDD/Jira workflow plugins.",
+  "owner": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "plugins": [
+    {
+      "name": "shared-skills",
+      "description": "Skills reused across multiple plugins in this marketplace.",
+      "source": "./plugins/shared-skills",
+      "category": "utility"
+    },
+    {
+      "name": "sdd-orchestrator-suite",
+      "description": "SDD orchestrator plus DDD/FastAPI/ORM/test specialist agents. No Jira coupling.",
+      "source": "./plugins/sdd-orchestrator-suite",
+      "category": "productivity"
+    },
+    {
+      "name": "jira-dev-workflow",
+      "description": "End-to-end Jira ticket workflow agent bundle.",
+      "source": "./plugins/jira-dev-workflow",
+      "category": "productivity"
+    }
+  ]
+}
