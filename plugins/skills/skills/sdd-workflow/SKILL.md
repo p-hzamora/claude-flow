@@ -92,11 +92,58 @@ route back to refinement rather than patching around it.
 - Task falls outside any available agent's capability -> escalate to the human
   with exact context, don't attempt it improvised.
 
-## Plan & spec persistence
+## State tracking & persistence
 
-Every time a plan is produced, before invoking any downstream implementation
-agent, write the finalized plan (and the specs it was derived from) to the
-location the calling agent specifies (e.g. a per-ticket `specs/` subdirectory) -
-never invent a different location, and don't overwrite unrelated existing
-planning files. If resuming after a context reset or interruption, check that
-location for an existing plan before drafting a new one from scratch.
+Every workflow run is identified by a single id (a ticket key, feature slug, or
+other caller-supplied identifier) and gets one folder, not scattered files:
+
+```
+{root}/{id}/
+  request.md     - the original request/spec as given, captured verbatim (or a
+                    faithful summary) before any refinement - so a later resume
+                    or audit can see what was actually asked, not just what got
+                    built
+  specs/         - the refined SDD specs derived from the request (one file per
+                    concern is fine - api, data-model, etc.)
+  summary.md     - written only once the workflow reaches a terminal state
+                    (done or blocked) - what was implemented, key decisions,
+                    outcome
+  state.json     - machine-readable status, updated at every phase transition
+```
+
+`{root}` is whatever the calling agent specifies; a stack orchestrator's own
+default (e.g. `.claude/planning/`) applies only when the caller doesn't say
+otherwise - see that orchestrator's own file for its default. Never invent a
+different root, and never overwrite an unrelated existing id's folder.
+
+### state.json shape
+
+```json
+{
+  "id": "<caller-supplied id>",
+  "status": "draft | refining | testing | implementing | validating | integrating | done | blocked",
+  "phase": "<current phase name from the Phase sequence above>",
+  "summary": "one-line current status, human-readable",
+  "specs": ["specs/<file>.md", "..."],
+  "blockers": ["<any open blocker, empty when not blocked>"],
+  "updated": "<ISO 8601 timestamp from the `date -u +%Y-%m-%dT%H:%M:%SZ` shell command, never guessed>"
+}
+```
+
+### Discipline
+
+- Write `request.md` and create `state.json` (status `draft`) before starting
+  Specification Refinement - don't do the refinement work first and document it
+  after.
+- Update `state.json`'s `status`, `phase`, and `updated` at every phase
+  transition defined in the Phase sequence above, not just at the start and
+  end. A stale `state.json` is worse than none, because a resuming session will
+  trust it.
+- On `blocked` (see Escalation above), set `status: "blocked"` and fill
+  `blockers` with the exact reason - don't leave a workflow silently stuck with
+  no machine-readable trace of why.
+- Write `summary.md` only on a terminal state (`done` or `blocked`), never as a
+  running log - it's the answer to "what happened here", not a diary.
+- Resuming a workflow: read `state.json` first. If `status` isn't a fresh
+  `draft`, read `request.md` and existing `specs/` before doing anything else -
+  never restart refinement from scratch when state already exists.

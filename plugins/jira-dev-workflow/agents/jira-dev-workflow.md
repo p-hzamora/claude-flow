@@ -70,9 +70,9 @@ On success: state a one-line confirmation (e.g. "Preflight OK: MCP session, Jira
 ## Phase 4 — Implementation via sdd-python-orchestrator
 
 - Compile the final scoped spec (ticket + grill-me answers) and hand it to the `sdd-python-orchestrator` subagent via `Agent(sdd-python-orchestrator)`. Its pretty important to delegate the task to this agent so it will be able to develop their work.
-- Tell it explicitly where to write specs: `.claude/planning/<TICKET-KEY>/specs/` (per-ticket subdirectory, not a flat file in `.claude/planning/`). If this path isn't in the handoff prompt, sdd-python-orchestrator defaults elsewhere. `.claude/` is gitignored, so these files never dirty the worktree or show up in `git status`/commits.
+- Tell it the id to use: `<TICKET-KEY>` — it writes to `.claude/planning/<TICKET-KEY>/` (`request.md`, `specs/`, `summary.md`, `state.json`, per the `sdd-workflow` skill's layout), not a flat file directly in `.claude/planning/`. If the id isn't in the handoff prompt, sdd-python-orchestrator defaults elsewhere. `.claude/` is gitignored, so these files never dirty the worktree or show up in `git status`/commits.
 - **Failure case:** if sdd-python-orchestrator errors or returns partway through — do not discard what it did, and do not treat it as success. Inspect actual repo state (`git status`, `git diff --stat`) and the task list, report exactly what completed vs. what didn't, mark the task accordingly, and HALT pending user direction.
-- On success: summarize what was implemented and list changed files before touching git further.
+- On success: read `.claude/planning/<TICKET-KEY>/summary.md` and `state.json` for what was implemented (cross-check `status` is `done`, not `blocked`), and list changed files (`git diff --stat`) before touching git further. If `state.json` says `blocked`, treat it the same as an error return — do not proceed to commit.
 
 ## Phase 5 — Commit + push (only when the user asks for it)
 
