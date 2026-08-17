@@ -1,8 +1,0 @@
-{
-  "name": "sdd-orchestrator-suite",
-  "description": "Spec-Driven Development orchestrator plus its DDD, FastAPI, ORM/SQLAlchemy, and test-writing specialist agents. No Jira coupling - reusable by any workflow that needs SDD implementation.",
-  "author": {
-    "name": "Pablo Hernandez",
-    "email": "pablo.hernandez@grupo-st.es"
-  }
-}

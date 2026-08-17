@@ -5,5 +5,5 @@
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"
   },
-  "dependencies": ["shared-skills", "sdd-orchestrator-suite"]
+  "dependencies": ["skills", "python-suite"]
 }

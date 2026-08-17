@@ -1,0 +1,8 @@
+{
+  "name": "skills",
+  "description": "Cross-cutting, language-agnostic skills reused across plugins: grill-me, commit-message-generator, claude-sdk-expert, graphify, api-rest-designer.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  }
+}
