@@ -6,15 +6,18 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
 
 - **skills** — cross-cutting, language-agnostic skills reused across plugins:
   `grill-me`, `commit-message-generator`, `claude-sdk-expert`, `graphify`,
-  `api-rest-designer`.
+  `api-rest-designer`, `sdd-workflow` (stack-agnostic SDD orchestration methodology —
+  any stack orchestrator, e.g. `sdd-python-orchestrator` below or a future
+  `sdd-docker-orchestrator`, invokes this first, then layers its own stack context
+  on top).
 - **python-suite** — reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each
   independently usable (not only reachable through an orchestrator):
-  - Agents: `sdd-orchestrator`, `ddd-reviewer`, `ddd-implementer`, `ddd-entity-generator`,
-    `fastapi-endpoint-builder`, `fastapi-reviewer`, `orm-model-inspector`,
-    `sqlalchemy-expert-fixer`, `test-writer`
+  - Agents: `sdd-python-orchestrator`, `ddd-reviewer`, `ddd-implementer`,
+    `ddd-entity-generator`, `fastapi-endpoint-builder`, `fastapi-reviewer`,
+    `orm-model-inspector`, `sqlalchemy-expert-fixer`, `test-writer`
   - Skills: `clean-ddd-hexagonal-python`, `fastapi-async-patterns`, `sqlalchemy-orm`,
     `python-syntax`, `pytest`, `pytest-coverage`
-  - No Jira coupling. Depends on `skills`.
+  - No Jira coupling. Depends on `skills` (for `sdd-workflow` plus the general ones).
 - **jira-dev-workflow** — `jira-dev-workflow` + `jira-git-committer`. Depends on
   `skills` and `python-suite`.
 
@@ -50,6 +53,11 @@ Installing `jira-dev-workflow` auto-enables `skills` and `python-suite` transiti
 
 Want just the Python suite, no Jira? `/plugin install python-suite` on its own — e.g. to
 run `test-writer` standalone on a repo without going through any planning/ticket flow.
+
+Building a suite for another stack (e.g. `docker-suite` with an `sdd-docker-orchestrator`)?
+Have it depend on `skills` and invoke the `sdd-workflow` skill the same way
+`sdd-python-orchestrator` does — the orchestration process is shared, only the
+stack-specific context in the agent's own file differs.
 
 ## Adding more later
 
