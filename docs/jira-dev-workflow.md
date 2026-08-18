@@ -2,9 +2,10 @@
 
 End-to-end Jira ticket workflow: read ticket via Atlassian MCP, create compliant git
 branch, scope with `/grill-with-context`, hand off to `sdd-python-orchestrator`, commit/push via
-`jira-git-committer`, close out in Jira.
+`jira-git-committer`, close out in Jira. Also ships `jira-tech-lead-reviewer` for
+read-only branch review.
 
-**Version:** 0.2.1
+**Version:** 0.3.0
 **Dependencies:** `skills`, `python-suite` (both auto-enabled on install)
 
 ## Agents
@@ -13,6 +14,7 @@ branch, scope with `/grill-with-context`, hand off to `sdd-python-orchestrator`,
 |---|---|
 | `jira-dev-workflow` | `agents/jira-dev-workflow.md` |
 | `jira-git-committer` | `agents/jira-git-committer.md` |
+| `jira-tech-lead-reviewer` | `agents/jira-tech-lead-reviewer.md` — read-only branch review for tech leads: resolves the ticket from the branch name, delegates DDD/SOLID/CQRS compliance to `ddd-reviewer` (and `fastapi-reviewer` when the API layer changed), checks lint (`ruff check .` only, never `format`/`--fix`) and tests, then reconciles the diff against the Jira ticket — any code-vs-ticket discrepancy is asked back to the user, never assumed |
 
 ## Skills
 

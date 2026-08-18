@@ -18,8 +18,11 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
   - Skills: `clean-ddd-hexagonal-python`, `fastapi-async-patterns`, `sqlalchemy-orm`,
     `python-syntax`, `pytest`, `pytest-coverage`
   - No Jira coupling. Depends on `skills` (for `sdd-workflow` plus the general ones).
-- **jira-dev-workflow** — `jira-dev-workflow` + `jira-git-committer`, plus two skills
-  they both invoke: `git-devops-conventions` (the branch-name/author-email regexes below)
+- **jira-dev-workflow** — `jira-dev-workflow` + `jira-git-committer` +
+  `jira-tech-lead-reviewer` (read-only branch review: resolves the ticket from the
+  branch name, delegates DDD/SOLID/CQRS compliance to `ddd-reviewer`/`fastapi-reviewer`,
+  checks lint/tests, reconciles the diff against the ticket), plus two skills the agents
+  invoke: `git-devops-conventions` (the branch-name/author-email regexes below)
   and `atlassian-jira-mcp` (site disambiguation, credentials, the REST fallbacks for
   attaching/creating issues, transitions, comments). The commit-message regex is owned
   by `skills`' `commit-message-generator`, not by `git-devops-conventions` — see below.
