@@ -10,18 +10,21 @@
     {
       "name": "skills",
       "description": "Cross-cutting, language-agnostic skills reused across plugins.",
+      "version": "0.1.0",
       "source": "./plugins/skills",
       "category": "utility"
     },
     {
       "name": "python-suite",
       "description": "Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each independently usable. No Jira coupling.",
+      "version": "0.1.0",
       "source": "./plugins/python-suite",
       "category": "productivity"
     },
     {
       "name": "jira-dev-workflow",
       "description": "End-to-end Jira ticket workflow agent bundle.",
+      "version": "0.1.0",
       "source": "./plugins/jira-dev-workflow",
       "category": "productivity"
     }
