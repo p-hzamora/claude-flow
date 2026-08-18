@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 0.1.0
+**Version:** 0.2.0
 **Dependencies:** `skills` (auto-enabled on install)
 
 ## Agents
@@ -17,6 +17,7 @@ usable, not only reachable through the orchestrator. No Jira coupling.
 | `fastapi-endpoint-builder` | `agents/fastapi-endpoint-builder.md` |
 | `fastapi-reviewer` | `agents/fastapi-reviewer.md` |
 | `orm-model-inspector` | `agents/orm-model-inspector.md` |
+| `ruff-linter` | `agents/ruff-linter.md` |
 | `sqlalchemy-expert-fixer` | `agents/sqlalchemy-expert-fixer.md` |
 | `test-writer` | `agents/test-writer.md` |
 

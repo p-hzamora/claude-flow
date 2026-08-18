@@ -5,7 +5,7 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
 ## Plugins
 
 - **skills** — cross-cutting, language-agnostic skills reused across plugins:
-  `grill-me`, `commit-message-generator`, `claude-sdk-expert`, `graphify`,
+  `grill-with-context`, `commit-message-generator`, `claude-sdk-expert`, `graphify`,
   `api-rest-designer`, `sdd-workflow` (stack-agnostic SDD orchestration methodology —
   any stack orchestrator, e.g. `sdd-python-orchestrator` below or a future
   `sdd-docker-orchestrator`, invokes this first, then layers its own stack context
@@ -14,12 +14,16 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
   independently usable (not only reachable through an orchestrator):
   - Agents: `sdd-python-orchestrator`, `ddd-reviewer`, `ddd-implementer`,
     `ddd-entity-generator`, `fastapi-endpoint-builder`, `fastapi-reviewer`,
-    `orm-model-inspector`, `sqlalchemy-expert-fixer`, `test-writer`
+    `orm-model-inspector`, `ruff-linter`, `sqlalchemy-expert-fixer`, `test-writer`
   - Skills: `clean-ddd-hexagonal-python`, `fastapi-async-patterns`, `sqlalchemy-orm`,
     `python-syntax`, `pytest`, `pytest-coverage`
   - No Jira coupling. Depends on `skills` (for `sdd-workflow` plus the general ones).
-- **jira-dev-workflow** — `jira-dev-workflow` + `jira-git-committer`. Depends on
-  `skills` and `python-suite`.
+- **jira-dev-workflow** — `jira-dev-workflow` + `jira-git-committer`, plus two skills
+  they both invoke: `git-devops-conventions` (the branch-name/author-email regexes below)
+  and `atlassian-jira-mcp` (site disambiguation, credentials, the REST fallbacks for
+  attaching/creating issues, transitions, comments). The commit-message regex is owned
+  by `skills`' `commit-message-generator`, not by `git-devops-conventions` — see below.
+  Depends on `skills` and `python-suite`.
 
 ## Dependency graph
 
@@ -36,12 +40,19 @@ jira-dev-workflow  --depends on-->  skills
 
 ## Non-negotiable regexes
 
-Duplicated in both `jira-dev-workflow.md` and `jira-git-committer.md` (same plugin).
-If DevOps changes these, update both files in the same commit:
+Two owners. Neither pattern is inlined here — read them at the source, so there's
+exactly one copy of each in the whole repo:
 
-- Branch name: `(develop|test|staging|main)|((feature|bugfix|hotfix)\/[A-Z][A-Z]{1,32}-\d+([-_].*)?)`
-- Commit message: `(build|chore|docs|feat|fix|perf|refactor|style|test|update)(\(([a-zA-Z]+|([A-Z][A-Z]{1,32}-\d+))\))?: .*(.*\n*)*`
-- Commit author email: `@(stidea\.com|grupo-st\.es|stanalytics\.es|noreply\.gitlab\.com)$`
+- **Branch name** and **commit author email** — owned by the `git-devops-conventions`
+  skill (`plugins/jira-dev-workflow/skills/git-devops-conventions/SKILL.md`).
+  `jira-dev-workflow.md` and `jira-git-committer.md` both invoke it rather than each
+  carrying their own copy.
+- **Commit message** — owned by the `commit-message-generator` skill
+  (`plugins/skills/skills/commit-message-generator/SKILL.md`, base `skills` plugin,
+  used outside the Jira flow too). `jira-git-committer` invokes it both to generate
+  and to validate titles.
+
+If DevOps changes one, edit it at its owning skill only.
 
 ## Install (teammates)
 

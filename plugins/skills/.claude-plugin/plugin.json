@@ -1,7 +1,7 @@
 {
   "name": "skills",
-  "description": "Cross-cutting, language-agnostic skills reused across plugins: grill-me, commit-message-generator, claude-sdk-expert, graphify, api-rest-designer, sdd-workflow.",
-  "version": "0.1.0",
+  "description": "Cross-cutting, language-agnostic skills reused across plugins: grill-with-context, commit-message-generator, claude-sdk-expert, graphify, api-rest-designer, sdd-workflow.",
+  "version": "0.2.0",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"
