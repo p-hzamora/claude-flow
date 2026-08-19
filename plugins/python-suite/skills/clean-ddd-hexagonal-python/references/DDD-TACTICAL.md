@@ -145,6 +145,11 @@ An object defined by its **attributes**, not identity. Two value objects are equ
 - Self-validating
 - Side-effect-free methods
 
+> **Scope note:** everything below is the VO as a domain building block. A VO must
+> never be returned directly from an application-layer handler (command or query) — map
+> it to a DTO first. See "DTO vs Value Object at the Handler Boundary" in `../SKILL.md`
+> and the worked examples in `CQRS-IMPLEMENTATION.md`.
+
 ### Common Value Objects
 
 | Value Object | Attributes | Validation |

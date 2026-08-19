@@ -345,8 +345,11 @@ from app.application.dtos import OrderDTO
 
 
 class OrderAssembler:
+    """Entity/VO -> DTO only. An Assembler never runs in reverse — a DTO is a
+    read-side contract, not a source of domain state to rebuild an Entity from."""
+
     @staticmethod
-    def from_entity(order: Order) -> OrderDTO:
+    def to_dto(order: Order) -> OrderDTO:
         """Convert domain entity to DTO."""
         return OrderDTO(
             id=order.id.value,
@@ -354,17 +357,6 @@ class OrderAssembler:
             status=order.status.value,
             created_at=str(order.created_at),
             updated_at=str(order.updated_at),
-        )
-
-    @staticmethod
-    def to_entity(dto: OrderDTO) -> Order:
-        """Convert DTO to domain entity."""
-        return Order(
-            id=OrderId(value=dto.id),
-            customer_id=CustomerId(value=dto.customer_id),
-            status=OrderStatus(dto.status),
-            created_at=Datetime(value=datetime.fromisoformat(dto.created_at)),
-            updated_at=Datetime(value=datetime.fromisoformat(dto.updated_at)),
         )
 ```
 
@@ -488,13 +480,13 @@ class OrderRepository(IOrderRepository):
         return OrderMapper.to_entity(row)
 
     async def save(self, order: Order) -> Order:
-        model = OrderMapper.to_model(order)
+        model = OrderMapper.to_orm(order)
         self._session.add(model)
         await self._session.flush()
         return order
 
     async def update(self, order: Order) -> Order:
-        model = OrderMapper.to_model(order)
+        model = OrderMapper.to_orm(order)
         await self._session.merge(model)
         await self._session.flush()
         return order
@@ -536,7 +528,7 @@ class OrderMapper:
         )
 
     @staticmethod
-    def to_model(order: Order) -> OrderModel:
+    def to_orm(order: Order) -> OrderModel:
         """Map domain entity to SQLAlchemy model."""
         return OrderModel(
             id=order.id.value,
@@ -745,9 +737,11 @@ class OrderResponse(BaseModel):
 
 ---
 
-## Three-Mapper Architecture
+## Four-Mapper Architecture
 
-This template uses **three distinct mapper types** for different purposes:
+This template uses **four distinct mapper types** for different purposes. Every method
+is named `to_[destination]` — never `from_x` — so the name always tells you what's being
+produced, not what was consumed.
 
 ### 1. Entity ↔ ORM Mapper
 
@@ -766,38 +760,45 @@ class OrderMapper:
         ...
 
     @staticmethod
-    def to_model(order: Order) -> OrderModel:
+    def to_orm(order: Order) -> OrderModel:
         """Domain Entity -> ORM"""
         ...
 ```
 
-### 2. ORM ↔ DTO Mapper
+### 2. ORM → DTO ReadMapper
 
-**Location**: `app/infrastructure/read_model/`
+**Location**: `app/infrastructure/db/mappers/read_mappers/` — a dedicated subfolder,
+split from the write-side `{Entity}Mapper` in `app/infrastructure/db/mappers/` (used
+from `app/infrastructure/read_model/`)
 
-**Purpose**: Read operations (queries) - Direct database to DTO conversion
+**Purpose**: Read operations (queries) - Direct database to DTO conversion, skipping the
+Entity entirely — the read side never rebuilds a domain object just to throw it away.
 
 **When to use**: In read repositories for optimized queries
 
 ```python
+# app/infrastructure/db/mappers/read_mappers/order_read_mapper.py
+class OrderReadMapper:
+    @staticmethod
+    def to_dto(model: OrderModel) -> OrderDTO:
+        """ORM -> DTO, no Entity in between"""
+        ...
+
+
 # app/infrastructure/read_model/order_read_repository.py
 class OrderReadRepository:
     async def get_by_id(self, id: UUID) -> OrderDTO | None:
         row = await self._session.execute(...)
-        # Direct ORM -> DTO (no entity conversion)
-        return OrderDTO(
-            id=row.id,
-            customer_id=row.customer_id,
-            status=row.status,
-            ...
-        )
+        return OrderReadMapper.to_dto(row)
 ```
 
-### 3. Entity ↔ DTO Mapper (Assembler)
+### 3. Entity/VO → DTO Assembler
 
 **Location**: `app/application/mappers/`
 
-**Purpose**: Convert between domain entities and DTOs for application layer
+**Purpose**: Convert a domain Entity or Value Object into a DTO for the application layer.
+One direction only — a DTO is a read-side contract, not a source of domain state to
+rebuild an Entity from, so an Assembler never runs in reverse.
 
 **When to use**: In command handlers when returning results
 
@@ -805,15 +806,37 @@ class OrderReadRepository:
 # app/application/mappers/order_assembler.py
 class OrderAssembler:
     @staticmethod
-    def from_entity(order: Order) -> OrderDTO:
-        """Domain Entity -> DTO"""
-        ...
-
-    @staticmethod
-    def to_entity(dto: OrderDTO) -> Order:
-        """DTO -> Domain Entity"""
+    def to_dto(order: Order) -> OrderDTO:
+        """Domain Entity/VO -> DTO"""
         ...
 ```
+
+### 4. DTO → Response ApiMapper
+
+**Location**: `app/interfaces/api/v1/mappers/`
+
+**Purpose**: Convert a DTO into an interface-layer Response schema. **This is the
+exception, not the default** — most routers just call `ResponseSchema.model_validate(dto)`
+inline, including when the Response's fields are a subset of (or trivially named like)
+the DTO's. Write a dedicated `{Entity}ApiMapper` only when the mapping needs real
+transform logic — nested-object flattening, renames a plain `model_validate` can't infer,
+computed fields — not merely because the shapes differ.
+
+**When to use**: Only when `model_validate` can't express the mapping
+
+```python
+# app/interfaces/api/v1/mappers/order_api_mapper.py
+class OrderApiMapper:
+    @staticmethod
+    def to_schema(dto: OrderDTO) -> OrderResponse:
+        """DTO -> Response, with transform logic model_validate can't do alone"""
+        ...
+```
+
+A Response schema is sourced from a DTO only, never straight from an Entity or Value
+Object — even an endpoint with no Command/Query handler behind it must still produce a
+DTO first (via an Assembler), because that's the one seam that keeps a domain refactor
+from silently reshaping the API contract.
 
 ### Mapper Decision Flow
 
@@ -823,21 +846,29 @@ flowchart TD
     Start --> Q1{What operation?}
 
     Q1 -->|Write| Write[Command/Save]
-    Q1 -->|Read| Read[Query/Get]
+    Q1 -->|Read: query handler| Read[Query/Get]
+    Q1 -->|Read: interface response| Resp[DTO leaving the process]
 
     Write --> EntityORM[Entity ↔ ORM Mapper]
     EntityORM --> Loc1[infrastructure/db/mappers/]
 
     Read --> Q2{Need domain logic?}
-    Q2 -->|Yes| EntityDTO[Entity ↔ DTO Assembler]
-    Q2 -->|No| ORMDTO[ORM ↔ DTO Direct]
+    Q2 -->|Yes| EntityDTO[Entity/VO -> DTO Assembler]
+    Q2 -->|No| ORMDTO[ORM -> DTO ReadMapper]
 
     EntityDTO --> Loc2[application/mappers/]
-    ORMDTO --> Loc3[infrastructure/read_model/]
+    ORMDTO --> Loc3[infrastructure/db/mappers/read_mappers/]
+
+    Resp --> Q3{model_validate enough?}
+    Q3 -->|Yes, almost always| Inline[Schema.model_validate dto, inline in router]
+    Q3 -->|No, real transform logic| ApiMapper[DTO -> Response ApiMapper]
+    ApiMapper --> Loc4[interfaces/api/v1/mappers/]
 
     style EntityORM fill:#3b82f6,stroke:#2563eb,color:white
     style EntityDTO fill:#10b981,stroke:#059669,color:white
     style ORMDTO fill:#f59e0b,stroke:#d97706,color:white
+    style Inline fill:#6b7280,stroke:#4b5563,color:white
+    style ApiMapper fill:#ef4444,stroke:#dc2626,color:white
 ```
 
 ---

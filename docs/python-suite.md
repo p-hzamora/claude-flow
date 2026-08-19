@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 0.2.1
+**Version:** 0.3.0
 **Dependencies:** `skills` (auto-enabled on install)
 
 ## Agents

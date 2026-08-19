@@ -218,8 +218,10 @@ Is it stateless business logic?
 | **Command Handler** | Write operations | `IHandler[CreateOrderCommand, OrderDto]` |
 | **Query Handler** | Read operations | Returns `PaginationDto[T]` or `T` |
 | **Unit of Work** | Transaction management | `async with self._uow as uow:` |
-| **Mapper** | DB Model <-> Entity | `OrderMapper.to_entity(model)` |
-| **Assembler** | Entity <-> DTO | `OrderAssembler.from_entity(order)` |
+| **Mapper** | DB Model <-> Entity | `OrderMapper.to_entity(model)` / `OrderMapper.to_orm(entity)` |
+| **ReadMapper** | DB Model -> DTO (skips Entity) | `OrderReadMapper.to_dto(model)` |
+| **Assembler** | Entity/VO -> DTO | `OrderAssembler.to_dto(order)` |
+| **ApiMapper** | DTO -> Response (exception, not default) | `OrderApiMapper.to_schema(dto)` |
 | **Read Repository** | Optimized queries | Returns DTOs directly |
 | **Write Repository** | Persistence | Part of UoW, works with entities |
 
@@ -654,7 +656,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
             await uow.orders.save(order)
             await uow.commit()
 
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 ```
 
 ### Query Handler Template
@@ -934,9 +936,14 @@ class Email(ValueObject):
         return str(self.value)
 ```
 
-### Three-Mapper Pattern
+### Four-Mapper Pattern
 
-The template uses a three-layer mapping approach to separate concerns:
+The template uses a four-layer mapping approach to separate concerns. Every method is
+named `to_[destination]` — never `from_x` — so the name always tells you what's being
+produced. The fourth tier (`{Entity}ApiMapper`, DTO → Response) is the exception, not
+the default: reach for it only when `ResponseSchema.model_validate(dto)` inline in the
+router can't express the mapping (real transform logic — nested flattening, computed
+fields — not merely "the shapes differ").
 
 ```python
 # 1. Domain Entity (app/domain/order/entity.py)
@@ -1002,7 +1009,7 @@ class OrderDto(BaseModel):
     total_currency: str
 
 
-# Mappers (app/infrastructure/db/mappers/order_mapper.py)
+# 1. Mapper (app/infrastructure/db/mappers/order_mapper.py) — ORM <-> Entity
 """Order mapper for Domain <-> Database conversions."""
 
 from app.domain.order.entity import Order
@@ -1014,7 +1021,7 @@ class OrderMapper:
     """Mapper for converting between Order entity and OrderModel."""
 
     @staticmethod
-    def to_model(entity: Order) -> OrderModel:
+    def to_orm(entity: Order) -> OrderModel:
         """Convert domain entity to database model.
 
         Args:
@@ -1047,31 +1054,91 @@ class OrderMapper:
         )
 
 
-# Assembler (app/application/assemblers/order_assembler.py)
-"""Order assembler for Entity <-> DTO conversions."""
+# 2. ReadMapper (app/infrastructure/db/mappers/read_mappers/order_read_mapper.py) —
+# ORM -> DTO, skips the Entity entirely (read side never rebuilds a domain object).
+# Lives in its own read_mappers/ subfolder, split from the write-side Mapper above.
+"""Order read mapper for Database -> DTO conversions."""
+
+from app.infrastructure.db.models.order_model import OrderModel
+from app.application.dtos.order_dto import OrderDto
+
+
+class OrderReadMapper:
+    """Maps OrderModel directly to OrderDto for query handlers."""
+
+    @staticmethod
+    def to_dto(model: OrderModel) -> OrderDto:
+        """Convert database model straight to DTO.
+
+        Args:
+            model: The OrderModel from database
+
+        Returns:
+            OrderDto for query responses
+        """
+        return OrderDto(
+            id=str(model.id),
+            customer_id=str(model.customer_id),
+            total_amount=model.total_amount,
+            total_currency=model.total_currency,
+        )
+
+
+# 3. Assembler (app/application/mappers/order_assembler.py) — Entity/VO -> DTO
+"""Order assembler for Entity -> DTO conversions."""
 
 from app.domain.order.entity import Order
 from app.application.dtos.order_dto import OrderDto
 
 
 class OrderAssembler:
-    """Assembler for converting between Order entity and OrderDto."""
+    """Assembler for converting Order entity into OrderDto."""
 
     @staticmethod
-    def from_entity(entity: Order) -> OrderDto:
+    def to_dto(entity: Order) -> OrderDto:
         """Convert domain entity to DTO.
 
         Args:
             entity: The Order entity to convert
 
         Returns:
-            OrderDto for API responses
+            OrderDto for command/query handler responses
         """
         return OrderDto(
             id=str(entity.id),
             customer_id=str(entity.customer_id),
             total_amount=entity.total.amount,
             total_currency=entity.total.currency,
+        )
+
+
+# 4. ApiMapper (app/interfaces/api/v1/mappers/order_api_mapper.py) — DTO -> Response
+# THE EXCEPTION, not the default. Most routers just call
+# `OrderResponse.model_validate(dto)` inline — write this class only when the
+# mapping needs real transform logic a plain model_validate can't express.
+"""Order API mapper for DTO -> Response conversions."""
+
+from app.application.dtos.order_dto import OrderDto
+from app.interfaces.api.v1.schemas.order_schema import OrderResponse
+
+
+class OrderApiMapper:
+    """Maps OrderDto to OrderResponse when model_validate alone isn't enough."""
+
+    @staticmethod
+    def to_schema(dto: OrderDto) -> OrderResponse:
+        """Convert DTO to API response schema.
+
+        Args:
+            dto: The OrderDto to convert
+
+        Returns:
+            OrderResponse for the HTTP layer
+        """
+        return OrderResponse(
+            id=dto.id,
+            customer_id=dto.customer_id,
+            total=f"{dto.total_amount} {dto.total_currency}",
         )
 ```
 
@@ -1462,7 +1529,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
             await uow.orders.save(order)  # Write repository
             await uow.commit()
 
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 
 
 # 2. Write Repository (domain/order/repository.py)

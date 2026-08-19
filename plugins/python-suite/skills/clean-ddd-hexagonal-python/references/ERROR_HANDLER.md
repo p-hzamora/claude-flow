@@ -17,17 +17,24 @@ exception is raised.
 All custom exceptions inherit from `AppException` (`app/exceptions/base.py`):
 
 ```
-AppException (root)
-├── ApplicationException  → HTTP 400/422 — application/use-case invariant violations
-├── CoreException         → HTTP 400 — business rule violations (default)
-├── DomainException       → HTTP 400/422 — domain invariant violations
-├── InfrastructureException → HTTP 503 — DB, external services, not-found
-└── InterfaceException    → HTTP 400/429 — API/CLI input errors
+AppException (root)                        __http_error__ = 500 (root default)
+├── ApplicationException                   — application/use-case invariant violations
+├── CoreException                          → HTTP 400 (overridden) — business rule violations
+├── DomainException                        — domain invariant violations
+├── InfrastructureException                → HTTP 503 (overridden) — DB, external services, not-found
+└── InterfaceException                     — API/CLI input errors
 ```
 
-Each base sets a sane default via `__http_error__`; a concrete exception overrides it
-when its real status differs (e.g. a `*NotFoundError` on `InfrastructureException`
-overrides the base's 503 down to 404).
+**Only two of the five bases actually override `__http_error__` in code:**
+`CoreException` (400) and `InfrastructureException` (503). `ApplicationException`,
+`DomainException`, and `InterfaceException` set nothing themselves — a concrete
+exception under any of those three that forgets to declare its own `__http_error__`
+silently falls through to the root's `500`, not some sensible 4xx. This is not a
+documentation gap to "round up" — it's the real behavior of `app/exceptions/base.py`,
+verified against the class bodies, and it means: **every exception under
+`ApplicationException`/`DomainException`/`InterfaceException` MUST set `__http_error__`
+explicitly.** Never rely on the base for these three the way you can for `CoreException`
+or `InfrastructureException`.
 
 `AppException` itself carries three class-level attributes a subclass fills in:
 
@@ -129,13 +136,13 @@ Reach for (B) only when duplication is real — copy-pasting the same sentence i
 
 ### Step 1 — Pick the right base class
 
-| Situation | Base class |
-|---|---|
-| Entity not found, DB constraint, external service | `InfrastructureException` |
-| Business rule violated | `CoreException` |
-| Domain invariant broken | `DomainException` |
-| Application/use-case invariant broken | `ApplicationException` |
-| Bad API input / rate limit | `InterfaceException` |
+| Situation | Base class | `__http_error__` required? |
+|---|---|---|
+| Entity not found, DB constraint, external service | `InfrastructureException` | No — base already sets 503; override only if the real status differs (e.g. `*NotFoundError` → 404) |
+| Business rule violated | `CoreException` | No — base already sets 400; override if the real status differs |
+| Domain invariant broken | `DomainException` | **Yes, always** — base sets nothing, silently falls to 500 |
+| Application/use-case invariant broken | `ApplicationException` | **Yes, always** — base sets nothing, silently falls to 500 |
+| Bad API input / rate limit | `InterfaceException` | **Yes, always** — base sets nothing, silently falls to 500 |
 
 ### Step 2 — Write the exception class
 
@@ -258,6 +265,29 @@ def register_exception_handlers(app: FastAPI) -> None:
     for exc_type, handler_func in EXCEPTION_REGISTRY.items():
         app.add_exception_handler(exc_type, handler_func)
 ```
+
+**Registering a dedicated handler for one specific exception, not just its base.** FastAPI
+dispatches by walking the MRO for the closest registered type, so a mid-hierarchy
+exception can get its own handler entry alongside its base's generic one — used for
+`AuthenticationError` (a `CoreException` subclass) when it needs different treatment
+than every other `CoreException` (e.g. a `WWW-Authenticate` response header on 401):
+
+```python
+EXCEPTION_REGISTRY: dict[type[Exception], ExceptionHandler] = {
+    RequestValidationError: handlers.handle_request_validation_error,
+    ValueError: handlers.handle_value_error,
+    AuthenticationError: handlers.handle_authentication_exception,  # specific, not CoreException's generic handler
+    CoreException: handlers.handle_core_exception,
+    InfrastructureException: handlers.handle_infrastructure_exception,
+    AppException: handlers.handle_app_exception,   # catch-all for AppException
+    Exception: handlers.handle_unexpected_error,    # catch-all for everything else
+}
+```
+
+Reach for this only when an exception genuinely needs response-shaping its base's
+generic handler can't give it (an extra header, a different log level) — most new
+exceptions are fine falling through to their base's handler and need no registry entry
+at all.
 
 Response body (`RFC9457.to_json()`):
 ```json

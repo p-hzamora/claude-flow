@@ -199,7 +199,7 @@ app/
 │   │   ├── commands/        # Command Handlers (write operations)
 │   │   └── queries/         # Query Handlers (read operations)
 │   ├── dtos/                # Data Transfer Objects (FrozenObject)
-│   ├── mappers/             # Entity ↔ DTO Assemblers
+│   ├── mappers/             # {Entity}Assembler (Entity/VO → DTO)
 │   ├── ports/               # Application Ports (Read Repositories)
 │   └── services/            # Application Services
 │
@@ -207,7 +207,8 @@ app/
 │   ├── db/                  # Database Implementation
 │   │   ├── models/         # SQLAlchemy ORM Models
 │   │   ├── repository/     # Repository Implementations (Write)
-│   │   ├── mappers/        # ORM ↔ Entity/DTO Mappers
+│   │   ├── mappers/        # {Entity}Mapper (ORM↔Entity)
+│   │   │   └── read_mappers/  # {Entity}ReadMapper (ORM→DTO), split from write-side Mapper
 │   │   └── utils/          # DB Utilities
 │   ├── read_model/         # CQRS Read Side (Query Repositories)
 │   └── services/           # Infrastructure Services
@@ -218,6 +219,7 @@ app/
 │           ├── routers/       # FastAPI Routers
 │           ├── dependencies/  # DI Factory Functions
 │           ├── schemas/       # API Request/Response Schemas
+│           ├── mappers/       # {Entity}ApiMapper (DTO→Response) — exception, not default
 │           └── middleware/    # Middleware
 │
 ├── utils/                 # Utility classes
@@ -252,7 +254,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
             await uow.commit()  # Explicit commit
 
         # Return DTO via Assembler
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 ```
 
 **Key characteristics:**
@@ -286,6 +288,31 @@ class GetOrdersHandler:
 - May or may not implement `IHandler`
 - Optimized for queries (denormalized data)
 
+### DTO vs Value Object at the Handler Boundary
+
+**A handler (command or query) never returns a Value Object as its response. It maps
+VO → DTO first, via an Assembler.** A VO is an internal domain building block, not a
+contract; a DTO is a contract the application layer controls independently of the
+domain model. Return a VO and every external consumer is now silently coupled to the
+domain's internal shape — a rename, a new invariant, or a refactor to a different value
+representation breaks or silently reshapes every response, and that breakage tends to
+surface during a migration, not during code review.
+
+- **Command handlers:** return minimal output (ID, ack, or a DTO) — never work with
+  Entities/VOs *just to serialize them out*. Returning a VO here is the stronger
+  violation: a write-side domain artifact doing a read-side serialization job.
+- **Query handlers:** the read model is independent of the domain model by CQRS's own
+  premise — optimized for the client, not for enforcing invariants. Returning a VO
+  leaks domain invariants/behavior the read model doesn't need. Weaker violation than
+  the command case, but still a leak.
+- **Narrow exception:** if the caller is strictly in-process (another in-process module,
+  never serialized across an API/process boundary), reusing the VO isn't a DTO problem —
+  there's no external contract being formed. The exception evaporates the moment the
+  return value gets serialized into an API response.
+
+See `references/CQRS-IMPLEMENTATION.md` for the worked Command/Query handler examples
+with the VO→DTO mapping called out inline.
+
 ## DDD Building Blocks
 
 | Pattern            | Purpose                 | Layer         | Key Rule                                 |
@@ -310,6 +337,7 @@ class GetOrdersHandler:
 | **CRUD Thinking**          | Modeling data, not behavior               | Model business operations            |
 | **Premature CQRS**         | Adding complexity before needed           | Start with simple read/write, evolve |
 | **Cross-Aggregate TX**     | Multiple aggregates in one transaction    | Use domain events for consistency    |
+| **VO as Handler Response** | Handler returns a Value Object, not a DTO | Map VO → DTO via Assembler (see below) |
 
 ## Implementation Order
 
@@ -480,13 +508,35 @@ slowapi `RateLimitExceeded`) inside the central exception registry
 (the limiter + `SlowAPIMiddleware`); the `RateLimitExceeded → 429` mapping lives in
 `EXCEPTION_REGISTRY` so every response flows through the one RFC9457 mapper.
 
-### Three-Mapper Architecture
+### Four-Mapper Architecture
 
-| Mapper Type           | Direction    | Location                     | Purpose                  |
-| --------------------- | ------------ | ---------------------------- | ------------------------ |
-| **{Entity}Mapper**    | ORM ↔ Entity | `infrastructure/db/mappers/` | Persistence (write side) |
-| **{Entity}DtoMapper** | ORM ↔ DTO    | `infrastructure/db/mappers/` | Read queries             |
-| **{Entity}Assembler** | Entity ↔ DTO | `application/mappers/`       | Command responses        |
+Every mapper method is named `to_[destination]` — never `from_x`. The name always
+tells you what's being produced, not what was consumed.
+
+> ⚠️ **Three of these four are classes you actually write. The fourth,
+> `{Entity}ApiMapper`, is not — it should be weird to even find one in the codebase.**
+> Pydantic already does DTO → Response conversion natively: `ResponseSchema.model_validate(dto)`,
+> called inline in the router, IS the mapping. That's the default for every single
+> DTO → Response case, including when the Response's fields are a subset of (or
+> trivially named like) the DTO's — `model_validate` handles that on its own, no code
+> needed. Do not scaffold an `{Entity}ApiMapper` "for consistency" with the other three
+> tiers. Write one only when the mapping needs logic `model_validate` genuinely cannot
+> do — nested-object flattening, a rename it can't infer, a computed field — and even
+> then, treat its existence as a sign to double check nothing simpler covers it.
+
+| Mapper Type           | Direction     | Location                        | Purpose                                 |
+| --------------------- | ------------- | -------------------------------- | ---------------------------------------- |
+| **{Entity}Mapper**    | ORM ↔ Entity  | `infrastructure/db/mappers/`     | Persistence (write side): `to_orm`, `to_entity` |
+| **{Entity}ReadMapper**| ORM → DTO     | `infrastructure/db/mappers/read_mappers/` | Read queries, skips Entity entirely: `to_dto` |
+| **{Entity}Assembler** | Entity/VO → DTO | `application/mappers/`         | Command responses: `to_dto`             |
+| **{Entity}ApiMapper** | DTO → Response | `interfaces/api/v1/mappers/`    | **Exception, not a peer tier** — default is `model_validate` inline, see warning above |
+
+**Response schemas are sourced from a DTO only, never straight from an Entity or Value
+Object.** Even an endpoint with no Command/Query handler behind it (e.g. an identity/auth
+"whoami" route) must still produce a DTO first (via an Assembler) before an
+`{Entity}ApiMapper`/`model_validate` turns it into a Response — mapping a VO or Entity
+directly into an interface Response skips the one seam (`Assembler`) that keeps a domain
+refactor from silently reshaping the API contract.
 
 ### Regional Imports
 

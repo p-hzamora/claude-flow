@@ -154,8 +154,20 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
             await uow.commit()
 
         # Return DTO (application layer concern)
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 ```
+
+> **CRITICAL — never return a Value Object directly from a command handler.**
+> `command.customer_id` above is a raw `str`; the handler builds a `CustomerId` VO
+> internally, but that VO never crosses back out. Only `OrderAssembler.to_dto(order)`
+> (a DTO) leaves the handler. A command handler's job is a write-side mutation — its
+> output should be minimal (an ID, an ack, or a DTO built for the caller), never a
+> domain building block. Returning a VO directly reuses a write-side artifact to do a
+> read-side serialization job — the stronger of the two VO/DTO violations (see the
+> callout under Query Handler below for the read-side case). If the VO never leaves the
+> process (consumed by another in-process module, not serialized into a response), this
+> doesn't apply — there's no external contract being formed. It applies the moment the
+> handler's return value gets serialized into an API response.
 
 ### Unit of Work Pattern
 
@@ -347,7 +359,10 @@ async def create_order(
     """Create a new order."""
     cmd = CreateOrderCommand(**request.model_dump())
     dto = await handler.handle(cmd)
-    return OrderResponse(**dto.model_dump())
+    # DTO → Response: model_validate is the default, not a dedicated mapper —
+    # see "Four-Mapper Architecture" in ../SKILL.md for when an {Entity}ApiMapper
+    # actually earns its keep.
+    return OrderResponse.model_validate(dto)
 ```
 
 ---
@@ -410,6 +425,20 @@ class GetOrderHandler:
         return await self._repository.find_by_id(query.order_id)
 ```
 
+> **Never return a Value Object directly from a query handler either.** CQRS's premise
+> on the read side is that the read model is independent of the domain model — optimized
+> for the client's needs, not for enforcing invariants. A VO carries domain
+> invariants/behavior a read model doesn't need, so handing one back as the response
+> leaks a domain building block across the API boundary. Weaker violation than the
+> command-handler case (see above), but still a leak: a DTO is a contract the
+> application layer controls independently of the domain model, while a VO is not a
+> contract — it's internal. When the VO's shape changes (new invariant, renamed field,
+> different value representation), every external consumer breaks or silently gets a
+> different serialized shape, and that coupling tends to surface painfully during a
+> migration rather than during code review. Map VO → DTO explicitly at the handler
+> boundary, even when it feels like boilerplate for a "simple" VO — unless this handler's
+> caller is strictly in-process and the result is never serialized into a response.
+
 ### Read Repository
 
 Read repositories return **DTOs directly** (not entities). They use `Protocol` for interface definition.
@@ -450,7 +479,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 from sqlalchemy.orm import joinedload
 
 from app.infrastructure.db.models import OrderModel
-from app.infrastructure.db.mappers import OrderDtoMapper
+from app.infrastructure.db.mappers.read_mappers import OrderReadMapper
 from app.infrastructure.db.utils import CursorPaginatorAsync
 from app.application.dtos import PaginationParams, PaginationDto, OrderDto
 from app.application.ports import IOrderReadRepository
@@ -484,7 +513,7 @@ class OrderReadRepository(IOrderReadRepository):
         if not model:
             raise OrderNotFoundError(order_id)
 
-        return OrderDtoMapper.to_dto(model)
+        return OrderReadMapper.to_dto(model)
 
     async def get_orders(self, paged_params: PaginationParams) -> PaginationDto[OrderDto]:
         """Get paginated orders with cursor-based pagination."""
@@ -496,7 +525,7 @@ class OrderReadRepository(IOrderReadRepository):
         result = await self.paginator.paginate(stmt, paged_params)
 
         # Use cast_using to transform models to DTOs
-        return result.cast_using(OrderDtoMapper.to_dto)
+        return result.cast_using(OrderReadMapper.to_dto)
 
     async def show_orders_id(self) -> list[UUID]:
         """Optimized query returning only IDs."""
@@ -510,15 +539,15 @@ class OrderReadRepository(IOrderReadRepository):
         return models
 ```
 
-### DTO Mapper (ORM to DTO)
+### Read Mapper (ORM to DTO)
 
 ```python
-# app/infrastructure/db/mappers/order_dto_mapper.py
+# app/infrastructure/db/mappers/read_mappers/order_read_mapper.py
 from app.infrastructure.db.models import OrderModel
 from app.application.dtos import OrderDto, OrderItemDto
 
 
-class OrderDtoMapper:
+class OrderReadMapper:
     """Maps SQLAlchemy models directly to DTOs (read side)."""
 
     @staticmethod
@@ -611,7 +640,7 @@ async def get_orders(
     resp = await handler.handle(query)
 
     return {
-        "items": [OrderResponse(**r.model_dump()) for r in resp.items],
+        "items": [OrderResponse.model_validate(r) for r in resp.items],
         "meta": resp.meta,
     }
 
@@ -624,7 +653,7 @@ async def get_order(
     """Get a single order by ID."""
     query = GetOrderQuery(order_id=order_id)
     dto = await handler.handle(query)
-    return OrderResponse(**dto.model_dump())
+    return OrderResponse.model_validate(dto)
 ```
 
 ---
@@ -803,7 +832,9 @@ app/
 │   │   ├── mappers/
 │   │   │   ├── __init__.py
 │   │   │   ├── order_mapper.py           # ORM ↔ Entity
-│   │   │   └── order_dto_mapper.py       # ORM → DTO
+│   │   │   └── read_mappers/             # Split from write-side Mapper
+│   │   │       ├── __init__.py
+│   │   │       └── order_read_mapper.py  # ORM → DTO
 │   │   └── unit_of_work.py               # UoW Implementation
 │   └── read_model/
 │       ├── __init__.py
@@ -817,7 +848,10 @@ app/
             ├── dependencies/
             │   ├── __init__.py
             │   └── order_dpd.py          # Dependency Factories
-            └── schemas/
+            ├── schemas/
+            │   ├── __init__.py
+            │   └── order_schema.py       # API Request/Response Models
+            └── mappers/                  # Only when model_validate isn't enough
                 ├── __init__.py
-                └── order_schema.py       # API Request/Response Models
+                └── order_api_mapper.py   # DTO → Response (the exception)
 ```

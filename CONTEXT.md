@@ -24,6 +24,18 @@ DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal
 - Handler — application-layer class implementing one Command or Query.
 _Avoid_: restating this checklist inside an agent file. `ddd-reviewer`, `ddd-implementer`, and `ddd-entity-generator` should point at `clean-ddd-hexagonal-python` as the single source of truth, not each carry their own copy.
 
+**DTO** / **Response (schema)**:
+Two more objects in the same skill's layering, sitting output-side of Entity/VO —
+`clean-ddd-hexagonal-python` again owns the full ruleset ([ADR-0001](./docs/adr/0001-four-mapper-naming.md)):
+- DTO — application-layer output contract a Command/Query handler returns; never a VO or
+  Entity itself.
+- Response — interface-layer schema an API route returns; sourced from a DTO only
+  (`model_validate`, or an `{Entity}ApiMapper` in the rare case that needs real
+  transform logic), never straight from a DTO-less Entity/VO.
+_Avoid_: a mapper method named `from_x` anywhere in this taxonomy — the convention is
+`to_[destination]` (`to_orm`, `to_entity`, `to_dto`, `to_schema`) on `{Entity}Mapper` /
+`{Entity}ReadMapper` / `{Entity}Assembler` / `{Entity}ApiMapper` respectively.
+
 ## Relationships
 
 - A **Plugin** holds many **Agents** and many **Skills**.

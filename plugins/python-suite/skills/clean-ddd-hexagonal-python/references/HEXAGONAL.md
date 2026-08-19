@@ -325,13 +325,13 @@ class OrderRepository(IOrderRepository):
         return OrderMapper.to_entity(row)
 
     async def save(self, order: Order) -> Order:
-        model = OrderMapper.to_model(order)
+        model = OrderMapper.to_orm(order)
         self._session.add(model)
         await self._session.flush()
         return order
 
     async def update(self, order: Order) -> Order:
-        model = OrderMapper.to_model(order)
+        model = OrderMapper.to_orm(order)
         await self._session.merge(model)
         await self._session.flush()
         return order
@@ -411,7 +411,7 @@ class OrderMapper:
         )
 
     @staticmethod
-    def to_model(order: Order) -> OrderModel:
+    def to_orm(order: Order) -> OrderModel:
         """Map domain entity to SQLAlchemy model."""
         return OrderModel(
             id=order.id.value,

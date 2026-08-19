@@ -107,7 +107,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
             await uow.commit()
 
         # Return DTO
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 ```
 
 ### Queries (Read Side)
@@ -740,7 +740,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
 
             await uow.commit()
 
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 
 
 # infrastructure/messaging/outbox_processor.py
@@ -818,7 +818,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
             order = Order.create(**command.model_dump())
             await uow.orders.save(order)
             await uow.commit()
-        return OrderAssembler.from_entity(order)
+        return OrderAssembler.to_dto(order)
 
 
 # Query Handler (reads)
