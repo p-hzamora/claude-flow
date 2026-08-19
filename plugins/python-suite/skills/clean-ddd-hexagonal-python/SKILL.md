@@ -313,6 +313,39 @@ surface during a migration, not during code review.
 See `references/CQRS-IMPLEMENTATION.md` for the worked Command/Query handler examples
 with the VO→DTO mapping called out inline.
 
+### Default Values on a DTO Are a Code Smell — on Input, Not Output
+
+A DTO's job is to describe shape, not behavior or business rules. A default value is a
+decision — "if this field is absent, treat it as X" — and that decision belongs in
+application or domain logic, not in a data-transfer class.
+
+- **Hides missing-data bugs.** A client that forgot to send `quantity` and a client that
+  intentionally omitted it produce an identical Command/DTO once the default kicks in —
+  you lose the ability to tell "not provided" from "provided as default."
+- **Smuggles a business rule into the wrong layer.** `quantity: int = 1` on a
+  `CreateOrderLineCommand` isn't a shape decision, it's a domain rule ("an order line
+  implicitly means at least one unit"). If that rule changes, or needs to be
+  conditional, it's now buried in a Command instead of living in domain logic where it
+  can be tested and reasoned about explicitly.
+- **Breaks the seam between input validation and domain construction.** Part of a
+  Command/Request's value is that it can be validated as "did the caller send a
+  well-formed, complete request?" before anything touches the domain. A default
+  silently answers "no, but I'll pretend they did" — defeating that boundary.
+
+**The asymmetry is the point, not a smell to flatten away.** A default is low-risk on an
+*output* DTO (`items: []` instead of `null`, for serialization convenience) because
+nothing downstream is deciding on the caller's behalf. The same default is high-risk on
+an *input* Command/Query/Request, because it makes a business decision for the caller.
+Treating input and output DTOs identically here is itself the mistake — it means the
+DTO's directionality hasn't been thought through.
+
+**Rule of thumb:** a default on an input field is safe only when "absent" and "the
+default value" are genuinely and permanently the same meaning to every consumer, forever
+— a pagination `page: int = 1` or an optional filter (`status: str | None = None` on a
+Query) qualifies, because "no filter" and "absent filter" really are the same thing. The
+moment a field participates in a domain invariant (quantity, an initial status, a price),
+the Command/Request should fail validation on absence, not paper over it with a default.
+
 ## DDD Building Blocks
 
 | Pattern            | Purpose                 | Layer         | Key Rule                                 |

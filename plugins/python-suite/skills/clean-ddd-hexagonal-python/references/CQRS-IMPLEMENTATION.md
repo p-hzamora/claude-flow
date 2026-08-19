@@ -102,6 +102,13 @@ class CancelOrderCommand(FrozenObject):
     reason: str
 ```
 
+Note none of these fields carry a default. That's deliberate, not an omission — see
+"Default Values on a DTO Are a Code Smell" in `../SKILL.md`. A default on `items` or
+`reason` would make a business decision on the caller's behalf and hide a client that
+forgot to send the field; contrast with `GetOrdersQuery` below, where `status: str |
+None = None` is safe because "no filter" and "absent filter" are permanently the same
+thing.
+
 ### Command Handler
 
 Command handlers implement `IHandler[TCommand, TResult]` and use Unit of Work for transactions.
