@@ -26,6 +26,8 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
   and `atlassian-jira-mcp` (site disambiguation, credentials, the REST fallbacks for
   attaching/creating issues, transitions, comments). The commit-message regex is owned
   by `skills`' `commit-message-generator`, not by `git-devops-conventions` — see below.
+  Also ships `scripts/md2pdf.sh`, the mandatory (non-optional) Markdown-to-PDF converter
+  `jira-dev-workflow` calls in Phase 6 — never a hand-rolled `pandoc`/`weasyprint` call.
   Depends on `skills` and `python-suite`.
 
 ## Dependency graph

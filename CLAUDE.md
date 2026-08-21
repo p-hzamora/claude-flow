@@ -13,6 +13,7 @@ plugins/<name>/
   .claude-plugin/plugin.json   # this plugin's own metadata + version
   agents/*.md                  # full subagent definitions (persona, tools, model)
   skills/<name>/SKILL.md       # instructions loaded into the calling thread, no persona
+  scripts/*.sh                 # plain executables invoked via Bash, referenced by agents/skills as ${CLAUDE_PLUGIN_ROOT}/scripts/<name>, never a bare relative path
 .claude-plugin/marketplace.json  # lists every plugin + mirrors each plugin's version
 docs/<plugin>.md                 # human-facing reference per plugin, tables of contents
 README.md                        # top-level overview, dependency graph, install commands

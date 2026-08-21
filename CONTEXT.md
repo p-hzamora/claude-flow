@@ -15,6 +15,9 @@ A file under a plugin's `agents/` folder — a full subagent definition (persona
 A `SKILL.md` under a plugin's `skills/` folder — instructions loaded straight into the calling thread's own context. No tool-permission frontmatter, no persona, no restriction mechanism. Reference knowledge or a procedure, not an actor.
 _Avoid_: using "skill" and "agent" interchangeably when describing a plugin's contents — they're read and run differently.
 
+**Script**:
+An executable file under a plugin's `scripts/` folder — plain code (shell, Python, etc.) invoked via Bash, not read into context and not a persona. An Agent/Skill references it by an absolute, portable path (`${CLAUDE_PLUGIN_ROOT}/scripts/<name>`, the Claude Code env var that resolves to the installed plugin's own directory), never a bare relative path. Where an agent's instructions mark a script mandatory (e.g. `jira-dev-workflow`'s Phase 6 PDF step must call `scripts/md2pdf.sh`), that's a hard requirement, not one option among several equivalent shell one-liners.
+
 **Entity** / **Value Object** / **Aggregate** / **Port** / **Handler**:
 DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal-python` skill (`plugins/python-suite/skills/`) — this file only anchors the names:
 - Entity — domain object with identity tracked across time.
@@ -38,8 +41,8 @@ _Avoid_: a mapper method named `from_x` anywhere in this taxonomy — the conven
 
 ## Relationships
 
-- A **Plugin** holds many **Agents** and many **Skills**.
-- An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `clean-ddd-hexagonal-python`).
+- A **Plugin** holds many **Agents**, many **Skills**, and optionally **Scripts**.
+- An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `clean-ddd-hexagonal-python`), and may be required to invoke a **Script** as a fixed tool (e.g. `jira-dev-workflow` must call `scripts/md2pdf.sh` in Phase 6, not an ad hoc shell command).
 - A **Plugin** may declare `dependencies` on other **Plugins** (`jira-dev-workflow` depends on `skills` and `python-suite`; `python-suite` depends on `skills`).
 
 ## Flagged ambiguities
