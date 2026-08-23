@@ -28,6 +28,8 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
   by `skills`' `commit-message-generator`, not by `git-devops-conventions` — see below.
   Also ships `scripts/md2pdf.sh`, the mandatory (non-optional) Markdown-to-PDF converter
   `jira-dev-workflow` calls in Phase 6 — never a hand-rolled `pandoc`/`weasyprint` call.
+  Phase 6's `.md` source must follow the C4 model structure (Context/Container/Component/
+  Code, text sections only, no diagrams).
   Depends on `skills` and `python-suite`.
 
 ## Dependency graph

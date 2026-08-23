@@ -5,7 +5,7 @@ branch, scope with `/grill-with-context`, hand off to `sdd-python-orchestrator`,
 `jira-git-committer`, close out in Jira. Also ships `jira-tech-lead-reviewer` for
 read-only branch review.
 
-**Version:** 0.3.1
+**Version:** 0.3.2
 **Dependencies:** `skills`, `python-suite` (both auto-enabled on install)
 
 ## Agents
@@ -27,7 +27,7 @@ read-only branch review.
 
 | Script | Path |
 |---|---|
-| `md2pdf.sh` | `scripts/md2pdf.sh` — converts a Markdown file to PDF via `pandoc`+`weasyprint` (self-installs both on first run). Mandatory in `jira-dev-workflow`'s Phase 6 for the ticket summary PDF — the agent must call it via `${CLAUDE_PLUGIN_ROOT}/scripts/md2pdf.sh <in>.md <out>.pdf`, never a hand-rolled `pandoc`/`weasyprint`/`wkhtmltopdf`/`cupsfilter` invocation in its place. |
+| `md2pdf.sh` | `scripts/md2pdf.sh` — converts a Markdown file to PDF via `pandoc`+`weasyprint` (self-installs both on first run). Mandatory in `jira-dev-workflow`'s Phase 6 for the ticket summary PDF — the agent must call it via `${CLAUDE_PLUGIN_ROOT}/scripts/md2pdf.sh <in>.md <out>.pdf`, never a hand-rolled `pandoc`/`weasyprint`/`wkhtmltopdf`/`cupsfilter` invocation in its place. The source `.md` must follow the C4 model structure (Context/Container/Component/Code sections, text only — no diagrams) mandated in Phase 6 of `agents/jira-dev-workflow.md`. |
 
 Both agents above invoke these — the branch-name/author-email regexes and Atlassian MCP
 gotchas live here once, not duplicated per agent. The commit-message regex is **not**
