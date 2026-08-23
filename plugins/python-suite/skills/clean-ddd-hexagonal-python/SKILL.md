@@ -356,6 +356,7 @@ the Command/Request should fail validation on absence, not paper over it with a 
 | **Domain Event**   | Record of change        | Domain        | Past tense naming (`OrderPlaced`)        |
 | **Repository**     | Persistence abstraction | Domain (port) | Per aggregate, use Protocol              |
 | **Domain Service** | Stateless logic         | Domain        | When logic doesn't fit an entity         |
+| **Specification**  | Reusable business predicate | Domain    | Only when the same rule is checked in 2+ places; compose via AND/OR/NOT, don't wrap query filters |
 | **Handler**        | CQRS operations         | Application   | Commands use UoW, Queries use Read Repos |
 
 ## Anti-Patterns (CRITICAL)
@@ -607,6 +608,7 @@ from ..schemas.order_schema import CreateOrderRequest, OrderResponse
 | [references/LAYERS.md](references/LAYERS.md)                           | Complete layer specifications                        |
 | [references/DDD-STRATEGIC.md](references/DDD-STRATEGIC.md)             | Bounded contexts, context mapping                    |
 | [references/DDD-TACTICAL.md](references/DDD-TACTICAL.md)               | Entities, value objects, aggregates (Python)         |
+| [references/SPECIFICATION.md](references/SPECIFICATION.md)             | Specification pattern: validation, selection, construction |
 | [references/HEXAGONAL.md](references/HEXAGONAL.md)                     | Ports, adapters, naming                              |
 | [references/CQRS-EVENTS.md](references/CQRS-EVENTS.md)                 | Command/query separation, events                     |
 | [references/CQRS-IMPLEMENTATION.md](references/CQRS-IMPLEMENTATION.md) | Template-specific CQRS implementation reference      |

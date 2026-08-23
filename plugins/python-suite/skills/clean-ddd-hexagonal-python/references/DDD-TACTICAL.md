@@ -717,3 +717,14 @@ class OrderFactory:
 
         return order
 ```
+
+---
+
+## Specification
+
+A named, reusable business predicate (`is_satisfied_by(candidate) -> bool`), composable
+via AND/OR/NOT. Use it when the same business rule is checked in 2+ places (validating
+a candidate, selecting from a collection/repository, or constraining what a factory
+builds) — not for a one-off `if`, and not as a substitute for an ordinary CQRS query
+filter. See [SPECIFICATION.md](SPECIFICATION.md) for the full pattern, all three uses,
+and the composable base classes.
