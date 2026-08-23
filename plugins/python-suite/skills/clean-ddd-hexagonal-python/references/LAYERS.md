@@ -121,7 +121,7 @@ from app.domain.entities import Entity
 from app.domain.value_objects import OrderId, CustomerId, Datetime
 
 
-class OrderStatus(str, Enum):
+class OrderStatusEnum(str, Enum):
     DRAFT = "draft"
     CONFIRMED = "confirmed"
     SHIPPED = "shipped"
@@ -132,7 +132,7 @@ class OrderStatus(str, Enum):
 class Order(Entity["Order"]):
     id: OrderId
     customer_id: CustomerId
-    status: OrderStatus
+    status: OrderStatusEnum
     items: list[OrderItem] = field(default_factory=list)
     created_at: Datetime = field(default_factory=Datetime.now)
     updated_at: Datetime = field(default_factory=Datetime.now)
@@ -143,19 +143,19 @@ class Order(Entity["Order"]):
         return Order(
             id=OrderId(),
             customer_id=customer_id,
-            status=OrderStatus.DRAFT,
+            status=OrderStatusEnum.DRAFT,
             created_at=Datetime.now(),
             updated_at=Datetime.now(),
         )
 
     def confirm(self) -> None:
         """Confirm the order."""
-        if self.status != OrderStatus.DRAFT:
+        if self.status != OrderStatusEnum.DRAFT:
             raise ValueError(f"Cannot confirm {self.status.value} order")
         if not self.items:
             raise ValueError("Cannot confirm order with no items")
 
-        self.status = OrderStatus.CONFIRMED
+        self.status = OrderStatusEnum.CONFIRMED
         self.updated_at = Datetime.now()
 
     def __eq__(self, other: object) -> bool:

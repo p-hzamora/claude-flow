@@ -331,7 +331,7 @@ from app.domain.entities import Entity
 from app.domain.value_objects import OrderId, CustomerId, Datetime
 
 
-class OrderStatus(str, Enum):
+class OrderStatusEnum(str, Enum):
     DRAFT = "draft"
     CONFIRMED = "confirmed"
     SHIPPED = "shipped"
@@ -343,7 +343,7 @@ class OrderStatus(str, Enum):
 class Order(Entity["Order"]):
     id: OrderId
     customer_id: CustomerId
-    status: OrderStatus
+    status: OrderStatusEnum
     items: list[OrderItem] = field(default_factory=list)
     created_at: Datetime = field(default_factory=Datetime.now)
     updated_at: Datetime = field(default_factory=Datetime.now)
@@ -355,7 +355,7 @@ class Order(Entity["Order"]):
         order = Order(
             id=OrderId(),
             customer_id=customer_id,
-            status=OrderStatus.DRAFT,
+            status=OrderStatusEnum.DRAFT,
             created_at=Datetime.now(),
             updated_at=Datetime.now(),
         )
@@ -369,7 +369,7 @@ class Order(Entity["Order"]):
         unit_price: Money
     ) -> None:
         """Add item to order or increase quantity if already exists."""
-        if self.status in [OrderStatus.CANCELLED, OrderStatus.SHIPPED]:
+        if self.status in [OrderStatusEnum.CANCELLED, OrderStatusEnum.SHIPPED]:
             raise ValueError(f"Cannot add items to {self.status.value} order")
 
         if quantity <= 0:
@@ -395,7 +395,7 @@ class Order(Entity["Order"]):
 
     def remove_item(self, product_id: ProductId) -> None:
         """Remove item from order."""
-        if self.status in [OrderStatus.CANCELLED, OrderStatus.SHIPPED]:
+        if self.status in [OrderStatusEnum.CANCELLED, OrderStatusEnum.SHIPPED]:
             raise ValueError(f"Cannot remove items from {self.status.value} order")
 
         item = next(
@@ -410,30 +410,30 @@ class Order(Entity["Order"]):
 
     def confirm(self) -> None:
         """Confirm the order."""
-        if self.status != OrderStatus.DRAFT:
+        if self.status != OrderStatusEnum.DRAFT:
             raise ValueError(f"Cannot confirm {self.status.value} order")
 
         if not self.items:
             raise ValueError("Cannot confirm order with no items")
 
-        self.status = OrderStatus.CONFIRMED
+        self.status = OrderStatusEnum.CONFIRMED
         self.confirmed_at = Datetime.now()
         self.updated_at = Datetime.now()
 
     def ship(self) -> None:
         """Mark order as shipped."""
-        if self.status != OrderStatus.CONFIRMED:
+        if self.status != OrderStatusEnum.CONFIRMED:
             raise ValueError(f"Cannot ship {self.status.value} order")
 
-        self.status = OrderStatus.SHIPPED
+        self.status = OrderStatusEnum.SHIPPED
         self.updated_at = Datetime.now()
 
     def cancel(self, reason: str) -> None:
         """Cancel the order."""
-        if self.status in [OrderStatus.SHIPPED, OrderStatus.DELIVERED]:
+        if self.status in [OrderStatusEnum.SHIPPED, OrderStatusEnum.DELIVERED]:
             raise ValueError(f"Cannot cancel {self.status.value} order")
 
-        self.status = OrderStatus.CANCELLED
+        self.status = OrderStatusEnum.CANCELLED
         self.updated_at = Datetime.now()
 
     @property
@@ -528,7 +528,7 @@ class IOrderItemRepository(Protocol):
 ```python
 # Don't do this
 class IOrderRepository(Protocol):
-    async def find_by_status(self, status: OrderStatus) -> list[Order]: ...
+    async def find_by_status(self, status: OrderStatusEnum) -> list[Order]: ...
     async def find_by_date_range(self, start: datetime, end: datetime) -> list[Order]: ...
     async def count_by_customer(self, customer_id: CustomerId) -> int: ...
 ```

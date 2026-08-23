@@ -387,7 +387,7 @@ from .value_objects import CustomerId, OrderId, Money, Quantity, ProductId
 from .entity import OrderItem
 
 
-class OrderStatus(Enum):
+class OrderStatusEnum(Enum):
     """Order status enumeration."""
     DRAFT = "draft"
     CONFIRMED = "confirmed"
@@ -407,7 +407,7 @@ class Order(AggregateRoot[OrderId]):
     """
     id: OrderId
     customer_id: CustomerId
-    status: OrderStatus = OrderStatus.DRAFT
+    status: OrderStatusEnum = OrderStatusEnum.DRAFT
     _items: list[OrderItem] = field(default_factory=list)
 
     @classmethod
@@ -455,7 +455,7 @@ class Order(AggregateRoot[OrderId]):
         if not self._items:
             raise ValueError("Cannot confirm empty order")
 
-        self.status = OrderStatus.CONFIRMED
+        self.status = OrderStatusEnum.CONFIRMED
         self.add_domain_event(OrderConfirmed(order_id=self.id, total=self.total))
 
     def _assert_can_modify(self) -> None:
@@ -464,7 +464,7 @@ class Order(AggregateRoot[OrderId]):
         Raises:
             ValueError: If order is cancelled
         """
-        if self.status == OrderStatus.CANCELLED:
+        if self.status == OrderStatusEnum.CANCELLED:
             raise ValueError("Cannot modify cancelled order")
 
     @property

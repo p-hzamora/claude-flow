@@ -40,7 +40,7 @@ Test business logic in isolation. **No mocks needed**—domain has no dependenci
 import pytest
 from datetime import datetime, timezone
 
-from domain.order.order import Order, OrderStatus
+from domain.order.order import Order, OrderStatusEnum
 from domain.order.value_objects import OrderId, CustomerId, Quantity, Money, ProductId
 from domain.order.events import OrderCreated, OrderConfirmed
 from domain.order.errors import (
@@ -61,7 +61,7 @@ class TestOrder:
         order = Order.create(customer_id)
 
         # Assert
-        assert order.status == OrderStatus.DRAFT
+        assert order.status == OrderStatusEnum.DRAFT
         assert order.customer_id == customer_id
         assert len(order.items) == 0
 
@@ -129,7 +129,7 @@ class TestOrder:
         order.confirm()
 
         # Assert
-        assert order.status == OrderStatus.CONFIRMED
+        assert order.status == OrderStatusEnum.CONFIRMED
 
     def test_confirm_emits_order_confirmed_event(self):
         # Arrange

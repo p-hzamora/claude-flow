@@ -82,10 +82,10 @@ class Order:
 # ✅ Ubiquitous language
 class Order:
     def confirm(self) -> None:
-        if self.status != OrderStatus.PENDING:
+        if self.status != OrderStatusEnum.PENDING:
             raise OrderCannotBeConfirmedException(self.id)
 
-        self.status = OrderStatus.CONFIRMED
+        self.status = OrderStatusEnum.CONFIRMED
         self.confirmed_at = datetime.now(timezone.utc)
         self.add_domain_event(OrderConfirmed(self.id))
 ```
@@ -330,18 +330,18 @@ class StripePaymentACL:
         )
         return payment_intent.id
 
-    def translate_status(self, stripe_status: str) -> PaymentStatus:
-        """Translates Stripe status to domain PaymentStatus."""
+    def translate_status(self, stripe_status: str) -> PaymentStatusEnum:
+        """Translates Stripe status to domain PaymentStatusEnum."""
         mapping = {
-            "requires_payment_method": PaymentStatus.PENDING,
-            "requires_confirmation": PaymentStatus.PENDING,
-            "requires_action": PaymentStatus.PENDING,
-            "processing": PaymentStatus.PROCESSING,
-            "succeeded": PaymentStatus.COMPLETED,
-            "canceled": PaymentStatus.CANCELLED,
-            "requires_capture": PaymentStatus.AUTHORIZED,
+            "requires_payment_method": PaymentStatusEnum.PENDING,
+            "requires_confirmation": PaymentStatusEnum.PENDING,
+            "requires_action": PaymentStatusEnum.PENDING,
+            "processing": PaymentStatusEnum.PROCESSING,
+            "succeeded": PaymentStatusEnum.COMPLETED,
+            "canceled": PaymentStatusEnum.CANCELLED,
+            "requires_capture": PaymentStatusEnum.AUTHORIZED,
         }
-        return mapping.get(stripe_status, PaymentStatus.UNKNOWN)
+        return mapping.get(stripe_status, PaymentStatusEnum.UNKNOWN)
 
     def translate_webhook(self, event: stripe.Event) -> DomainEvent | None:
         """Translates Stripe webhook to domain event."""

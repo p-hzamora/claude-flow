@@ -590,6 +590,14 @@ async def create_order(
 | Query | `{Action}{Aggregate}Query` | `GetOrderQuery` |
 | DTO | `{Aggregate}DTO` | `OrderDTO` |
 | Dependency Type Alias | `{Name}Dpd` | `OrderUoWDpd` |
+| Enum | `{Name}Enum` | `OrderStatusEnum`, `PaymentStatusEnum` |
+
+**Enum suffix is mandatory, no exception.** A class deriving from `Enum`/`StrEnum`/
+`IntEnum`/`(str, Enum)` must end in `Enum` — the reader must be able to tell it's an
+enumeration from the name alone at the call site (`OrderStatusEnum.CONFIRMED`), without
+opening the file to check whether `OrderStatus` is an Enum, a Value Object, or a plain
+class. This applies everywhere an enum shows up in this template — domain status enums,
+`ErrorCodeEnum` (see `ERROR_HANDLER.md`), any future one.
 
 ### Project Structure
 
