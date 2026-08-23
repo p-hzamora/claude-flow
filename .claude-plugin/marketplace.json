@@ -24,7 +24,7 @@
     {
       "name": "jira-dev-workflow",
       "description": "End-to-end Jira ticket workflow agent bundle.",
-      "version": "0.3.2",
+      "version": "0.3.3",
       "source": "./plugins/jira-dev-workflow",
       "category": "productivity"
     }

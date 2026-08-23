@@ -5,7 +5,12 @@ branch, scope with `/grill-with-context`, hand off to `sdd-python-orchestrator`,
 `jira-git-committer`, close out in Jira. Also ships `jira-tech-lead-reviewer` for
 read-only branch review.
 
-**Version:** 0.3.2
+**Language:** all Jira-bound content (new issue/subtask title+description, the Phase 6
+summary.md/PDF, Jira comments) is written in plain Spanish for the Spanish-speaking Jira
+team. Everything else — chat with the user, halt/failure reports, task labels — stays in
+English.
+
+**Version:** 0.3.3
 **Dependencies:** `skills`, `python-suite` (both auto-enabled on install)
 
 ## Agents
