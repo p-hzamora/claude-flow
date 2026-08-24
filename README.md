@@ -9,7 +9,12 @@ Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
   `api-rest-designer`, `sdd-workflow` (stack-agnostic SDD orchestration methodology —
   any stack orchestrator, e.g. `sdd-python-orchestrator` below or a future
   `sdd-docker-orchestrator`, invokes this first, then layers its own stack context
-  on top).
+  on top), `handoff` (user-invoked only, via `/handoff` — compacts the conversation
+  into a portable markdown handoff document in the OS temp dir for a fresh agent, a
+  colleague, or a forked side task to pick up; not a `/compact` replacement),
+  `prototype` (builds a throwaway UI-variations-behind-a-toggle or state-machine
+  terminal REPL in its own directory to settle a design question code can answer
+  and words can't; pairs with `handoff` to carry the decision back).
 - **python-suite** — reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each
   independently usable (not only reachable through an orchestrator):
   - Agents: `sdd-python-orchestrator`, `ddd-reviewer`, `ddd-implementer`,
