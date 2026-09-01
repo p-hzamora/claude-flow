@@ -1,15 +1,24 @@
 # claude-flow
 
-A private Claude Code plugin marketplace for SDD/Jira/Python workflow agents.
+A private multi-host plugin marketplace for SDD/Jira/Python workflows.
 
 ## Language
 
 **Plugin**:
-A top-level installable unit listed in `.claude-plugin/marketplace.json`'s `plugins[]`, defined by its own `.claude-plugin/plugin.json`. The only structural container in this repo.
+A top-level installable unit listed in `.claude-plugin/marketplace.json`'s `plugins[]`,
+and `.agents/plugins/marketplace.json`'s `plugins[]`, defined by its own
+`.claude-plugin/plugin.json` and, for Codex compatibility, its own
+`.codex-plugin/plugin.json`. The plugin directory is the only structural container in
+this repo.
 _Avoid_: suite, bundle — as a distinct category from Plugin. `python-suite` and "agent bundle" (`jira-dev-workflow`'s own description) are informal descriptors baked into a name or a sentence, not a separate type with different rules. Every one of them is a Plugin.
 
 **Agent**:
-A file under a plugin's `agents/` folder — a full subagent definition (persona, `tools`/`disallowedTools`, `model`) launched via the Agent tool, running in its own context.
+A host-specific configuration for a specialized, isolated worker. Claude Code uses a
+full definition under a plugin's `agents/` folder (persona,
+`tools`/`disallowedTools`, `model`) launched via its Agent tool. Codex uses a thin,
+project-scoped TOML adapter under `.codex/agents/` (name, description, developer
+instructions and optional sandbox/model settings). Both configurations must point to
+shared Skills for procedures and knowledge instead of carrying duplicate workflow text.
 
 **Skill**:
 A `SKILL.md` under a plugin's `skills/` folder — instructions loaded straight into the calling thread's own context. No tool-permission frontmatter, no persona, no restriction mechanism. Reference knowledge or a procedure, not an actor.
@@ -41,7 +50,10 @@ _Avoid_: a mapper method named `from_x` anywhere in this taxonomy — the conven
 
 ## Relationships
 
-- A **Plugin** holds many **Agents**, many **Skills**, and optionally **Scripts**.
+- A **Plugin** holds many Claude Code **Agents**, many **Skills** shared by Claude
+  Code and Codex, and optionally **Scripts**. The repository's `.codex/agents/`
+  profiles make matching roles available to Codex as project configuration; Codex does
+  not currently load custom agents from a plugin manifest.
 - An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `clean-ddd-hexagonal-python`), and may be required to invoke a **Script** as a fixed tool (e.g. `jira-dev-workflow` must call `scripts/md2pdf.sh` in Phase 6, not an ad hoc shell command).
 - A **Plugin** may declare `dependencies` on other **Plugins** (`jira-dev-workflow` depends on `skills` and `python-suite`; `python-suite` depends on `skills`).
 

@@ -3,8 +3,15 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 0.3.3
+**Version:** 0.4.0
 **Dependencies:** `skills` (auto-enabled on install)
+
+**Codex:** the reusable skills are packaged through
+`../plugins/python-suite/.codex-plugin/plugin.json` and reuse the same files as the
+Claude Code plugin. Matching project-scoped Codex profiles live in
+[`../.codex/agents/`](../.codex/agents/); they reuse those skills and inherit the
+caller-selected model. See [`../.codex/README.md`](../.codex/README.md) to use the
+profiles from another project without copying them.
 
 ## Agents
 

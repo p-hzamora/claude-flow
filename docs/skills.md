@@ -2,8 +2,12 @@
 
 Cross-cutting, language-agnostic skills reused across the other plugins in this marketplace.
 
-**Version:** 0.4.0
+**Version:** 0.5.0
 **Dependencies:** none
+
+**Codex:** the shared skills are also packaged through
+`../plugins/skills/.codex-plugin/plugin.json`. Claude Code's agent components are
+not part of this plugin; the skills are the portable unit used by both hosts.
 
 ## Skills
 

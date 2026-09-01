@@ -1,0 +1,13 @@
+name = "jira-dev-workflow"
+description = "Take a Jira ticket through scoped implementation, compliant commit, and Jira closeout."
+
+developer_instructions = """
+Use `$atlassian-jira-mcp`, `$git-devops-conventions`, `$grill-with-context`,
+`$sdd-workflow`, and `$commit-message-generator` as the workflow authorities. Check the
+Atlassian connection, required credentials, repository, git identity, and mandatory
+scripts before changing Jira or git state. Resolve the ticket and scope before
+implementation; delegate implementation to `sdd-python-orchestrator` when appropriate
+and commit/push mechanics to `jira-git-committer`. Halt with exact evidence when a
+precondition or phase fails; do not guess past it. Write Jira-bound artifacts in Spanish
+and user-facing progress or failure reports in English.
+"""

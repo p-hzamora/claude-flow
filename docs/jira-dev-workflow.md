@@ -10,8 +10,16 @@ summary.md/PDF, Jira comments) is written in plain Spanish for the Spanish-speak
 team. Everything else — chat with the user, halt/failure reports, task labels — stays in
 English.
 
-**Version:** 0.3.3
+**Version:** 0.4.0
 **Dependencies:** `skills`, `python-suite` (both auto-enabled on install)
+
+**Codex:** the Jira and Git guidance skills are packaged through
+`../plugins/jira-dev-workflow/.codex-plugin/plugin.json` and reuse the same files.
+Matching project-scoped Codex profiles live in
+[`../.codex/agents/`](../.codex/agents/) and rely on those skills rather than a
+second workflow copy. Codex users still need a compatible, authenticated Atlassian MCP
+connection for live Jira actions; see [`../.codex/README.md`](../.codex/README.md)
+for profile setup in another project.
 
 ## Agents
 

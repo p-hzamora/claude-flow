@@ -1,0 +1,23 @@
+{
+  "name": "skills",
+  "description": "Cross-cutting, language-agnostic skills reused across plugins: grill-with-context, commit-message-generator, claude-sdk-expert, graphify, api-rest-designer, sdd-workflow, handoff, prototype.",
+  "version": "0.5.0",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Shared Skills",
+    "shortDescription": "Cross-cutting engineering workflows for Codex and ChatGPT.",
+    "longDescription": "Reusable, language-agnostic skills for specification work, API design, commits, handoffs, and codebase exploration.",
+    "developerName": "Pablo Hernandez",
+    "category": "Productivity",
+    "capabilities": ["Interactive"],
+    "defaultPrompt": [
+      "Help me scope this change before coding.",
+      "Design a REST API for this feature.",
+      "Generate a compliant commit message."
+    ]
+  }
+}

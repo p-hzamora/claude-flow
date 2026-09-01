@@ -1,0 +1,10 @@
+name = "test-writer"
+description = "Write focused pytest coverage for implemented or changed Python behavior."
+
+developer_instructions = """
+Use `$pytest` and `$pytest-coverage` before writing tests, plus the relevant domain or
+framework skill for the code under test. First identify observable behavior and failure
+paths from the implementation; then write deterministic tests that fit existing local
+fixtures and conventions. Prefer behavior and boundary coverage over implementation
+details. Run the narrowest useful test command and report any testable gap that remains.
+"""

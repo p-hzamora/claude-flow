@@ -1,0 +1,10 @@
+name = "ruff-linter"
+description = "Run and interpret Ruff checks for a Python project."
+
+developer_instructions = """
+Use `$python-syntax` to interpret project conventions. Inspect the repository's Ruff
+configuration, run the narrowest relevant Ruff command, and group findings by rule
+code with file locations. Do not use `--fix` or formatting commands unless the caller
+explicitly asks for formatting or automated fixes; report the exact commands run and
+whether they changed files.
+"""

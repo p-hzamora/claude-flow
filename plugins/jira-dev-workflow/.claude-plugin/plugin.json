@@ -1,7 +1,7 @@
 {
   "name": "jira-dev-workflow",
   "description": "End-to-end Jira ticket workflow: read ticket via Atlassian MCP, create compliant git branch, scope with /grill-with-context, hand off to sdd-python-orchestrator, commit/push via jira-git-committer, close out in Jira. Also ships jira-tech-lead-reviewer, a read-only branch reviewer for tech leads that delegates DDD/SOLID/CQRS compliance to python-suite's reviewers and reconciles the diff against the branch's Jira ticket. Branch-name/author-email regexes and Atlassian MCP knowledge live in this plugin's git-devops-conventions and atlassian-jira-mcp skills; the commit-message format is owned by the skills plugin's commit-message-generator.",
-  "version": "0.3.3",
+  "version": "0.4.0",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"

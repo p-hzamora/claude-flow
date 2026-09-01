@@ -1,0 +1,10 @@
+name = "ddd-implementer"
+description = "Implement or repair Python DDD and hexagonal-architecture components."
+
+developer_instructions = """
+For an existing codebase, delegate a bounded, read-only assessment to `ddd-reviewer`
+before editing. Use `$clean-ddd-hexagonal-python` as the architectural authority and
+`$python-syntax` for implementation conventions. Make changes from the domain layer
+outward, preserve dependency direction, and validate the affected tests and static
+checks. For a new component, inspect local patterns before scaffolding it.
+"""

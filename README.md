@@ -1,6 +1,8 @@
 # claude-flow
 
-Private Claude Code plugin marketplace for the SDD/Jira/Python workflow agents.
+Private multi-host plugin marketplace for the SDD/Jira/Python workflows. Claude Code
+and OpenAI Codex reuse the same skill files; each plugin has a host-specific manifest
+only where the host requires one.
 
 ## Plugins
 
@@ -82,12 +84,53 @@ Have it depend on `skills` and invoke the `sdd-workflow` skill the same way
 `sdd-python-orchestrator` does — the orchestration process is shared, only the
 stack-specific context in the agent's own file differs.
 
+## Use with Codex / ChatGPT
+
+The same marketplace is legacy-compatible with Codex. Each plugin also contains a
+`.codex-plugin/plugin.json` manifest whose `skills` entry points at the existing
+`skills/` directory, so no skill files are copied or renamed.
+
+From the repository root, add the marketplace to Codex once:
+
+```
+codex plugin marketplace add /absolute/path/to/claude-flow
+codex plugin list
+codex plugin add skills@claude-flow
+codex plugin add python-suite@claude-flow
+# Add jira-dev-workflow@claude-flow after the two dependencies above when needed.
+```
+
+The native Codex catalog is [`.agents/plugins/marketplace.json`](./.agents/plugins/marketplace.json).
+It lists the same three plugin folders as the Claude marketplace, with Codex-specific
+availability metadata. Codex plugin manifests do not currently declare dependencies,
+so install `skills` explicitly before `python-suite`, and both before
+`jira-dev-workflow`.
+
+Codex loads the shared skills with the selected OpenAI model. The Claude Code
+`agents/` definitions are not advertised as Codex skills: the two hosts have different
+agent configuration, tool, and permission models. Matching, thin Codex role adapters
+are versioned in [`.codex/agents/`](./.codex/agents/) and reuse the installed shared
+skills rather than copying a procedure. Codex discovers them automatically when this
+repository is the project; to use them from another project, follow
+[`.codex/README.md`](./.codex/README.md) to symlink the directory and retain one
+source of truth.
+
+Validate the dual-host layout with:
+
+```
+python3 scripts/validate_multihost.py
+```
+
 ## Adding more later
 
-- New stack suite (e.g. `go-suite`): add a folder under `plugins/`, add one entry to
-  `.claude-plugin/marketplace.json`'s `plugins[]`, commit, push.
+- New plugin: add a folder under `plugins/`, add one entry to
+  `.claude-plugin/marketplace.json`'s `plugins[]`, and add both
+  `.claude-plugin/plugin.json` and `.codex-plugin/plugin.json` when it should work
+  in both hosts.
 - New agent/skill in an existing plugin: drop the file in that plugin's `agents/` or
-  `skills/` folder, commit, push. No marketplace.json change needed.
+  `skills/` folder, commit, push. For Codex portability, put reusable behavior in
+  `skills/`; Claude-only orchestration can remain in `agents/`. No marketplace.json
+  change is needed for a component-only change.
 - Teammates pick up changes with `/plugin marketplace update` then `/plugin update <name>`.
 
 ## Update

@@ -1,0 +1,44 @@
+{
+  "name": "claude-flow",
+  "interface": {
+    "displayName": "claude-flow"
+  },
+  "plugins": [
+    {
+      "name": "skills",
+      "source": {
+        "source": "local",
+        "path": "./plugins/skills"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Productivity"
+    },
+    {
+      "name": "python-suite",
+      "source": {
+        "source": "local",
+        "path": "./plugins/python-suite"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    },
+    {
+      "name": "jira-dev-workflow",
+      "source": {
+        "source": "local",
+        "path": "./plugins/jira-dev-workflow"
+      },
+      "policy": {
+        "installation": "AVAILABLE",
+        "authentication": "ON_INSTALL"
+      },
+      "category": "Engineering"
+    }
+  ]
+}
