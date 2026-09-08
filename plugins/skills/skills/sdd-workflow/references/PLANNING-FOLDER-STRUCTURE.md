@@ -5,6 +5,13 @@ not a scratchpad and it is not an implementation directory: it records the
 request, the refined contracts, the workflow checkpoint, and the final outcome.
 Keep all material for one run inside its one id folder.
 
+For any run that changes versioned artifacts, `{id}` also binds the record to
+one exclusive Git worktree. The checkout is deliberately a sibling structure,
+not a child of `planning/`: normally
+`<repo-parent>/<repo-name>-wt/{id}`. `state.json.worktree` records the returned
+absolute path, branch, and base ref. A separate task needs a separate planning
+id and worktree; never let parallel tasks share either.
+
 ```text
 {root}/{id}/
   request.md
@@ -31,7 +38,21 @@ refinement starts. Create `specs/README.md` and `specs/00-overview.md` during
 refinement. Create a concern file only when that concern has requirements or
 decisions that would make `00-overview.md` unclear; omit inapplicable concerns.
 Create `90-verification.md` before implementation, as the output of test
-design. Create `summary.md` only after the workflow is `done` or `blocked`.
+design.
+
+Before the first task that changes versioned artifacts, send the planning-bound
+`WORKTREE_REQUEST` specified by
+[`git-worktree-management`](../../git-worktree-management/SKILL.md#delegation-request-contract)
+to `git-worktree-expert`. Wait for `WORKTREE_RESULT`, record it in `state.json`,
+and perform all source work only in the returned worktree. A blocked request
+blocks the run; do not fall back to a shared checkout.
+
+After validation and integration, set the run to `reviewing` and present the
+evidence to the user. Only after the user explicitly approves may the
+orchestrator use `commit-message-generator` for the staged change proposal,
+commit in the assigned worktree, and delegate clean removal to
+`git-worktree-expert`. Create `summary.md` only after the workflow is `done` or
+`blocked`.
 
 On resume, read `state.json`, then `request.md`, then `specs/README.md` and
 `00-overview.md` before delegating or making a new decision. Existing specs are
@@ -68,10 +89,10 @@ assumptions, or a proposed solution here; those belong in `specs/`.
 
 `state.json` is the only machine-readable source of current workflow state. It
 uses the base shape in `SKILL.md`. `phase` is one of `Specification refinement`,
-`Test design`, `Code generation`, `Validation`, or `Integration`; use `Terminal`
-only for `done` and `blocked`. `specs` lists every spec file relative to the run
-folder, in reading order. `blockers` contains open, actionable reasons and is
-empty in all non-blocked states.
+`Test design`, `Code generation`, `Validation`, `Integration`, or `User review
+and closeout`; use `Terminal` only for `done` and `blocked`. `specs` lists every
+spec file relative to the run folder, in reading order. `blockers` contains
+open, actionable reasons and is empty in all non-blocked states.
 
 Example while refining:
 
@@ -82,6 +103,13 @@ Example while refining:
   "phase": "Specification refinement",
   "summary": "Requirements are being refined; CSV format remains open.",
   "specs": ["specs/README.md", "specs/00-overview.md"],
+  "worktree": {
+    "planning_id": "add-export",
+    "branch": null,
+    "base_ref": null,
+    "path": null,
+    "status": "unassigned"
+  },
   "blockers": [],
   "updated": "2026-09-08T09:15:00Z"
 }
@@ -89,6 +117,9 @@ Example while refining:
 
 Update it atomically at every phase transition. It is a checkpoint, not a
 history log: retain the current concise status rather than appending events.
+When `worktree.status` changes, update the same checkpoint. `released` means
+the expert successfully removed the registered worktree; it does not mean the
+branch was deleted.
 
 ## `summary.md`: terminal handoff
 

@@ -18,8 +18,9 @@ host-specific, while the skills remain the portable unit used by both hosts.
 ### Worktree delegation flow
 
 Development agents request isolated worktrees from `git-worktree-expert`, which
-inspects or creates them through `git-worktree-management`. The returned absolute path
-is the only directory where the requesting agent performs that task's work.
+inspects or creates them through `git-worktree-management`. For SDD work, the request
+is bound to the planning folder ID and `state.json` records the returned absolute path;
+that path is the only directory where the requesting agent performs the task's work.
 
 ```text
                     ┌──────────────────────┐
@@ -64,7 +65,7 @@ is the only directory where the requesting agent performs that task's work.
 | `graphify` | `skills/graphify/SKILL.md` |
 | `api-rest-designer` | `skills/api-rest-designer/SKILL.md` |
 | `git-worktree-management` | `skills/git-worktree-management/SKILL.md` — safe, deterministic inspection, creation, reuse, removal, and stale-metadata cleanup for Git worktrees; includes a lifecycle helper script |
-| `sdd-workflow` | `skills/sdd-workflow/SKILL.md` — stack-agnostic SDD orchestration methodology with an auditable planning-record layout and uniform, traceable specification templates; any stack orchestrator (e.g. `sdd-python-orchestrator`) invokes this first, then layers its own stack context on top |
+| `sdd-workflow` | `skills/sdd-workflow/SKILL.md` — stack-agnostic SDD orchestration methodology with planning-ID-bound worktree isolation, auditable records, and uniform, traceable specification templates; any stack orchestrator (e.g. `sdd-python-orchestrator`) invokes this first, then layers its own stack context on top |
 | `handoff` | `skills/handoff/SKILL.md` — compacts the conversation into a portable handoff markdown file (written to the OS temp dir) for a fresh agent, colleague, or forked side task to pick up; user-invoked only (`/handoff`), never model-triggered |
 | `prototype` | `skills/prototype/SKILL.md` — builds a throwaway prototype (UI variations behind a toggle, or a terminal REPL for a state machine) in its own directory to settle a design question code can answer and words can't; pairs with `handoff` to carry the settled decision back to the originating session |
 

@@ -9,8 +9,9 @@ only where the host requires one.
 - **skills** — cross-cutting, language-agnostic skills reused across plugins:
   `grill-with-context`, `commit-message-generator`, `claude-sdk-expert`, `graphify`,
   `api-rest-designer`, `git-worktree-management` (safe, deterministic Git worktree
-  lifecycle management), `sdd-workflow` (stack-agnostic SDD orchestration methodology —
-  any stack orchestrator, e.g. `sdd-python-orchestrator` below or a future
+  lifecycle management), `sdd-workflow` (stack-agnostic SDD orchestration methodology
+  with one isolated, planning-ID-bound worktree per implementation task — any stack
+  orchestrator, e.g. `sdd-python-orchestrator` below or a future
   `sdd-docker-orchestrator`, invokes this first, then layers its own stack context
   on top), `handoff` (user-invoked only, via `/handoff` — compacts the conversation
   into a portable markdown handoff document in the OS temp dir for a fresh agent, a

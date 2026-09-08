@@ -47,6 +47,8 @@ conventions) on top for *what the stack requires*.
    never drives the spec, the spec drives the code.
 4. **Validation** - run generated tests, verify spec compliance.
 5. **Integration** - confirm new code integrates with existing architecture.
+6. **User review and closeout** - present the verified implementation for the
+   user's review; commit and release its worktree only after explicit approval.
 
 Feedback loops are not failures: if tests fail or a spec gap emerges mid-phase,
 route back to refinement rather than patching around it.
@@ -64,6 +66,46 @@ route back to refinement rather than patching around it.
   resolve them at the orchestration level, not by letting one agent silently
   override another's contract.
 
+### Mandatory worktree isolation
+
+Every planning run that will change source code, tests, configuration, or other
+versioned artifacts owns one isolated Git worktree. Treat a planning run as one
+bounded implementation task: do not assign two independently implemented tasks
+to the same run or worktree. Parallel work requires a separate `{root}/{id}/`
+planning record and a separate worktree for each task.
+
+Before delegating the first source-changing task, send a `WORKTREE_REQUEST` to
+the `git-worktree-expert` agent and wait for a successful `WORKTREE_RESULT`.
+`git-worktree-expert` is the sole owner of inspection, branch assignment,
+creation, removal, and pruning; the SDD orchestrator never performs lifecycle
+commands itself. Follow the request contract in
+[`git-worktree-management`](../git-worktree-management/SKILL.md#delegation-request-contract).
+
+Bind the two records with the planning folder name:
+
+- `planning_id` is exactly `{id}` and `planning_path` is the absolute
+  `{root}/{id}` path.
+- Request an explicit worktree directory ending in `{id}`, normally
+  `<repo-parent>/<repo-name>-wt/{id}`. The worktree remains outside the planning
+  folder: the latter is the audit record, not a source checkout.
+- Supply the task's approved branch and, for a new branch, its explicit base
+  ref. A planning id is not a license to guess branch or history.
+- Persist the returned absolute `path`, `branch`, and `base_ref` in `state.json`.
+  Do not send implementation agents to any other checkout.
+
+If the worktree request is blocked or fails, set the run to `blocked` with the
+reported reason and do not start source-changing work on a shared checkout.
+
+At closeout, keep the run in `reviewing` until the user has checked the
+implementation and explicitly approves a commit. Then invoke
+`commit-message-generator` to propose the staged-file grouping and title(s),
+obtain the required review of those proposals, commit within the assigned
+worktree, and delegate removal to `git-worktree-expert`. Removal is ordinary,
+non-force cleanup only after the expert reports the worktree clean. Do not
+delete the branch unless the user separately requests it. Mark the run `done`
+only after the commit and worktree removal both succeed; otherwise retain the
+exact pending cleanup reason in `state.json`.
+
 ## Quality gates (before advancing a phase)
 
 - Spec is unambiguous and complete for the current scope.
@@ -71,6 +113,8 @@ route back to refinement rather than patching around it.
 - Test coverage aligns with spec requirements - no more, no less.
 - Generated code passes all tests.
 - Integration points are documented and verified, not assumed.
+- The user has explicitly approved commit/cleanup, and the associated worktree
+  has been safely released before a run is marked `done`.
 
 ## Communication style
 
@@ -137,10 +181,17 @@ acceptance criteria to observable evidence.
 ```json
 {
   "id": "<caller-supplied id>",
-  "status": "draft | refining | testing | implementing | validating | integrating | done | blocked",
+  "status": "draft | refining | testing | implementing | validating | integrating | reviewing | done | blocked",
   "phase": "<current phase name from the Phase sequence above>",
   "summary": "one-line current status, human-readable",
   "specs": ["specs/<file>.md", "..."],
+  "worktree": {
+    "planning_id": "<same value as id>",
+    "branch": "<assigned local branch, null before assignment>",
+    "base_ref": "<base ref for a new branch, or null>",
+    "path": "<absolute assigned worktree path, or null>",
+    "status": "unassigned | assigned | cleanup-pending | released"
+  },
   "blockers": ["<any open blocker, empty when not blocked>"],
   "updated": "<ISO 8601 timestamp from the `date -u +%Y-%m-%dT%H:%M:%SZ` shell command, never guessed>"
 }
@@ -155,6 +206,10 @@ acceptance criteria to observable evidence.
   transition defined in the Phase sequence above, not just at the start and
   end. A stale `state.json` is worse than none, because a resuming session will
   trust it.
+- Before the first source-changing delegation, create or reuse the run's
+  exclusive worktree through `git-worktree-expert`, then record its result in
+  `state.json`. A read-only refinement or design activity may happen before
+  assignment; no source changes may.
 - On `blocked` (see Escalation above), set `status: "blocked"` and fill
   `blockers` with the exact reason - don't leave a workflow silently stuck with
   no machine-readable trace of why.

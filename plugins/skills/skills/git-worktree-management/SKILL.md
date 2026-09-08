@@ -149,6 +149,33 @@ ${CLAUDE_PLUGIN_ROOT}/scripts/git-worktree-management.sh prune --repo <repositor
 
 The helper runs `git worktree prune --dry-run --verbose` first and does nothing when no stale metadata exists.
 
+## Delegation request contract
+
+When another agent delegates lifecycle work to `git-worktree-expert`, it sends one
+line-oriented request. For an SDD planning run, `planning_id` and `planning_path`
+are mandatory and identify the planning record that owns the worktree. They are
+coordination metadata, not Git arguments.
+
+```text
+WORKTREE_REQUEST
+operation: <create|inspect|remove|prune>
+repository: <absolute repository root or worktree path>
+planning_id: <planning folder name, or null outside SDD>
+planning_path: <absolute {root}/{id} path, or null outside SDD>
+branch: <local branch name or null>
+base_ref: <explicit ref for a new branch, otherwise null>
+path: <explicit absolute worktree path, or null to use the standard derived path>
+task: <bounded task the worktree will isolate>
+authorization: <"none" or the exact user-authorized destructive action>
+```
+
+For `create`, the caller must supply a branch and—when that branch is new—an
+explicit `base_ref`. Do not infer either from a planning id. For `remove`, the
+caller must explicitly state the user's authorization; ordinary post-commit
+cleanup is `authorization: none` and succeeds only for a clean worktree. The
+expert validates the operation through this skill and responds with the exact
+`WORKTREE_RESULT` block below.
+
 ## Idempotence and result reporting
 
 If the requested directory is already registered to the requested branch (and, for remote setup, its upstream is correct), return `exists` rather than recreate it. Always report the absolute path and assigned branch for a newly created or reused worktree.
