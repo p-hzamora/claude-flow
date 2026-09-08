@@ -2,12 +2,57 @@
 
 Cross-cutting, language-agnostic skills reused across the other plugins in this marketplace.
 
-**Version:** 0.5.0
+**Version:** 0.6.0
 **Dependencies:** none
 
 **Codex:** the shared skills are also packaged through
 `../plugins/skills/.codex-plugin/plugin.json`. Claude Code's agent components are
-not part of this plugin; the skills are the portable unit used by both hosts.
+host-specific, while the skills remain the portable unit used by both hosts.
+
+## Agents
+
+| Agent | Responsibility |
+|---|---|
+| `git-worktree-expert` | Exclusive specialist for Git worktree lifecycle operations; uses `git-worktree-management` as its authoritative procedure. |
+
+### Worktree delegation flow
+
+Development agents request isolated worktrees from `git-worktree-expert`, which
+inspects or creates them through `git-worktree-management`. The returned absolute path
+is the only directory where the requesting agent performs that task's work.
+
+```text
+                    ┌──────────────────────┐
+                    │       Agent A        │
+                    │ backend / feature    │
+                    └──────────┬───────────┘
+                               │
+                    "I need an isolated
+                     worktree for ABC-1234"
+                               │
+                               ▼
+                  ┌──────────────────────────┐
+                  │   git-worktree-expert    │
+                  │                          │
+                  │ uses                     │
+                  │ git-worktree-management  │
+                  │ skill                    │
+                  └────────────┬─────────────┘
+                               │
+                        create / inspect
+                               │
+                               ▼
+               ~/project-wt/bugfix-ABC-1234
+                               │
+                               ▼
+                    returns absolute path
+                               │
+                               ▼
+                    ┌──────────────────────┐
+                    │       Agent A        │
+                    │ works ONLY there     │
+                    └──────────────────────┘
+```
 
 ## Skills
 
@@ -18,7 +63,8 @@ not part of this plugin; the skills are the portable unit used by both hosts.
 | `claude-sdk-expert` | `skills/claude-sdk-expert/SKILL.md` |
 | `graphify` | `skills/graphify/SKILL.md` |
 | `api-rest-designer` | `skills/api-rest-designer/SKILL.md` |
-| `sdd-workflow` | `skills/sdd-workflow/SKILL.md` — stack-agnostic SDD orchestration methodology; any stack orchestrator (e.g. `sdd-python-orchestrator`) invokes this first, then layers its own stack context on top |
+| `git-worktree-management` | `skills/git-worktree-management/SKILL.md` — safe, deterministic inspection, creation, reuse, removal, and stale-metadata cleanup for Git worktrees; includes a lifecycle helper script |
+| `sdd-workflow` | `skills/sdd-workflow/SKILL.md` — stack-agnostic SDD orchestration methodology with an auditable planning-record layout and uniform, traceable specification templates; any stack orchestrator (e.g. `sdd-python-orchestrator`) invokes this first, then layers its own stack context on top |
 | `handoff` | `skills/handoff/SKILL.md` — compacts the conversation into a portable handoff markdown file (written to the OS temp dir) for a fresh agent, colleague, or forked side task to pick up; user-invoked only (`/handoff`), never model-triggered |
 | `prototype` | `skills/prototype/SKILL.md` — builds a throwaway prototype (UI variations behind a toggle, or a terminal REPL for a state machine) in its own directory to settle a design question code can answer and words can't; pairs with `handoff` to carry the settled decision back to the originating session |
 

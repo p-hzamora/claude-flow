@@ -116,6 +116,22 @@ default (e.g. `.claude/planning/`) applies only when the caller doesn't say
 otherwise - see that orchestrator's own file for its default. Never invent a
 different root, and never overwrite an unrelated existing id's folder.
 
+### Planning-record and spec conventions
+
+Use the canonical planning-record layout in
+[`references/PLANNING-FOLDER-STRUCTURE.md`](references/PLANNING-FOLDER-STRUCTURE.md).
+It defines the purpose, lifecycle, and required content of every file in a run
+folder. In particular, `request.md` is immutable evidence of the starting
+request, `state.json` is the current machine-readable checkpoint, and
+`summary.md` is a terminal-only handoff.
+
+Use [`references/SPECS.md`](references/SPECS.md) when creating or refining
+`specs/`. It defines the required file set, naming scheme, requirement IDs, and
+the exact common section order for every concern specification. Do not create
+an unstructured collection of notes: every requirement must be catalogued once,
+each concern spec must trace back to that catalogue, and verification must map
+acceptance criteria to observable evidence.
+
 ### state.json shape
 
 ```json

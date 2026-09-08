@@ -78,6 +78,48 @@ do not duplicate the Claude agent body or a skill's procedure.
 No separate build step. A version bump only matters for humans reading `docs/`/README —
 Claude Code re-reads plugin files from the marketplace source on update regardless.
 
+## Git worktree ownership
+
+All Git worktree lifecycle operations MUST be delegated to `git-worktree-expert`.
+Do not directly create, remove, prune, relocate, or otherwise manage Git worktrees
+when `git-worktree-expert` is available.
+
+### Agent delegation architecture
+
+`git-worktree-expert` is the sole lifecycle owner. It uses the
+`git-worktree-management` skill as its authoritative procedure; development agents
+must send a `WORKTREE_REQUEST` and act only after receiving `WORKTREE_RESULT`.
+
+```text
+Development Agent
+      │
+      │ WORKTREE_REQUEST
+      ▼
+git-worktree-expert
+      │
+      │ uses
+      ▼
+git-worktree-management skill
+      │
+      ▼
+Git worktree
+      │
+      │ WORKTREE_RESULT
+      ▼
+Development Agent
+```
+
+When isolated work is required:
+
+1. Ask `git-worktree-expert` for a worktree.
+2. Provide the desired branch/task and base ref when known.
+3. Wait for its `WORKTREE_RESULT`.
+4. Perform the development task inside the returned `path`.
+5. Delegate worktree cleanup back to `git-worktree-expert` when needed.
+
+Normal Git operations within the assigned worktree remain the responsibility of the
+current development agent.
+
 ## Non-negotiable regexes
 
 Enforced by DevOps in CI, used across `jira-dev-workflow`. Two owners:
