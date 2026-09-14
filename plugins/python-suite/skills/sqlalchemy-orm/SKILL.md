@@ -1,27 +1,16 @@
 ---
 name: sqlalchemy-orm
 description: "SQLAlchemy Python SQL toolkit and ORM with powerful query builder, relationship mapping, and database migrations via Alembic"
-progressive_disclosure:
-  entry_point:
-    summary: "SQLAlchemy Python SQL toolkit and ORM with powerful query builder, relationship mapping, and database migrations via Alembic"
-    when_to_use: "When working with sqlalchemy-orm or related functionality."
-    quick_start: "1. Review the core concepts below. 2. Apply patterns to your use case. 3. Follow best practices for implementation."
 ---
 
 # SQLAlchemy ORM Skill
 
----
+## Quick Reference
 
-progressive_disclosure:
-entry_point:
-summary: "Python SQL toolkit and ORM with powerful query builder and relationship mapping"
-when_to_use: - "When building Python applications with databases" - "When needing complex SQL queries with type safety" - "When working with FastAPI/Flask/Django" - "When needing database migrations (Alembic)"
-quick_start: - "pip install sqlalchemy" - "Define models with declarative base" - "Create engine and session" - "Query with select() and commit()"
-token_estimate:
-entry: 70-85
-full: 4500-5500
-
----
+Use this skill for Python database applications, complex type-safe SQL queries,
+FastAPI/Flask/Django persistence, and Alembic migrations. Start by installing
+SQLAlchemy, defining declarative models, creating an engine and session, then querying
+with `select()` and committing through the correct transaction boundary.
 
 ## Core Concepts
 
@@ -1016,3 +1005,10 @@ When using Sqlalchemy, these skills enhance your workflow:
 - **systematic-debugging**: Advanced debugging for ORM query issues and N+1 problems
 
 [Full documentation available in these skills if deployed in your bundle]
+
+## Review Checklist
+
+- [ ] Session and transaction ownership are explicit, with rollback/error behavior appropriate to the operation.
+- [ ] Relationship loading avoids unintended lazy loads and N+1 queries on the exercised path.
+- [ ] ORM mappings, constraints, and cascade behavior preserve the intended data invariants.
+- [ ] Queries and schema changes were verified against the relevant database-backed tests or migration checks.

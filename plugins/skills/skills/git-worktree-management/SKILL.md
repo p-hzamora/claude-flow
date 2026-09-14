@@ -205,6 +205,13 @@ next_action: <recommended next action or null>
    # creates ~/projects/atlantis-wt/feature-foo
    ```
 
+## Review Checklist
+
+- [ ] The repository, branch, base ref, and requested lifecycle operation were resolved before mutation.
+- [ ] The returned worktree path, branch assignment, and cleanliness status were verified.
+- [ ] Development occurs only in the assigned worktree, never an assumed or ambiguous path.
+- [ ] Cleanup or pruning targets only the explicitly confirmed worktree and reports its result.
+
 2. Create `bugfix/ABC-1234` from `develop`:
 
    ```bash

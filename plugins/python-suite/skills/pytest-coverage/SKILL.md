@@ -26,3 +26,10 @@ If a line starts with a ! (exclamation mark), it means that the line is not cove
 Add tests to cover the missing lines.
 
 Keep running the tests and improving coverage until all lines are covered.
+
+## Review Checklist
+
+- [ ] The relevant test suite ran successfully with coverage collection enabled.
+- [ ] Every reported uncovered line was investigated rather than hidden with an exclusion.
+- [ ] New tests exercise behavior and edge cases, not only lines for a percentage target.
+- [ ] The final coverage report and any remaining justified exclusions are reported accurately.

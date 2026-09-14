@@ -47,3 +47,10 @@ As a term or decision resolves mid-session, record it immediately — don't batc
 3. **The result of a real trade-off** — genuine alternatives existed and one was picked for specific reasons
 
 Skip the ADR if any of the three is missing — most resolved questions don't warrant one. Use the structure in [ADR-FORMAT.md](./ADR-FORMAT.md). Create `docs/adr/` lazily — only once the first ADR is needed.
+
+## Review Checklist
+
+- [ ] Existing glossary terms, ADRs, and repository facts were read before asking the user to decide them again.
+- [ ] Each round covered only the currently unblocked decision frontier.
+- [ ] Resolved terms and qualifying architecture decisions were recorded in their canonical location.
+- [ ] Every branch of the design tree is settled, and the user confirmed shared understanding before action.

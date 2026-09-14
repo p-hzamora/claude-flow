@@ -1,7 +1,7 @@
 {
   "name": "python-suite",
   "description": "Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills: sdd-python-orchestrator, ddd-reviewer, ddd-implementer, ddd-entity-generator, fastapi-endpoint-builder, fastapi-reviewer, orm-model-inspector, ruff-linter, sqlalchemy-expert-fixer, test-writer. Each agent is independently usable, not only via sdd-python-orchestrator.",
-  "version": "0.4.1",
+  "version": "0.4.2",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"

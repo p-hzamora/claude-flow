@@ -78,6 +78,17 @@ do not duplicate the Claude agent body or a skill's procedure.
 No separate build step. A version bump only matters for humans reading `docs/`/README —
 Claude Code re-reads plugin files from the marketplace source on update regardless.
 
+## Skill completion checklists
+
+Every shared skill ends with a `## Review Checklist`. When a task uses a skill, treat
+that checklist as a completion gate: before reporting the task complete, verify every
+item that applies to the work. Record an item as not applicable only with a concrete
+reason. If an applicable item fails or cannot be verified, continue the work or report
+the task as incomplete/blocked; do not claim completion.
+
+The checklist complements the user's request and repository instructions. It does not
+authorize extra scope, external mutations, or a second review of unrelated work.
+
 ## Git worktree ownership
 
 All Git worktree lifecycle operations MUST be delegated to `git-worktree-expert`.

@@ -4,6 +4,9 @@ Private multi-host plugin marketplace for the SDD/Jira/Python workflows. Claude 
 and OpenAI Codex reuse the same skill files; each plugin has a host-specific manifest
 only where the host requires one.
 
+Every shared skill has a task-specific `Review Checklist`; agents complete every
+applicable item before reporting skill-scoped work done.
+
 ## Plugins
 
 - **skills** — cross-cutting, language-agnostic skills reused across plugins:

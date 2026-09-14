@@ -13,33 +13,30 @@ description: |
   
   User reviews suggested grouping and can adjust files before committing.
 
-compatibility: |
-  Requires: git repository with staged files
-
-critical: |
-  **TITLE COMMITS ONLY - NO DESCRIPTION AT ALL**
-  Generate ONLY commit titles with NO description body, NO multiline content, NO footer.
-  Each commit must match this regex pattern exactly:
-  
-  (build|chore|docs|feat|fix|perf|refactor|style|test|update)(\(([a-zA-Z]+|([A-Z][A-Z]{1,32}-\d+))\))?: .*(.*\n*)*
-  
-  Pattern breakdown:
-  - type: one of (build|chore|docs|feat|fix|perf|refactor|style|test|update)
-  - scope: optional, either lowercase letters OR JIRA-style ticket (e.g., EVA-123)
-  - subject: description after colon and space
-  - NO description body
-  - NO multiline content
-  - NO footer
-  - TITLE ONLY — single line commit message, nothing else
-  
-  Examples:
-  - feat(auth): add login endpoint
-  - fix(rule-engine): correct permission check
-  - test(handlers): remove invalid test cases
-  - update(dependencies): upgrade fastapi to v0.104
 ---
 
 ## How it works
+
+**Requires:** a Git repository with staged files.
+
+## Critical Format Constraint
+
+Generate commit titles only: no description body, multiline content, or footer. Every
+title must match this pattern exactly:
+
+```text
+(build|chore|docs|feat|fix|perf|refactor|style|test|update)(\(([a-zA-Z]+|([A-Z][A-Z]{1,32}-\d+))\))?: .*(.*\n*)*
+```
+
+- Type: one of `build`, `chore`, `docs`, `feat`, `fix`, `perf`, `refactor`, `style`,
+  `test`, or `update`.
+- Scope: optional lowercase letters or a Jira-style ticket, such as `EVA-123`.
+- Subject: description after the colon and space.
+- The title is one line only.
+
+Examples: `feat(auth): add login endpoint`, `fix(rule-engine): correct permission
+check`, `test(handlers): remove invalid test cases`, and `update(dependencies): upgrade
+fastapi to v0.104`.
 
 1. **Fetch staged files**: Runs `git diff --cached --name-only` to get staged files
 2. **Analyze changes**: Runs `git diff --cached` to examine what changed in each file
@@ -190,3 +187,10 @@ COMMIT 2: fix(routers): add app-access guards to app-scoped endpoints
 
 ### Correct (will pass):
 ✅ `test(dependencies): remove route-level permission guard tests`
+
+## Review Checklist
+
+- [ ] Staged changes were inspected and grouped by one coherent purpose per commit.
+- [ ] The proposed conventional-commit type, scope, and imperative subject reflect the actual diff.
+- [ ] Unrelated changes were kept out of the commit or presented as separate commits.
+- [ ] The final title satisfies the documented format without a body that violates the repository convention.

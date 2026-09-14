@@ -139,3 +139,10 @@ The agent has `Read`, `Write`, `Edit`, `Glob`, `Grep`, and `WebFetch` access.
 - Hooks must be `async` — no blocking I/O inside them
 - `resume=session_id` option must not be combined with `system_prompt` or `allowed_tools` from the original call
 - `claude-agent-sdk` latest stable: `0.2.x` (PyPI); docs at https://code.claude.com/docs/en/agent-sdk
+
+## Review Checklist
+
+- [ ] The SDK version, API surface, and runtime assumptions were verified against current official documentation.
+- [ ] Agent iteration, async hooks, and cancellation can run to their intended terminal state.
+- [ ] Allowed tools, MCP integrations, and subagent permissions are least-privilege and explicitly configured.
+- [ ] Session resume, state, and error handling match the SDK constraints documented above.

@@ -39,3 +39,10 @@ Never guess a transition id. Call `mcp__atlassian__getTransitionsForJiraIssue` f
 # Comments
 
 `mcp__atlassian__addCommentToJiraIssue`'s `contentFormat` defaults to markdown and will convert `*bold*` to `_italic_` and mangle nested `**bullets**` into literal `\*\*` — use only flat, single-level `*` bullets. To fix a wrong comment, pass `commentId` to the same tool rather than posting a second comment.
+
+## Review Checklist
+
+- [ ] The real tracker site was selected explicitly, not inferred from a similar name.
+- [ ] The target issue, project, and requested operation were verified before mutation.
+- [ ] Credentials, tokens, and REST output were handled without exposing secrets.
+- [ ] Every create, transition, attachment, or comment mutation was re-read or otherwise verified.

@@ -115,3 +115,10 @@ When the user is forking a side task while staying in this session: write the
 document exactly the same way, but make clear in your reply that this session is
 continuing unaffected — the fresh agent takes the fork, and its findings (once it
 reports back) get referenced from here rather than re-explained.
+
+## Review Checklist
+
+- [ ] The user explicitly requested a handoff and the work genuinely needs to move to another session or location.
+- [ ] The handoff is one concise Markdown file in the OS temporary directory, not the workspace.
+- [ ] It states verified facts separately from assumptions and contains no secrets or credentials.
+- [ ] The final response includes the exact path and any durability warning the destination needs.

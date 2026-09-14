@@ -3,8 +3,11 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 0.4.1
+**Version:** 0.4.2
 **Dependencies:** `skills` (auto-enabled on install)
+
+Every shared skill has a task-specific `Review Checklist` that agents complete before
+reporting applicable work done.
 
 **Codex:** the reusable skills are packaged through
 `../plugins/python-suite/.codex-plugin/plugin.json` and reuse the same files as the

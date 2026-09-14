@@ -2,8 +2,11 @@
 
 Cross-cutting, language-agnostic skills reused across the other plugins in this marketplace.
 
-**Version:** 0.6.0
+**Version:** 0.6.1
 **Dependencies:** none
+
+Every shared skill has a task-specific `Review Checklist` that agents complete before
+reporting applicable work done.
 
 **Codex:** the shared skills are also packaged through
 `../plugins/skills/.codex-plugin/plugin.json`. Claude Code's agent components are

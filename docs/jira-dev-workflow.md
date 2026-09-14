@@ -10,8 +10,11 @@ summary.md/PDF, Jira comments) is written in plain Spanish for the Spanish-speak
 team. Everything else — chat with the user, halt/failure reports, task labels — stays in
 English.
 
-**Version:** 0.4.0
+**Version:** 0.4.1
 **Dependencies:** `skills`, `python-suite` (both auto-enabled on install)
+
+Every shared skill has a task-specific `Review Checklist` that agents complete before
+reporting applicable work done.
 
 **Codex:** the Jira and Git guidance skills are packaged through
 `../plugins/jira-dev-workflow/.codex-plugin/plugin.json` and reuse the same files.

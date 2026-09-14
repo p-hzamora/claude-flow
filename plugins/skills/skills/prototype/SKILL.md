@@ -122,3 +122,10 @@ detour there. The handoff document should carry:
 The originating session resumes with the decision as a settled fact and doesn't
 re-litigate it — same principle `grill-with-context` uses for anything already
 resolved in `CONTEXT.md`/ADRs.
+
+## Review Checklist
+
+- [ ] The prototype addresses a decision that cannot be settled adequately by discussion alone.
+- [ ] It is isolated from the real project and remains explicitly disposable.
+- [ ] The chosen UI variations or business-logic scenarios genuinely test the unresolved question.
+- [ ] The observed decision is captured; prototype code is not merged into production work.

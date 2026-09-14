@@ -914,3 +914,10 @@ order_list: list[str] = []
 entity_id: str = "abc"
 order_type: str = "order"
 ```
+
+## Review Checklist
+
+- [ ] Python syntax, typing, and imports match the project's supported Python version.
+- [ ] Public APIs have precise parameter and return type hints.
+- [ ] Names, docstrings, exceptions, and control flow make the code's intent clear.
+- [ ] No legacy typing or syntax pattern was introduced where the supported modern form is clearer.

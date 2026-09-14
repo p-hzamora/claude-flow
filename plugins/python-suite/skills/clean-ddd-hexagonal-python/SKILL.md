@@ -698,3 +698,11 @@ supporting detail, not default reading.
 
 - [Microsoft: DDD + CQRS Microservices](https://learn.microsoft.com/en-us/dotnet/architecture/microservices/microservice-ddd-cqrs-patterns/)
 - [Domain Events](https://udidahan.com/2009/06/14/domain-events-salvation/) — Udi Dahan
+
+## Review Checklist
+
+- [ ] Dependencies point inward and domain logic remains independent of delivery and infrastructure.
+- [ ] Aggregate boundaries, transaction scope, and cross-aggregate consistency match the business invariants.
+- [ ] Context-owned models stay local; cross-context integration uses IDs, contracts, events, or an ACL.
+- [ ] Commands, queries, DTOs, ports, and adapters are placed in the appropriate layer/context.
+- [ ] The relevant routed reference was consulted for non-trivial DDD, CQRS, architecture, error, or testing decisions.

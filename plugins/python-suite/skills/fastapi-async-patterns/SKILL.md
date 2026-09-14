@@ -785,3 +785,10 @@ Use fastapi-async-patterns when:
 - [Motor (MongoDB Async)](https://motor.readthedocs.io/)
 - [WebSockets in FastAPI](https://fastapi.tiangolo.com/advanced/websockets/)
 - [Server-Sent Events with Starlette](https://github.com/sysid/sse-starlette)
+
+## Review Checklist
+
+- [ ] Route and dependency code does not block the event loop with synchronous I/O or CPU-heavy work.
+- [ ] Concurrent work has a bounded lifetime, cancellation behavior, and error handling appropriate to the request.
+- [ ] Async clients, sessions, streams, and background resources are closed through their intended lifecycle.
+- [ ] The chosen async pattern is covered by a meaningful async test or an equivalent observable verification.

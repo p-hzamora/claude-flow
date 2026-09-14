@@ -1437,3 +1437,10 @@ pytest -k "auth or login" -v
 ---
 
 **pytest Version Compatibility:** This skill covers pytest 7.0+ and reflects current best practices for Python testing in 2025.
+
+## Review Checklist
+
+- [ ] Tests describe observable behavior and include the relevant success, failure, and boundary cases.
+- [ ] Fixtures have the narrowest practical scope and isolate external state.
+- [ ] Parametrization, mocks, and assertions make failures specific rather than masking behavior.
+- [ ] The focused tests ran successfully; broader verification was run when the change warrants it.

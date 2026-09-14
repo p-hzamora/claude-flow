@@ -218,3 +218,10 @@ acceptance criteria to observable evidence.
 - Resuming a workflow: read `state.json` first. If `status` isn't a fresh
   `draft`, read `request.md` and existing `specs/` before doing anything else -
   never restart refinement from scratch when state already exists.
+
+## Review Checklist
+
+- [ ] Requirements, ambiguities, acceptance criteria, and edge cases are captured in the planning record and specifications.
+- [ ] Each phase has observable success evidence; no phase advanced on an assumption.
+- [ ] Source-changing work used the assigned worktree and recorded its lifecycle state.
+- [ ] Validation, integration, review, and terminal `state.json` status accurately reflect the actual outcome.

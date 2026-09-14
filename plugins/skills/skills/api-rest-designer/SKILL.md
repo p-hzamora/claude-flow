@@ -678,7 +678,7 @@ Use clear, consistent names for request and response schemas (DTOs).
 
 ---
 
-## Quick Reference: Endpoint Design Checklist
+## Review Checklist
 
 Before publishing any endpoint, verify:
 

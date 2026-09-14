@@ -23,3 +23,10 @@ Validate a branch name (against the branch regex above) or a commit-message titl
 ## Single source of truth
 
 Branch-name and author-email patterns live only here. `jira-dev-workflow` and `jira-git-committer` both invoke this skill for those two — if DevOps changes either, edit it here once. Because a skill is read fresh via the Skill tool on each invocation (unlike an agent's own frontmatter/body, which is snapshotted at session start), both agents pick up the change on their very next call — no session restart needed, and nothing to keep in sync by hand across agent files.
+
+## Review Checklist
+
+- [ ] The branch name was checked with the exact branch regex before any branch or push side effect.
+- [ ] The commit author email was checked with `re.search` against the exact suffix regex.
+- [ ] Commit-title format was delegated to `commit-message-generator`, not duplicated here.
+- [ ] A failed validation was reported without silently normalizing or correcting the value.

@@ -17,6 +17,17 @@ When delegation is useful, use the named Codex profile for an independent, bound
 workstream. Prefer direct work for small or sequential changes. Review profiles are
 read-only; do not override their sandbox to make edits.
 
+## Skill completion checklists
+
+Every shared skill ends with a `## Review Checklist`. When a task uses a skill, treat
+the checklist as a completion gate: before reporting completion, verify every item
+applicable to the work. Mark an item not applicable only with a concrete reason. If an
+applicable item fails or cannot be verified, continue the work or report it as
+incomplete/blocked; never call it complete.
+
+Checklists complement the user's request and repository instructions. They do not
+authorize extra scope, external mutations, or unrelated review work.
+
 ## Git worktree ownership
 
 All Git worktree lifecycle operations MUST be delegated to `git-worktree-expert`.

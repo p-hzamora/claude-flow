@@ -1,7 +1,7 @@
 {
   "name": "jira-dev-workflow",
   "description": "Jira and Git workflow guidance: Atlassian MCP operating rules and DevOps naming and identity conventions.",
-  "version": "0.4.0",
+  "version": "0.4.1",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"
