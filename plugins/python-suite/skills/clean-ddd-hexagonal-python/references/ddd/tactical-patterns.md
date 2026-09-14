@@ -148,7 +148,7 @@ An object defined by its **attributes**, not identity. Two value objects are equ
 > **Scope note:** everything below is the VO as a domain building block. A VO must
 > never be returned directly from an application-layer handler (command or query) — map
 > it to a DTO first. See "DTO vs Value Object at the Handler Boundary" in `../SKILL.md`
-> and the worked examples in `CQRS-IMPLEMENTATION.md`.
+> and the worked examples in `../cqrs/implementation.md`.
 
 ### Common Value Objects
 
@@ -726,5 +726,5 @@ A named, reusable business predicate (`is_satisfied_by(candidate) -> bool`), com
 via AND/OR/NOT. Use it when the same business rule is checked in 2+ places (validating
 a candidate, selecting from a collection/repository, or constraining what a factory
 builds) — not for a one-off `if`, and not as a substitute for an ordinary CQRS query
-filter. See [SPECIFICATION.md](SPECIFICATION.md) for the full pattern, all three uses,
+filter. See [the specification pattern](../patterns/specification.md) for the full pattern, all three uses,
 and the composable base classes.

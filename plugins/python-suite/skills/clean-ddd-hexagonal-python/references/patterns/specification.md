@@ -227,7 +227,7 @@ class OrderRepository:
 
 **This is not the same thing as CQRS read-side filtering.** A query handler's filter
 params (`status`, `customer_id`, pagination) belong on the `Query` DTO and get pushed
-straight into a read-repository's SQL, per `CQRS-EVENTS.md` — those aren't reusable
+straight into a read-repository's SQL, per `../cqrs/events.md` — those aren't reusable
 domain business rules, they're request shape. Don't wrap ordinary query filters in a
 Specification just for consistency; reserve Specification for a *named business rule*
 that Domain code also needs to evaluate outside the query path.
@@ -272,7 +272,7 @@ def test_overdue_order_specification(hours_since_confirm, status, expected, make
     assert OverdueOrderSpecification().is_satisfied_by(order) is expected
 ```
 
-See `references/TESTING.md` for the fixture-building conventions this project uses for
+See `references/testing/strategy.md` for the fixture-building conventions this project uses for
 domain objects.
 
 ## Anti-Patterns
@@ -280,13 +280,13 @@ domain objects.
 | Anti-Pattern                              | Problem                                                    | Fix                                                          |
 | ------------------------------------------ | ----------------------------------------------------------- | -------------------------------------------------------------- |
 | **Specification for a one-off check**      | Adds indirection with no reuse payoff                       | Keep it a plain `if`/boolean expression until reused          |
-| **Specification wrapping a query filter**  | Confuses CQRS read-side shape with a domain business rule   | Query params stay on the `Query` DTO; see CQRS-EVENTS.md      |
+| **Specification wrapping a query filter**  | Confuses CQRS read-side shape with a domain business rule   | Query params stay on the `Query` DTO; see ../cqrs/events.md      |
 | **Specification with I/O inside**          | `is_satisfied_by` calling a repository/HTTP client breaks purity and testability | Pass already-loaded data in; keep the spec pure               |
 | **Giant one-class specification**          | One `is_satisfied_by` with unrelated AND'd conditions bolted in ad hoc | Split into small named specs, compose with `.and_()`/`.or_()` |
 | **Naming without ubiquitous language**     | `Spec1`, `CheckA` — no domain meaning                        | Name it what the domain expert calls the rule, or don't extract it |
 
 ## Reference Documentation
 
-- [DDD-TACTICAL.md](DDD-TACTICAL.md) — Entity, Value Object, Aggregate, Repository, Domain Service, UoW, Factory
-- [CQRS-EVENTS.md](CQRS-EVENTS.md) — why query filters are not Specifications
-- [TESTING.md](TESTING.md) — domain object test fixtures
+- [DDD tactical patterns](../ddd/tactical-patterns.md) — Entity, Value Object, Aggregate, Repository, Domain Service, UoW, Factory
+- [../cqrs/events.md](../cqrs/events.md) — why query filters are not Specifications
+- [testing strategy](../testing/strategy.md) — domain object test fixtures

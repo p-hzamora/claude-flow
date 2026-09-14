@@ -186,6 +186,55 @@ Aggregate boundaries?
 
 ## Directory Structure
 
+### Bounded Contexts Are the Primary Project Boundary
+
+DDD does not prescribe a filesystem layout. When a system has multiple **genuine** bounded
+contexts, its filesystem should make those semantic boundaries clearer than technical layers.
+Prefer context-first organization when it improves independent understanding:
+
+```
+src/
+├── catalogue/
+│   ├── domain/
+│   ├── application/
+│   └── infrastructure/
+├── client_basket/
+│   ├── domain/
+│   ├── application/
+│   └── infrastructure/
+├── shared_kernel/
+└── bootstrap/
+```
+
+Use a bounded context only where there is a distinct business model, ubiquitous language,
+ownership, consistency boundary, or lifecycle. Do not create one merely because code has a
+different noun or database table. Each genuine context owns its aggregates, value objects, domain
+services, ports, commands, queries, handlers, DTOs, persistence adapters, and infrastructure.
+
+In a multi-context application, do not retain duplicate top-level `domain/`, `application/`, or
+`infrastructure/` packages for context-owned business code. Keep service-wide composition and
+delivery concerns in `bootstrap/` or an equivalent outer package; keep each context's business
+code within that context. Read [shared-kernel and context-first organization](references/ddd/bounded-contexts/shared-kernel.md)
+when deciding package placement, shared abstractions, or port ownership.
+
+The same real-world concept may have a different model in another context. Do not import another
+context's internal aggregate or entity: consume a context-local ID/reference, explicit public
+application contract, integration event, or anti-corruption-layer mapping instead. Integration
+contracts are not domain entities; keep domain models, integration messages, API DTOs, persistence
+models, and read models distinct.
+
+The shared kernel is deliberately small: only intentionally shared stable concepts belong there.
+Prefer small duplication to accidental coupling; never turn `shared`, `common`, or `core` into a
+dumping ground for context-owned entities, repositories, ORM models, or business rules.
+
+For one small domain or a mature technical-layer-first codebase, do not move files cosmetically.
+Assess the model and coupling first, preserve public APIs, and refactor incrementally only when
+context-first placement provides a real architectural benefit.
+
+### Single-context layout
+
+For a single bounded context, a technical-layer layout remains a clear, pragmatic option:
+
 ```
 app/
 ├── domain/                    # Core business logic (NO external dependencies)
@@ -235,7 +284,7 @@ app/
 **Commands** change state and use the **write model**:
 
 ```python
-# application/handlers/commands/create_order_cmd.py
+# application/handlers/orders/commands/create_order_handler.py
 from app.utils import FrozenObject
 
 class CreateOrderCommand(FrozenObject):
@@ -269,7 +318,7 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
 **Queries** retrieve data and use the **read model**:
 
 ```python
-# application/handlers/queries/get_orders.py
+# application/handlers/orders/queries/get_orders_handler.py
 class GetOrdersQuery(PaginationParams):
     status: str | None = None
 
@@ -310,8 +359,8 @@ surface during a migration, not during code review.
   there's no external contract being formed. The exception evaporates the moment the
   return value gets serialized into an API response.
 
-See `references/CQRS-IMPLEMENTATION.md` for the worked Command/Query handler examples
-with the VO→DTO mapping called out inline.
+For worked Command/Query handler examples with the VO→DTO mapping called out inline,
+read [the CQRS implementation guide](references/cqrs/implementation.md).
 
 ### Default Values on a DTO Are a Code Smell — on Input, Not Output
 
@@ -436,24 +485,29 @@ class OrderDto(FrozenObject):
 
 ### Handler Organization
 
-**Commands and Queries** are organized separately in `application/handlers/`:
+Within a bounded context, group CQRS modules by use case when that improves cohesion. A
+feature-named module owns its command/query payload and its handler; do not split one use case
+across global `commands/`, `queries/`, and `handlers/` buckets. Keep DTOs, assemblers, and ports
+inside the same context unless they are intentionally shared.
 
 ```
-application/handlers/
-├── commands/
-│   ├── __init__.py
-│   ├── create_order_cmd.py      # Both Command and Handler in same file
-│   └── cancel_order_cmd.py
-└── queries/
-    ├── __init__.py
-    ├── get_order.py
-    └── get_orders.py
+orders/
+└── application/
+    ├── dtos/
+    ├── mappers/
+    ├── ports/
+    └── handlers/
+        ├── commands/
+        │   └── create_order_handler.py  # CreateOrderCommand + CreateOrderHandler
+        └── queries/
+            └── get_order_handler.py     # GetOrderQuery + GetOrderHandler
 ```
 
 **File naming:**
 
-- Commands: `{verb}_{entity}_cmd.py`
-- Queries: `{verb}_{entity}.py` or `{verb}_{entity}_query.py`
+- Commands: `{verb}_{entity}_handler.py`
+- Queries: `{verb}_{entity}_handler.py`
+- A command/query and its handler are defined in the same feature-named module.
 
 ### Dependency Injection Pattern
 
@@ -603,18 +657,23 @@ from ..schemas.order_schema import CreateOrderRequest, OrderResponse
 
 ## Reference Documentation
 
-| File                                                                   | Purpose                                              |
-| ---------------------------------------------------------------------- | ---------------------------------------------------- |
-| [references/LAYERS.md](references/LAYERS.md)                           | Complete layer specifications                        |
-| [references/DDD-STRATEGIC.md](references/DDD-STRATEGIC.md)             | Bounded contexts, context mapping                    |
-| [references/DDD-TACTICAL.md](references/DDD-TACTICAL.md)               | Entities, value objects, aggregates (Python)         |
-| [references/SPECIFICATION.md](references/SPECIFICATION.md)             | Specification pattern: validation, selection, construction |
-| [references/HEXAGONAL.md](references/HEXAGONAL.md)                     | Ports, adapters, naming                              |
-| [references/CQRS-EVENTS.md](references/CQRS-EVENTS.md)                 | Command/query separation, events                     |
-| [references/CQRS-IMPLEMENTATION.md](references/CQRS-IMPLEMENTATION.md) | Template-specific CQRS implementation reference      |
-| [references/ERROR_HANDLER.md](references/ERROR_HANDLER.md)             | Error handling workflow and exception best practices |
-| [references/TESTING.md](references/TESTING.md)                         | Unit, integration, architecture tests                |
-| [references/CHEATSHEET.md](references/CHEATSHEET.md)                   | Quick decision guide                                 |
+Read only the reference that addresses the current design decision; these guides are
+supporting detail, not default reading.
+
+| When the task involves | Read |
+| --- | --- |
+| Context boundaries, ubiquitous language, or subdomains | [DDD: bounded contexts](references/ddd/bounded-contexts/overview.md) |
+| Context-first package layout, a shared kernel, cross-context imports, or port placement | [DDD: shared kernel and context-first organization](references/ddd/bounded-contexts/shared-kernel.md) |
+| Relationships or integration between contexts, including ACLs and integration events | [DDD: context mapping](references/ddd/context-mapping.md) |
+| Entities, value objects, aggregates, repositories, domain services, factories, or UoW | [DDD: tactical patterns](references/ddd/tactical-patterns.md) |
+| Command/query separation, events, projections, outbox, sagas, or idempotency | [CQRS: events and edge cases](references/cqrs/events.md) |
+| Python/FastAPI command and query handler implementation | [CQRS: implementation](references/cqrs/implementation.md) |
+| Domain, application, infrastructure, or interface responsibilities | [Architecture: layers](references/architecture/layers.md) |
+| Ports, adapters, and dependency direction | [Architecture: hexagonal](references/architecture/hexagonal.md) |
+| Specification validation, selection, or construction | [Patterns: specification](references/patterns/specification.md) |
+| Exception design, error translation, and error-handling edge cases | [Error handling](references/error-handling/errors.md) |
+| Unit, integration, or architecture tests | [Testing strategy](references/testing/strategy.md) |
+| A fast design check | [Cheatsheet](references/cheatsheet.md) |
 
 ## Sources
 

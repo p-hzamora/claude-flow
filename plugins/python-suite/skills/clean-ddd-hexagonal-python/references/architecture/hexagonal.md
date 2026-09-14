@@ -597,7 +597,7 @@ async def create_order(
 enumeration from the name alone at the call site (`OrderStatusEnum.CONFIRMED`), without
 opening the file to check whether `OrderStatus` is an Enum, a Value Object, or a plain
 class. This applies everywhere an enum shows up in this template — domain status enums,
-`ErrorCodeEnum` (see `ERROR_HANDLER.md`), any future one.
+`ErrorCodeEnum` (see `../error-handling/errors.md`), any future one.
 
 ### Project Structure
 
