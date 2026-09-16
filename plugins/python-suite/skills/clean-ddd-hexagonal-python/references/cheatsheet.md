@@ -609,7 +609,7 @@ from pydantic import BaseModel
 from ...domain.order.entity import Order
 from ...domain.order.uow import IOrderUoW
 from ..dtos.order_dto import OrderDto
-from ..assemblers.order_assembler import OrderAssembler
+from ..mappers.order_assembler import OrderAssembler
 from ..shared.handler import IHandler
 
 
@@ -860,15 +860,15 @@ app/
 ├── application/                   # Use case orchestration
 │   ├── handlers/
 │   │   ├── commands/
-│   │   │   ├── create_order_cmd.py
-│   │   │   └── cancel_order_cmd.py
+│   │   │   ├── create_order_handler.py
+│   │   │   └── cancel_order_handler.py
 │   │   └── queries/
-│   │       ├── get_order.py
-│   │       └── get_orders.py
-│   ├── dto/                       # Data transfer objects
+│   │       ├── get_order_handler.py
+│   │       └── get_orders_handler.py
+│   ├── dtos/                      # Data transfer objects
 │   │   ├── order_dto.py
 │   │   └── pagination_dto.py
-│   ├── assemblers/                # Entity <-> DTO mapping
+│   ├── mappers/                    # Entity <-> DTO mapping
 │   │   └── order_assembler.py
 │   └── shared/
 │       └── handler.py             # IHandler protocol
@@ -891,7 +891,7 @@ app/
             ├── routers/           # FastAPI route handlers
             │   └── order_router.py
             ├── dependencies/      # Dependency injection
-            │   └── order_deps.py
+            │   └── order_dpd.py
             ├── schemas/           # API request/response models
             │   └── order_schema.py
             └── middleware/        # API middleware
@@ -1249,7 +1249,7 @@ class OrderUoW:
 ### Annotated Dependencies Pattern
 
 ```python
-# Type aliases with FastAPI dependencies (app/interfaces/api/v1/dependencies/order_deps.py)
+# Type aliases with FastAPI dependencies (app/interfaces/api/v1/dependencies/order_dpd.py)
 """Dependency injection for order endpoints."""
 
 from typing import Annotated
@@ -1258,7 +1258,7 @@ from sqlalchemy.ext.asyncio import AsyncSession
 
 from app.domain.order.uow import IOrderUoW
 from app.infrastructure.db.uow import OrderUoW
-from app.application.handlers.commands.create_order_cmd import CreateOrderHandler
+from app.application.handlers.commands.create_order_handler import CreateOrderHandler
 from app.infrastructure.db.session import get_session
 
 
@@ -1294,12 +1294,12 @@ def get_create_order_handler(
 from fastapi import APIRouter, Depends
 from typing import Annotated
 
-from app.application.handlers.commands.create_order_cmd import (
+from app.application.handlers.commands.create_order_handler import (
     CreateOrderCommand,
     CreateOrderHandler,
 )
 from app.application.dtos.order_dto import OrderDto
-from ..dependencies.order_deps import get_create_order_handler
+from ..dependencies.order_dpd import get_create_order_handler
 
 router = APIRouter(prefix="/orders", tags=["orders"])
 
@@ -1341,7 +1341,7 @@ from app.domain.order.entity import Order
 from app.domain.order.repository import OrderRepository
 
 # Local - Application
-from app.application.dto.order_dto import OrderDto
+from app.application.dtos.order_dto import OrderDto
 from app.application.handlers.shared.handler import IHandler
 
 # Local - Infrastructure
@@ -1631,16 +1631,15 @@ class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
 ```
 application/handlers/
 ├── commands/
-│   ├── create_order_cmd.py       # Command + Handler
-│   ├── cancel_order_cmd.py
-│   └── update_order_cmd.py
+│   ├── create_order_handler.py   # Command + Handler
+│   ├── cancel_order_handler.py
+│   └── update_order_handler.py
 └── queries/
-    ├── get_order.py              # Query + Handler
-    ├── get_orders.py
-    └── search_orders.py
+    ├── get_order_handler.py      # Query + Handler
+    ├── get_orders_handler.py
+    └── search_orders_handler.py
 
-# Commands use _cmd suffix
-# Queries use descriptive action names
+# Commands and queries both use the _handler suffix
 ```
 
 ---

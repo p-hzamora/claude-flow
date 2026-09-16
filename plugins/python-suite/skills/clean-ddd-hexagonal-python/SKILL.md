@@ -550,6 +550,43 @@ async def create_order(
     return await handler.handle(cmd)
 ```
 
+### Cross-Cutting Configuration (`core/`)
+
+`core/` sits outside the domain/application/infrastructure/interfaces layering — it's
+composition-root code: declares config shapes, wires singletons, and is consumed by
+everything else. Split into three steps, each with one job:
+
+1. `core/configurations/` declares shape only — one `{Concern}Configuration` class per
+   file, no instantiation.
+2. `core/env.py` instantiates the singletons from those shapes.
+3. `app/bootstrap/` consumes the singletons to wire real resources (DB engines, broker
+   connections, etc.).
+
+**Fallback naming rule** — when a `core/` subfolder (or any folder without its own
+documented naming rule) has no more specific convention, suffix the filename and the
+class name with the container folder's singular name:
+
+```
+{folder}/{concern}.py   ->  {concern}_{folder-singular}.py
+class {Concern}         ->  class {Concern}{FolderSingular}
+```
+
+**Worked example** — `core/configurations/` (folder → `configuration`):
+
+| File | Class |
+| --- | --- |
+| `cors_configuration.py` | `CorsConfiguration` |
+| `cache_configuration.py` | `CacheConfiguration` |
+| `database_configuration.py` | `DatabaseConfiguration` |
+| `logging_configuration.py` | `LoggingConfiguration` |
+| `messaging_configuration.py` | `MessagingConfiguration` |
+| `observability_configuration.py` | `ObservabilityConfiguration` |
+| `outbox_configuration.py` | `OutboxConfiguration` |
+| `resilient_configuration.py` | `ResilientConfiguration` |
+| `runtime_configuration.py` | `RuntimeConfiguration` |
+
+A file's base name must match what it actually configures, not a generic category —
+
 ### Request Parameter Grouping
 
 Group related endpoint inputs into a single Pydantic model instead of many loose params:

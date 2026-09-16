@@ -41,7 +41,7 @@ block() {
 
 absolute_path() {
   local input=$1
-  if command -v realpath >/dev/null 2>&1; then
+  if command -v realpath >/dev/null 2>&1 && realpath -m -- "$PWD" >/dev/null 2>&1; then
     realpath -m -- "$input"
   else
     case "$input" in

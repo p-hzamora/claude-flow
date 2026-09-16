@@ -99,7 +99,6 @@ Before finalizing any implementation:
 - Verify all adapters implement their corresponding ports.
 - Verify naming conventions match the skill files exactly.
 - Verify file and folder structure matches the skill files exactly.
-- Verify all cookiecutter template variables are preserved and correctly placed.
 
 ## Output Format
 
