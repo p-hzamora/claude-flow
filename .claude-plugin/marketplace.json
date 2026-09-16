@@ -10,7 +10,7 @@
     {
       "name": "skills",
       "description": "Cross-cutting, language-agnostic skills reused across plugins.",
-      "version": "0.6.1",
+      "version": "0.7.0",
       "source": "./plugins/skills",
       "category": "utility"
     },
