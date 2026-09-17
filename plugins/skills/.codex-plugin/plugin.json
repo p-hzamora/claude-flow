@@ -1,7 +1,7 @@
 {
   "name": "skills",
-  "description": "Cross-cutting, language-agnostic skills and utilities reused across plugins, including LaTeX authoring and PDF export.",
-  "version": "0.7.0",
+  "description": "Cross-cutting, language-agnostic skills and utilities reused across plugins.",
+  "version": "1.0.0",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"
@@ -10,7 +10,7 @@
   "interface": {
     "displayName": "Shared Skills",
     "shortDescription": "Cross-cutting engineering workflows for Codex and ChatGPT.",
-    "longDescription": "Reusable, language-agnostic skills for specification work, API design, LaTeX documents, Git worktrees, commits, handoffs, and codebase exploration.",
+    "longDescription": "Reusable, language-agnostic skills for specification work, API design, Git worktrees, commits, handoffs, and codebase exploration.",
     "developerName": "Pablo Hernandez",
     "category": "Productivity",
     "capabilities": ["Interactive"],
@@ -18,8 +18,7 @@
       "Help me scope this change before coding.",
       "Design a REST API for this feature.",
       "Generate a compliant commit message.",
-      "Create a safe Git worktree from an explicit base branch.",
-      "Review a LaTeX document without changing its design system."
+      "Create a safe Git worktree from an explicit base branch."
     ]
   }
 }

@@ -10,8 +10,8 @@ summary.md/PDF, Jira comments) is written in plain Spanish for the Spanish-speak
 team. Everything else — chat with the user, halt/failure reports, task labels — stays in
 English.
 
-**Version:** 0.4.1
-**Dependencies:** `skills`, `python-suite` (both auto-enabled on install)
+**Version:** 0.6.0
+**Dependencies:** `skills`, `python-suite`, `latex-tools` (all auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
 reporting applicable work done.
@@ -39,18 +39,17 @@ for profile setup in another project.
 | `git-devops-conventions` | `skills/git-devops-conventions/SKILL.md` |
 | `atlassian-jira-mcp` | `skills/atlassian-jira-mcp/SKILL.md` |
 
-## Scripts
-
-| Script | Path |
-|---|---|
-| `md2pdf.sh` | `scripts/md2pdf.sh` — converts a Markdown file to PDF via `pandoc`+`weasyprint` (self-installs both on first run). Mandatory in `jira-dev-workflow`'s Phase 6 for the ticket summary PDF — the agent must call it via `${CLAUDE_PLUGIN_ROOT}/scripts/md2pdf.sh <in>.md <out>.pdf`, never a hand-rolled `pandoc`/`weasyprint`/`wkhtmltopdf`/`cupsfilter` invocation in its place. The source `.md` must follow the C4 model structure (Context/Container/Component/Code sections, text only — no diagrams) mandated in Phase 6 of `agents/jira-dev-workflow.md`. |
-
 Both agents above invoke these — the branch-name/author-email regexes and Atlassian MCP
 gotchas live here once, not duplicated per agent. The commit-message regex is **not**
 one of them: it's owned by `commit-message-generator` in the base `skills` plugin
 (`plugins/skills/skills/commit-message-generator/SKILL.md`), which `jira-git-committer`
 already invokes to generate titles — `git-devops-conventions` deliberately doesn't carry
 a second copy of that pattern.
+
+Phase 6 writes the C4-structured Spanish Markdown summary as its canonical editorial
+source, then delegates to `latex-tools`: `markdown-to-latex-author` turns it into an
+organized root `.tex` document with the approved bundled report template, and
+`latex-2-pdf-exporter` produces the verified PDF attached to Jira.
 
 ## Requires
 

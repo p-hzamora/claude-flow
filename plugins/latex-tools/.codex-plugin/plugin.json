@@ -1,0 +1,23 @@
+{
+  "name": "latex-tools",
+  "version": "0.2.0",
+  "description": "Document-agnostic LaTeX authoring, including structured Markdown-to-LaTeX source generation and verified PDF export.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "LaTeX Tools",
+    "shortDescription": "Turn structured Markdown into LaTeX, then verify PDF export.",
+    "longDescription": "Reusable LaTeX guidance for preserving document design systems, authoring source from approved structured Markdown, and verified PDF export.",
+    "developerName": "Pablo Hernandez",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "Review this LaTeX document without changing its design system.",
+      "Turn this approved Markdown document into organized LaTeX source.",
+      "Compile this approved root LaTeX document to a verified PDF."
+    ]
+  }
+}

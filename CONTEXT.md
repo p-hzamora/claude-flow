@@ -25,7 +25,7 @@ A `SKILL.md` under a plugin's `skills/` folder — instructions loaded straight 
 _Avoid_: using "skill" and "agent" interchangeably when describing a plugin's contents — they're read and run differently.
 
 **Script**:
-An executable file under a plugin's `scripts/` folder — plain code (shell, Python, etc.) invoked via Bash, not read into context and not a persona. An Agent/Skill references it by an absolute, portable path (`${CLAUDE_PLUGIN_ROOT}/scripts/<name>`, the Claude Code env var that resolves to the installed plugin's own directory), never a bare relative path. Where an agent's instructions mark a script mandatory (e.g. `jira-dev-workflow`'s Phase 6 PDF step must call `scripts/md2pdf.sh`), that's a hard requirement, not one option among several equivalent shell one-liners.
+An executable file under a plugin's `scripts/` folder — plain code (shell, Python, etc.) invoked via Bash, not read into context and not a persona. An Agent/Skill references it by an absolute, portable path (`${CLAUDE_PLUGIN_ROOT}/scripts/<name>`, the Claude Code env var that resolves to the installed plugin's own directory), never a bare relative path. Where an agent's instructions mark a script mandatory, that requirement is a hard constraint, not one option among several equivalent shell one-liners.
 
 **Entity** / **Value Object** / **Aggregate** / **Port** / **Handler**:
 DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal-python` skill (`plugins/python-suite/skills/`) — this file only anchors the names:
@@ -54,7 +54,7 @@ _Avoid_: a mapper method named `from_x` anywhere in this taxonomy — the conven
   Code and Codex, and optionally **Scripts**. The repository's `.codex/agents/`
   profiles make matching roles available to Codex as project configuration; Codex does
   not currently load custom agents from a plugin manifest.
-- An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `clean-ddd-hexagonal-python`), and may be required to invoke a **Script** as a fixed tool (e.g. `jira-dev-workflow` must call `scripts/md2pdf.sh` in Phase 6, not an ad hoc shell command).
+- An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `clean-ddd-hexagonal-python`), may delegate to another Agent (e.g. `jira-dev-workflow` delegates Markdown-to-LaTeX authoring and PDF export to `latex-tools` in Phase 6), and may be required to invoke a **Script** as a fixed tool.
 - A **Plugin** may declare `dependencies` on other **Plugins** (`jira-dev-workflow` depends on `skills` and `python-suite`; `python-suite` depends on `skills`).
 
 ## Flagged ambiguities

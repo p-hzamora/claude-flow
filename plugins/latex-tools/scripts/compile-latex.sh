@@ -108,7 +108,10 @@ esac
 echo "Compiling $source_name with $engine..."
 # Always rebuild: latexmk otherwise retains a prior failed invocation in its
 # dependency database and can incorrectly report "Nothing to do" on a retry.
-if ! latexmk "${latexmk_engine[@]}" -g -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$output_dir" "$source_file"; then
+if ! (
+  cd "$source_dir"
+  latexmk "${latexmk_engine[@]}" -g -interaction=nonstopmode -halt-on-error -file-line-error -outdir="$output_dir" "$source_name"
+); then
   echo "Compilation failed. Review: $output_dir/$source_stem.log" >&2
   exit 1
 fi

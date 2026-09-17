@@ -21,9 +21,11 @@ applicable item before reporting skill-scoped work done.
   colleague, or a forked side task to pick up; not a `/compact` replacement),
   `prototype` (builds a throwaway UI-variations-behind-a-toggle or state-machine
   terminal REPL in its own directory to settle a design question code can answer
-  and words can't; pairs with `handoff` to carry the decision back), and
-  `latex-expertise` (document-agnostic LaTeX editing, review, and compilation
-  guidance). It also includes `latex-2-pdf-exporter`, which builds a caller-approved
+  and words can't; pairs with `handoff` to carry the decision back).
+- **latex-tools** — document-agnostic LaTeX tooling: the `latex-expertise` skill
+  preserves existing document design systems while editing, reviewing, diagnosing, and
+  transforming approved structured Markdown into source; `markdown-to-latex-author`
+  creates organized `.tex` files and `latex-2-pdf-exporter` compiles a caller-approved
   root document into a verified PDF without changing its content or design.
 - **python-suite** — reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each
   independently usable (not only reachable through an orchestrator):
@@ -41,17 +43,17 @@ applicable item before reporting skill-scoped work done.
   and `atlassian-jira-mcp` (site disambiguation, credentials, the REST fallbacks for
   attaching/creating issues, transitions, comments). The commit-message regex is owned
   by `skills`' `commit-message-generator`, not by `git-devops-conventions` — see below.
-  Also ships `scripts/md2pdf.sh`, the mandatory (non-optional) Markdown-to-PDF converter
-  `jira-dev-workflow` calls in Phase 6 — never a hand-rolled `pandoc`/`weasyprint` call.
-  Phase 6's `.md` source must follow the C4 model structure (Context/Container/Component/
-  Code, text sections only, no diagrams).
-  Depends on `skills` and `python-suite`.
+  Depends on `skills`, `python-suite`, and `latex-tools`. Its required Phase 6
+  ticket-closeout Markdown follows the C4 model structure (Context/Container/Component/
+  Code, text sections only, no diagrams), is preserved as the canonical source, and is
+  delegated to `latex-tools` for LaTeX authoring and verified PDF export.
 
 ## Dependency graph
 
 ```
 jira-dev-workflow  --depends on-->  skills
                    --depends on-->  python-suite  --depends on-->  skills
+                   --depends on-->  latex-tools
 ```
 
 ## Not bundled
@@ -105,14 +107,15 @@ codex plugin marketplace add /absolute/path/to/claude-flow
 codex plugin list
 codex plugin add skills@claude-flow
 codex plugin add python-suite@claude-flow
-# Add jira-dev-workflow@claude-flow after the two dependencies above when needed.
+codex plugin add latex-tools@claude-flow
+# Add jira-dev-workflow@claude-flow after its three dependencies above when needed.
 ```
 
 The native Codex catalog is [`.agents/plugins/marketplace.json`](./.agents/plugins/marketplace.json).
-It lists the same three plugin folders as the Claude marketplace, with Codex-specific
+It lists the same four plugin folders as the Claude marketplace, with Codex-specific
 availability metadata. Codex plugin manifests do not currently declare dependencies,
-so install `skills` explicitly before `python-suite`, and both before
-`jira-dev-workflow`.
+so install `skills` explicitly before `python-suite`, then install `latex-tools`,
+and install `jira-dev-workflow` after its three dependencies.
 
 Codex loads the shared skills with the selected OpenAI model. The Claude Code
 `agents/` definitions are not advertised as Codex skills: the two hosts have different
