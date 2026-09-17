@@ -8,6 +8,6 @@ the dependency graph, and the non-negotiable regexes, see the root [README](../R
 | Plugin | Version | Depends on |
 |---|---|---|
 | [skills](./skills.md) | 1.0.0 | — |
-| [python-suite](./python-suite.md) | 0.4.2 | `skills` |
+| [python-suite](./python-suite.md) | 0.5.0 | `skills` |
 | [latex-tools](./latex-tools.md) | 0.2.0 | — |
 | [jira-dev-workflow](./jira-dev-workflow.md) | 0.6.0 | `skills`, `python-suite`, `latex-tools` |

@@ -66,7 +66,7 @@ from typing import Protocol
 
 
 class IHandler[TCommand, TResult](Protocol):
-    """Generic handler protocol using modern Python 3.12+ syntax."""
+    """Generic handler protocol for commands and queries."""
     async def handle(self, action: TCommand) -> TResult: ...
 
 

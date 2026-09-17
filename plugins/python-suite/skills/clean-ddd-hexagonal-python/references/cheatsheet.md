@@ -2,94 +2,13 @@
 
 > See [SKILL.md](../SKILL.md#sources) for full source list.
 
-## Code Standards
+## Python Conventions
 
-### Documentation Requirements
-
-**CRITICAL:** All Python files in this template MUST follow these documentation standards:
-
-1. **Module Docstrings** - Every `.py` file must have a module-level docstring at the top:
-   ```python
-   """Brief description of what this module contains."""
-   ```
-
-2. **Class Docstrings** - Every class must have a docstring:
-   ```python
-   class Order:
-       """Brief description of the class.
-
-       Attributes:
-           id: Description of id attribute
-           status: Description of status attribute
-       """
-   ```
-
-3. **Method/Function Docstrings** - All public methods and functions must have docstrings:
-   ```python
-   def create_order(customer_id: str) -> Order:
-       """Create a new order for a customer.
-
-       Args:
-           customer_id: The unique identifier of the customer
-
-       Returns:
-           The newly created Order instance
-
-       Raises:
-           ValueError: If customer_id is invalid
-       """
-   ```
-
-4. **Type Hints** - Always use type hints for parameters and return values
-5. **Google Style** - Use Google-style docstrings (Args, Returns, Raises, Attributes)
-
-### Modern Python Syntax
-
-**CRITICAL:** This template uses Python 3.12+ features. Always use modern syntax:
-
-1. **Generic Syntax** - Use `[T]` NOT `Generic[T]`:
-   ```python
-   # ✅ CORRECT - Modern syntax (PEP 695)
-   class Entity[T]:
-       pass
-
-   class IHandler[TCommand, TResult](Protocol):
-       pass
-
-   # ❌ WRONG - Old syntax
-   from typing import Generic, TypeVar
-   T = TypeVar("T")
-   class Entity(Generic[T]):
-       pass
-   ```
-
-2. **Type Unions** - Use `|` NOT `Union`:
-   ```python
-   # ✅ CORRECT
-   def find(id: str) -> Order | None:
-       pass
-
-   # ❌ WRONG
-   from typing import Union, Optional
-   def find(id: str) -> Optional[Order]:
-       pass
-   ```
-
-3. **FrozenObject** - Use Pydantic BaseModel, NOT dataclass:
-   ```python
-   # ✅ CORRECT
-   from pydantic import BaseModel, ConfigDict
-
-   class ValueObject(BaseModel):
-       model_config = ConfigDict(frozen=True, from_attributes=True)
-
-   # ❌ WRONG
-   from dataclasses import dataclass
-
-   @dataclass(frozen=True)
-   class ValueObject:
-       pass
-   ```
+[`python-syntax`](../../python-syntax/SKILL.md) owns all Python language and style
+rules: supported versions, annotations, docstrings, imports, generic and union syntax,
+dataclass form, naming, and formatting. Read it for every Python implementation or
+review. This cheatsheet only summarizes DDD and hexagonal decisions; its code examples
+illustrate those decisions and defer their Python spelling to `python-syntax`.
 
 ---
 
@@ -358,7 +277,6 @@ class OrderItem:
 class Entity[T]:
     """Base class for domain entities with generic type support.
 
-    Uses modern Python 3.12+ generic syntax with [T].
     All entities must implement the create() classmethod.
     """
 
@@ -1358,14 +1276,11 @@ from typing import Protocol
 
 
 class IHandler[TCommand, TResult](Protocol):
-    """Generic handler protocol using modern Python 3.12+ syntax.
+    """Generic handler protocol for commands and queries.
 
     Type parameters:
         TCommand: The command/query input type
         TResult: The result/output type
-
-    Note: Uses PEP 695 generic syntax [TCommand, TResult] instead of
-    the older Generic[TCommand, TResult] pattern.
     """
     async def execute(self, command: TCommand) -> TResult:
         """Execute the command/query and return result.
@@ -1568,63 +1483,12 @@ class IOrderReadRepository(Protocol):
 
 ---
 
-## Python-Specific Best Practices
+## Python Implementation Touchpoints
 
-### Type Hints
-```python
-from typing import Protocol, Annotated
-from collections.abc import Sequence
-
-# Use Protocol for ports
-class OrderRepository(Protocol):
-    async def save(self, entity: Order) -> None: ...
-
-# Use string literals for forward references in return types
-class Money(FrozenObject):
-    def add(self, other: "Money") -> "Money": ...
-
-# Use Annotated for dependency injection
-from fastapi import Depends
-
-OrderUoWDep = Annotated[IOrderUoW, Depends(get_order_uow)]
-```
-
-### Immutability
-```python
-from dataclasses import dataclass
-from app.utils import FrozenObject
-
-# Use FrozenObject for value objects
-class Money(FrozenObject):
-    amount: float
-    currency: str
-
-# Use slots=True, kw_only=True for entities
-@dataclass(slots=True, kw_only=True)
-class Order:
-    id: UUID
-    customer_id: UUID
-
-# Use tuples for read-only collections
-@property
-def items(self) -> tuple[OrderItem, ...]:
-    return tuple(self._items)
-```
-
-### Async/Await
-```python
-# Repositories are async
-class OrderRepository(Protocol):
-    async def find_by_id(self, id: OrderId) -> Order | None: ...
-    async def save(self, order: Order) -> None: ...
-
-# Handlers are async
-class CreateOrderHandler(IHandler[CreateOrderCommand, OrderDto]):
-    async def execute(self, command: CreateOrderCommand) -> OrderDto:
-        async with self._uow as uow:
-            # Transaction management via async context manager
-            ...
-```
+For the syntax of ports, dependency injection, immutable collections, and asynchronous
+code, read [`python-syntax`](../../python-syntax/SKILL.md). The DDD-specific decisions
+are that ports describe contracts, entities protect behavior and identity, value objects
+remain immutable, and handlers coordinate asynchronous application work.
 
 ### File Naming Conventions
 

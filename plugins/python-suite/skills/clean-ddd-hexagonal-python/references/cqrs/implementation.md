@@ -12,19 +12,12 @@ Pragmatic CQRS implementation using direct dependency injection with FastAPI, no
 - Complex queries that don't map well to domain models
 - Need to denormalize data for query performance
 
-## CRITICAL: Code Standards
+## Python Conventions
 
-**All code must follow the template standards:**
-
-1. **Module Docstrings** - Every `.py` file MUST start with a module docstring
-2. **Class Docstrings** - Every class MUST have a docstring with Attributes section
-3. **Method Docstrings** - All public methods MUST have docstrings (Args, Returns, Raises)
-4. **Type Hints** - ALWAYS use type hints for all parameters and return values
-5. **Modern Generics** - Use `[T]` syntax, NOT `Generic[T]` (Python 3.12+)
-6. **Type Unions** - Use `|` NOT `Union` or `Optional`
-7. **Value Objects** - Use Pydantic BaseModel with frozen config, NOT dataclass
-
-See the `clean-ddd-hexagonal-python` skill for complete documentation standards.
+[`python-syntax`](../../../python-syntax/SKILL.md) owns all Python language and
+documentation rules. This reference owns only the CQRS decisions: Commands and Queries
+are immutable input models, handlers coordinate application work, and value objects use
+the DDD skill's frozen Pydantic base model.
 
 ## Core Concepts
 

@@ -20,117 +20,18 @@ Backend architecture combining DDD tactical patterns, Clean Architecture depende
 
 **Start simple. Evolve complexity only when needed.** Most systems don't need full CQRS or Event Sourcing.
 
-## CRITICAL: Code Standards
+## Python Syntax and Documentation
 
-### Documentation Requirements (MANDATORY)
+[`python-syntax`](../python-syntax/SKILL.md) is the single source of truth for
+supported Python versions, annotations, docstrings, imports, generics, unions,
+dataclass syntax, naming, and other language-level conventions. Invoke it alongside
+this skill whenever writing or reviewing Python; do not restate or override its rules
+here.
 
-**Every Python file must follow these documentation standards:**
-
-1. **Module Docstrings** - Every `.py` file MUST start with a module docstring:
-
-   ```python
-   """Brief description of what this module contains."""
-   ```
-
-2. **Class Docstrings** - Every class MUST have a docstring with Attributes section:
-
-   ```python
-   class Order:
-       """Brief description of the class.
-
-       Attributes:
-           id: Description of id attribute
-           status: Description of status attribute
-       """
-   ```
-
-3. **Method/Function Docstrings** - All public methods MUST have docstrings:
-
-   ```python
-   def create(cls, customer_id: str) -> "Order":
-       """Create a new order for a customer.
-
-       Args:
-           customer_id: The unique identifier of the customer
-
-       Returns:
-           The newly created Order instance
-
-       Raises:
-           ValueError: If customer_id is invalid
-       """
-   ```
-
-4. **Type Hints** - ALWAYS use type hints for all parameters and return values
-5. **Google Style** - Use Google-style docstrings (Args, Returns, Raises, Attributes)
-
-### Modern Python Syntax (Python 3.12+)
-
-**CRITICAL:** This template requires Python 3.12+ features:
-
-1. **Generic Syntax** - Use `[T]` NOT `Generic[T]` (PEP 695):
-
-   ```python
-   # ✅ CORRECT - Modern syntax
-   class Entity[T]:
-       pass
-
-   class IHandler[TCommand, TResult](Protocol):
-       async def execute(self, command: TCommand) -> TResult: ...
-
-   # ❌ WRONG - Old syntax (DO NOT USE)
-   from typing import Generic, TypeVar
-   T = TypeVar("T")
-   class Entity(Generic[T]):
-       pass
-   ```
-
-2. **Type Unions** - Use `|` NOT `Union` or `Optional`:
-
-   ```python
-   # ✅ CORRECT
-   def find(id: str) -> Order | None:
-       pass
-
-   # ❌ WRONG
-   from typing import Union, Optional
-   def find(id: str) -> Optional[Order]:
-       pass
-   ```
-
-3. **Value Objects** - Use Pydantic BaseModel, NOT dataclass with frozen:
-
-   ```python
-   # ✅ CORRECT - Pydantic with frozen config
-   from pydantic import BaseModel, ConfigDict
-
-   class ValueObject(BaseModel):
-       model_config = ConfigDict(frozen=True, from_attributes=True)
-
-   class Money(ValueObject):
-       amount: float
-       currency: str
-
-   # ❌ WRONG - dataclass (DO NOT USE for Value Objects)
-   from dataclasses import dataclass
-
-   @dataclass(frozen=True)
-   class Money:
-       amount: float
-       currency: str
-   ```
-
-4. **Entities** - Use dataclass with `slots=True, kw_only=True`:
-
-   ```python
-   # ✅ CORRECT
-   from dataclasses import dataclass
-
-   @dataclass(slots=True, kw_only=True)
-   class Order:
-       id: UUID
-       status: OrderStatus
-   ```
+This skill owns the architecture decisions that determine which construct to use:
+entities have identity and behavior, value objects are immutable Pydantic models, ports
+are protocols, and application boundaries expose DTOs rather than domain objects. Use
+`python-syntax` for the exact spelling of those constructs.
 
 ## CRITICAL: The Dependency Rule
 
@@ -685,12 +586,12 @@ from ..schemas.order_schema import CreateOrderRequest, OrderResponse
 # endregion
 ```
 
-### Type Safety
+### Python Implementation Conventions
 
-- Use **type hints** everywhere (Python 3.10+)
-- Use **Protocol** for port definitions
-- Use **Annotated** for dependency injection
-- Use generics (`[T]`) for type-safe collections
+Use [`python-syntax`](../python-syntax/SKILL.md) for all language-level choices. In
+this architecture, apply those conventions to keep port definitions explicit and to
+keep dependency injection at the interface boundary; the architectural reason matters
+here, while the syntax itself belongs to `python-syntax`.
 
 ## Reference Documentation
 
@@ -711,6 +612,7 @@ supporting detail, not default reading.
 | Exception design, error translation, and error-handling edge cases | [Error handling](references/error-handling/errors.md) |
 | Unit, integration, or architecture tests | [Testing strategy](references/testing/strategy.md) |
 | A fast design check | [Cheatsheet](references/cheatsheet.md) |
+| Python syntax, typing, imports, naming, or docstrings | [`python-syntax`](../python-syntax/SKILL.md) |
 
 ## Sources
 

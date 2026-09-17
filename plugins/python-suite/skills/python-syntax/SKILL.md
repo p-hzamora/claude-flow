@@ -250,6 +250,21 @@ def serialize(obj: Serializable) -> str:
     return json.dumps(obj.to_dict())
 ```
 
+### `Annotated` for Typed Metadata
+
+Use `typing.Annotated` when a framework or library consumes metadata attached to an
+otherwise precise type. The base type remains the static type; the metadata is not a
+substitute for it.
+
+```python
+from typing import Annotated
+
+UserId = Annotated[str, "database identifier"]
+
+def load_user(user_id: UserId) -> User:
+    ...
+```
+
 ### Self Type
 
 ```python
