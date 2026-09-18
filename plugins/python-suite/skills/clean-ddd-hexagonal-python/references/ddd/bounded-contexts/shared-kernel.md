@@ -10,34 +10,21 @@ Use a bounded context when the business language, ownership, consistency boundar
 is genuinely distinct. A different noun, REST resource, database table, or Python module alone is
 not enough.
 
-When contexts are genuine, make them the primary home of their own business code. A context owns
-its domain model and the application and infrastructure code that serves that model:
+When contexts are genuine, make each context the primary home of its domain model and
+the application and infrastructure code that serves it. For the skill's canonical
+context-first topology, read [the structural profile](../../architecture/project-topology.md);
+this guide intentionally does not duplicate that layout.
 
-```text
-src/
-├── catalogue/
-│   ├── domain/
-│   ├── application/
-│   └── infrastructure/
-├── client_basket/
-│   ├── domain/
-│   ├── application/
-│   └── infrastructure/
-├── shared_kernel/
-└── bootstrap/
-```
-
-This is an illustration, not a prescription to create every directory. Add a package only when it
-has an immediate, coherent responsibility. Within a context, split aggregates, entities, value
+Add a package only when it has an immediate, coherent responsibility. Within a context, split aggregates, entities, value
 objects, enums, events, repositories, and domain services into concise purpose-based modules when
 that improves navigation; do not accumulate an unrelated "models" module or empty tactical
 folders merely to match a diagram.
 
 ## Avoid Duplicate Technical Roots
 
-Do not place `catalogue` and `client_basket` under `src/` while also maintaining global
-`src/domain/`, `src/application/`, and `src/infrastructure/` packages that contain the same
-contexts' business code. That produces two competing boundaries and makes ownership ambiguous.
+Do not place context packages alongside global `domain/`, `application/`, and
+`infrastructure/` packages that contain those same contexts' business code. That
+produces two competing boundaries and makes ownership ambiguous.
 
 Global outer packages remain useful when their responsibility is genuinely service-wide:
 
