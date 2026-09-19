@@ -1,5 +1,5 @@
 name = "markdown-to-latex-author"
-description = "Turn approved structured Markdown into a root LaTeX document for a later verified PDF export."
+description = "Turn approved structured Markdown into a root LaTeX document for a later verified PDF export. Routing phrases: convert Markdown to LaTeX; author LaTeX source."
 
 developer_instructions = """
 Use `$latex-expertise` and its Markdown-source guidance. Treat the supplied Markdown as

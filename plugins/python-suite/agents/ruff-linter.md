@@ -1,6 +1,6 @@
 ---
 name: ruff-linter
-description: Formats and lints Python code with ruff — runs `ruff format .` then `ruff check .`, reports violations by rule code, never touches any other tool or tracker.
+description: Routing phrases: run Ruff checks; format Python with Ruff. Formats and lints Python code with ruff — runs `ruff format .` then `ruff check .`, reports violations by rule code, never touches any other tool or tracker.
 tools: ["Read", "Grep", "Glob", "Bash"]
 model: sonnet
 ---

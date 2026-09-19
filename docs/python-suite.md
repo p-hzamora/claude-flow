@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 0.5.3
+**Version:** 0.5.4
 **Dependencies:** `skills` (auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -14,22 +14,23 @@ reporting applicable work done.
 Claude Code plugin. Matching project-scoped Codex profiles live in
 [`../.codex/agents/`](../.codex/agents/); they reuse those skills and inherit the
 caller-selected model. See [`../.codex/README.md`](../.codex/README.md) to use the
-profiles from another project without copying them.
+profiles from another project without copying them. Matching Claude/Codex agent
+definitions carry the same unique routing phrases.
 
 ## Agents
 
-| Agent | Path |
-|---|---|
-| `sdd-python-orchestrator` | `agents/sdd-python-orchestrator.md` |
-| `ddd-reviewer` | `agents/ddd-reviewer.md` |
-| `ddd-implementer` | `agents/ddd-implementer.md` |
-| `ddd-entity-generator` | `agents/ddd-entity-generator.md` |
-| `fastapi-endpoint-builder` | `agents/fastapi-endpoint-builder.md` |
-| `fastapi-reviewer` | `agents/fastapi-reviewer.md` |
-| `orm-model-inspector` | `agents/orm-model-inspector.md` |
-| `ruff-linter` | `agents/ruff-linter.md` |
-| `sqlalchemy-expert-fixer` | `agents/sqlalchemy-expert-fixer.md` |
-| `test-writer` | `agents/test-writer.md` |
+| Agent | Path | Codex routing phrases |
+|---|---|---|
+| `sdd-python-orchestrator` | `agents/sdd-python-orchestrator.md` | `run a specification workflow`; `plan an SDD implementation` |
+| `ddd-reviewer` | `agents/ddd-reviewer.md` | `audit domain boundaries`; `check architecture layering` |
+| `ddd-implementer` | `agents/ddd-implementer.md` | `build a bounded context`; `repair hexagonal layers` |
+| `ddd-entity-generator` | `agents/ddd-entity-generator.md` | `design a value object`; `model an aggregate` |
+| `fastapi-endpoint-builder` | `agents/fastapi-endpoint-builder.md` | `create a REST route`; `design an API resource` |
+| `fastapi-reviewer` | `agents/fastapi-reviewer.md` | `audit an async API`; `review an OpenAPI contract` |
+| `orm-model-inspector` | `agents/orm-model-inspector.md` | `map ORM relationships`; `inspect an Alembic schema` |
+| `ruff-linter` | `agents/ruff-linter.md` | `run Ruff checks`; `format Python with Ruff` |
+| `sqlalchemy-expert-fixer` | `agents/sqlalchemy-expert-fixer.md` | `repair a SQLAlchemy session`; `implement an ORM query` |
+| `test-writer` | `agents/test-writer.md` | `write pytest coverage`; `test changed behavior` |
 
 ## Skills
 

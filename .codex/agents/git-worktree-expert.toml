@@ -1,5 +1,5 @@
 name = "git-worktree-expert"
-description = "Exclusively manage Git worktree lifecycle operations and report structured results."
+description = "Exclusively manage Git worktree lifecycle operations and report structured results. Routing phrases: allocate an isolated checkout; clean up a worktree."
 
 developer_instructions = """
 You are the exclusive specialist for Git worktree lifecycle operations. Use

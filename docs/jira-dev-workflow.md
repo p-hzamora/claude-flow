@@ -10,7 +10,7 @@ summary.md/PDF, Jira comments) is written in plain Spanish for the Spanish-speak
 team. Everything else — chat with the user, halt/failure reports, task labels — stays in
 English.
 
-**Version:** 0.6.0
+**Version:** 0.6.1
 **Dependencies:** `skills`, `python-suite`, `latex-tools` (all auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -22,15 +22,16 @@ Matching project-scoped Codex profiles live in
 [`../.codex/agents/`](../.codex/agents/) and rely on those skills rather than a
 second workflow copy. Codex users still need a compatible, authenticated Atlassian MCP
 connection for live Jira actions; see [`../.codex/README.md`](../.codex/README.md)
-for profile setup in another project.
+for profile setup in another project. Matching Claude/Codex agent definitions carry
+the same unique routing phrases.
 
 ## Agents
 
-| Agent | Path |
-|---|---|
-| `jira-dev-workflow` | `agents/jira-dev-workflow.md` |
-| `jira-git-committer` | `agents/jira-git-committer.md` |
-| `jira-tech-lead-reviewer` | `agents/jira-tech-lead-reviewer.md` — read-only branch review for tech leads: resolves the ticket from the branch name, delegates DDD/SOLID/CQRS compliance to `ddd-reviewer` (and `fastapi-reviewer` when the API layer changed), checks lint (`ruff check .` only, never `format`/`--fix`) and tests, then reconciles the diff against the Jira ticket — any code-vs-ticket discrepancy is asked back to the user, never assumed |
+| Agent | Path | Codex routing phrases |
+|---|---|---|
+| `jira-dev-workflow` | `agents/jira-dev-workflow.md` | `deliver a Jira ticket`; `close a Jira issue` |
+| `jira-git-committer` | `agents/jira-git-committer.md` | `commit ticket changes`; `validate a conventional commit` |
+| `jira-tech-lead-reviewer` | `agents/jira-tech-lead-reviewer.md` — read-only branch review for tech leads: resolves the ticket from the branch name, delegates DDD/SOLID/CQRS compliance to `ddd-reviewer` (and `fastapi-reviewer` when the API layer changed), checks lint (`ruff check .` only, never `format`/`--fix`) and tests, then reconciles the diff against the Jira ticket — any code-vs-ticket discrepancy is asked back to the user, never assumed | `review a ticket branch`; `perform a premerge ticket audit` |
 
 ## Skills
 

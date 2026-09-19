@@ -1,5 +1,5 @@
 name = "ddd-reviewer"
-description = "Read-only reviewer for Python DDD and hexagonal-architecture compliance."
+description = "Read-only reviewer for Python DDD and hexagonal-architecture compliance. Routing phrases: audit domain boundaries; check architecture layering."
 sandbox_mode = "read-only"
 
 developer_instructions = """

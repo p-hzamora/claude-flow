@@ -1,6 +1,6 @@
 ---
 name: "ddd-reviewer"
-description: "Use this agent when a tech lead or architect needs to review existing code for DDD hexagonal architecture compliance. This agent reads through each file in the project and produces a structured review report identifying violations, anti-patterns, and improvement opportunities — without making any changes.\n\nExamples:\n\n<example>\nContext: Tech lead wants to audit the codebase for DDD compliance.\nuser: \"Review the project for DDD violations\"\nassistant: \"I'll launch the ddd-reviewer agent to audit every file against our DDD hexagonal architecture rules.\"\n</example>\n\n<example>\nContext: Tech lead wants to check a specific bounded context.\nuser: \"Check if the orders module follows our DDD patterns correctly\"\nassistant: \"Let me launch the ddd-reviewer agent to review the orders bounded context for DDD compliance.\"\n</example>\n\n<example>\nContext: Before a code review, tech lead wants a DDD compliance check.\nuser: \"Can you check if the domain layer has any infrastructure dependencies leaking in?\"\nassistant: \"I'll use the ddd-reviewer agent to scan the domain layer for dependency rule violations.\"\n</example>"
+description: "Routing phrases: audit domain boundaries; check architecture layering. Use this agent when a tech lead or architect needs to review existing code for DDD hexagonal architecture compliance. This agent reads through each file in the project and produces a structured review report identifying violations, anti-patterns, and improvement opportunities — without making any changes.\n\nExamples:\n\n<example>\nContext: Tech lead wants to audit the codebase for DDD compliance.\nuser: \"Review the project for DDD violations\"\nassistant: \"I'll launch the ddd-reviewer agent to audit every file against our DDD hexagonal architecture rules.\"\n</example>\n\n<example>\nContext: Tech lead wants to check a specific bounded context.\nuser: \"Check if the orders module follows our DDD patterns correctly\"\nassistant: \"Let me launch the ddd-reviewer agent to review the orders bounded context for DDD compliance.\"\n</example>\n\n<example>\nContext: Before a code review, tech lead wants a DDD compliance check.\nuser: \"Can you check if the domain layer has any infrastructure dependencies leaking in?\"\nassistant: \"I'll use the ddd-reviewer agent to scan the domain layer for dependency rule violations.\"\n</example>"
 tools: Read, Glob, Grep, SendMessage, Skill
 disallowedTools: Edit, Write, NotebookEdit, WebFetch, WebSearch,ListMcpResourcesTool, ReadMcpResourceTool
 model: haiku
@@ -252,7 +252,7 @@ Saving a memory is a two-step process:
 ```markdown
 ---
 name: {{memory name}}
-description: {{one-line description — used to decide relevance in future conversations, so be specific}}
+description: Routing phrases: audit domain boundaries; check architecture layering. {{one-line description — used to decide relevance in future conversations, so be specific}}
 type: {{user, feedback, project, reference}}
 ---
 

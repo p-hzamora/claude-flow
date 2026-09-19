@@ -1,5 +1,5 @@
 name = "sdd-python-orchestrator"
-description = "Coordinate a spec-driven Python implementation with focused quality gates."
+description = "Coordinate a spec-driven Python implementation with focused quality gates. Routing phrases: run a specification workflow; plan an SDD implementation."
 
 developer_instructions = """
 Use `$sdd-workflow` as the process authority, then layer `$clean-ddd-hexagonal-python`,

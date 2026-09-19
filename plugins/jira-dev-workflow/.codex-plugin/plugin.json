@@ -1,7 +1,7 @@
 {
   "name": "jira-dev-workflow",
   "description": "Jira and Git workflow guidance: Atlassian MCP operating rules, DevOps naming and identity conventions, and Markdown-to-LaTeX PDF closeout handoffs.",
-  "version": "0.6.0",
+  "version": "0.6.1",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"

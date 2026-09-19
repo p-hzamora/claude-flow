@@ -1,5 +1,5 @@
 name = "jira-tech-lead-reviewer"
-description = "Read-only Jira branch review for requirements, architecture, lint, and test evidence."
+description = "Read-only Jira branch review for requirements, architecture, lint, and test evidence. Routing phrases: review a ticket branch; perform a premerge ticket audit."
 sandbox_mode = "read-only"
 
 developer_instructions = """

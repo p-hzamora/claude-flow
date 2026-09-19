@@ -1,5 +1,5 @@
 name = "jira-dev-workflow"
-description = "Take a Jira ticket through scoped implementation, compliant commit, and Jira closeout."
+description = "Take a Jira ticket through scoped implementation, compliant commit, and Jira closeout. Routing phrases: deliver a Jira ticket; close a Jira issue."
 
 developer_instructions = """
 Use `$atlassian-jira-mcp`, `$git-devops-conventions`, `$grill-with-context`,

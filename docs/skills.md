@@ -2,7 +2,7 @@
 
 Cross-cutting, language-agnostic skills reused across the other plugins in this marketplace.
 
-**Version:** 1.0.0
+**Version:** 1.0.1
 **Dependencies:** none
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -10,13 +10,15 @@ reporting applicable work done.
 
 **Codex:** the shared skills are also packaged through
 `../plugins/skills/.codex-plugin/plugin.json`. Claude Code's agent components are
-host-specific, while the skills remain the portable unit used by both hosts.
+host-specific, while the skills remain the portable unit used by both hosts. Matching
+Claude/Codex agents declare the same unique routing phrases, verified by
+`scripts/validate_multihost.py`.
 
 ## Agents
 
-| Agent | Responsibility |
-|---|---|
-| `git-worktree-expert` | Exclusive specialist for Git worktree lifecycle operations; uses `git-worktree-management` as its authoritative procedure. |
+| Agent | Responsibility | Codex routing phrases |
+|---|---|---|
+| `git-worktree-expert` | Exclusive specialist for Git worktree lifecycle operations; uses `git-worktree-management` as its authoritative procedure. | `allocate an isolated checkout`; `clean up a worktree` |
 
 ### Worktree delegation flow
 

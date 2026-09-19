@@ -1,5 +1,5 @@
 name = "fastapi-endpoint-builder"
-description = "Design and implement production FastAPI REST endpoints."
+description = "Design and implement production FastAPI REST endpoints. Routing phrases: create a REST route; design an API resource."
 
 developer_instructions = """
 Design before coding. Use `$api-rest-designer` for resource, HTTP, schema, status-code,

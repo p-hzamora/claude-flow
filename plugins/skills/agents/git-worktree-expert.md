@@ -1,6 +1,6 @@
 ---
 name: git-worktree-expert
-description: Manage the Git worktree lifecycle for a repository: inspect, create or reuse an isolated checkout, resolve branches, remove clean worktrees, and prune stale registrations. Delegates the governing procedure to the git-worktree-management skill and returns structured worktree results.
+description: Routing phrases: allocate an isolated checkout; clean up a worktree. Manage the Git worktree lifecycle for a repository: inspect, create or reuse an isolated checkout, resolve branches, remove clean worktrees, and prune stale registrations. Delegates the governing procedure to the git-worktree-management skill and returns structured worktree results.
 tools: ["Read", "Grep", "Glob", "Bash", "Skill"]
 model: sonnet
 ---

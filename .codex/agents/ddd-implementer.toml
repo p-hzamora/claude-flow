@@ -1,5 +1,5 @@
 name = "ddd-implementer"
-description = "Implement or repair Python DDD and hexagonal-architecture components."
+description = "Implement or repair Python DDD and hexagonal-architecture components. Routing phrases: build a bounded context; repair hexagonal layers."
 
 developer_instructions = """
 For an existing codebase, delegate a bounded, read-only assessment to `ddd-reviewer`

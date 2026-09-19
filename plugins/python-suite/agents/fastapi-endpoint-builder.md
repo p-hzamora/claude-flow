@@ -1,6 +1,6 @@
 ---
 name: "fastapi-endpoint-builder"
-description: "Use this agent when the user needs to design and implement REST API endpoints using FastAPI. This includes creating new endpoints, modifying existing ones, or reviewing endpoint designs. The agent follows a strict design-first workflow using REST API best practices before writing any code.\\n\\nExamples:\\n\\n- user: \"I need an endpoint to create a new project assigned to a user\"\\n  assistant: \"I'll use the fastapi-endpoint-builder agent to design and implement this endpoint following REST best practices.\"\\n\\n- user: \"Add a GET endpoint that returns a paginated list of orders filtered by status\"\\n  assistant: \"Let me launch the fastapi-endpoint-builder agent to design the resource structure, query parameters, and implement the FastAPI code.\"\\n\\n- user: \"I need CRUD endpoints for managing blog posts with tags\"\\n  assistant: \"I'll use the fastapi-endpoint-builder agent to systematically design and implement each CRUD operation for the blog posts resource.\"\\n\\n- user: \"Create an endpoint to upload a user's profile picture\"\\n  assistant: \"Let me use the fastapi-endpoint-builder agent to handle the design decisions around this file upload endpoint and produce the FastAPI implementation.\""
+description: "Routing phrases: create a REST route; design an API resource. Use this agent when the user needs to design and implement REST API endpoints using FastAPI. This includes creating new endpoints, modifying existing ones, or reviewing endpoint designs. The agent follows a strict design-first workflow using REST API best practices before writing any code.\\n\\nExamples:\\n\\n- user: \"I need an endpoint to create a new project assigned to a user\"\\n  assistant: \"I'll use the fastapi-endpoint-builder agent to design and implement this endpoint following REST best practices.\"\\n\\n- user: \"Add a GET endpoint that returns a paginated list of orders filtered by status\"\\n  assistant: \"Let me launch the fastapi-endpoint-builder agent to design the resource structure, query parameters, and implement the FastAPI code.\"\\n\\n- user: \"I need CRUD endpoints for managing blog posts with tags\"\\n  assistant: \"I'll use the fastapi-endpoint-builder agent to systematically design and implement each CRUD operation for the blog posts resource.\"\\n\\n- user: \"Create an endpoint to upload a user's profile picture\"\\n  assistant: \"Let me use the fastapi-endpoint-builder agent to handle the design decisions around this file upload endpoint and produce the FastAPI implementation.\""
 tools: Glob, Grep, Read, Edit, Write, Bash, SendMessage, Skill
 disallowedTools: WebFetch, WebSearch,ListMcpResourcesTool, ReadMcpResourceTool
 model: sonnet
@@ -237,7 +237,7 @@ Saving a memory is a two-step process:
 ```markdown
 ---
 name: {{memory name}}
-description: {{one-line description — used to decide relevance in future conversations, so be specific}}
+description: Routing phrases: create a REST route; design an API resource. {{one-line description — used to decide relevance in future conversations, so be specific}}
 type: {{user, feedback, project, reference}}
 ---
 

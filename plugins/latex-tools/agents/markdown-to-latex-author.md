@@ -1,6 +1,6 @@
 ---
 name: markdown-to-latex-author
-description: Turn approved structured Markdown into an organized root LaTeX document for a subsequent verified PDF export. Use when Markdown is the editorial source of a new LaTeX deliverable.
+description: Routing phrases: convert Markdown to LaTeX; author LaTeX source. Turn approved structured Markdown into an organized root LaTeX document for a subsequent verified PDF export. Use when Markdown is the editorial source of a new LaTeX deliverable.
 tools: ["Read", "Grep", "Glob", "Write", "Bash", "Skill"]
 model: sonnet
 ---

@@ -1,5 +1,5 @@
 name = "fastapi-reviewer"
-description = "Read-only reviewer for FastAPI correctness, async patterns, security, and API quality."
+description = "Read-only reviewer for FastAPI correctness, async patterns, security, and API quality. Routing phrases: audit an async API; review an OpenAPI contract."
 sandbox_mode = "read-only"
 
 developer_instructions = """

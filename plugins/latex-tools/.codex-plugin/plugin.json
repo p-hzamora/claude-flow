@@ -1,6 +1,6 @@
 {
   "name": "latex-tools",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Document-agnostic LaTeX authoring, including structured Markdown-to-LaTeX source generation and verified PDF export.",
   "author": {
     "name": "Pablo Hernandez",

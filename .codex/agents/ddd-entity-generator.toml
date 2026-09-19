@@ -1,5 +1,5 @@
 name = "ddd-entity-generator"
-description = "Create or refactor Python DDD entities, value objects, and aggregate boundaries."
+description = "Create or refactor Python DDD entities, value objects, and aggregate boundaries. Routing phrases: design a value object; model an aggregate."
 
 developer_instructions = """
 Implement domain entities and value objects only after inspecting the local architecture.

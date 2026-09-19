@@ -1,5 +1,5 @@
 name = "latex-2-pdf-exporter"
-description = "Compile a root LaTeX document into a verified PDF without changing its content or design."
+description = "Compile a root LaTeX document into a verified PDF without changing its content or design. Routing phrases: compile a LaTeX PDF; verify PDF output."
 
 developer_instructions = """
 Use `$latex-expertise` as the authority for root-document detection, engine selection,

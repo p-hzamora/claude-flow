@@ -1,5 +1,5 @@
 name = "orm-model-inspector"
-description = "Read-only inspector for SQLAlchemy ORM models, relationships, queries, and migrations."
+description = "Read-only inspector for SQLAlchemy ORM models, relationships, queries, and migrations. Routing phrases: map ORM relationships; inspect an Alembic schema."
 sandbox_mode = "read-only"
 
 developer_instructions = """

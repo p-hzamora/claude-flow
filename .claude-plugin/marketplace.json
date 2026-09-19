@@ -10,28 +10,28 @@
     {
       "name": "skills",
       "description": "Cross-cutting, language-agnostic skills reused across plugins.",
-      "version": "1.0.0",
+      "version": "1.0.1",
       "source": "./plugins/skills",
       "category": "utility"
     },
     {
       "name": "python-suite",
       "description": "Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each independently usable. No Jira coupling.",
-      "version": "0.5.3",
+      "version": "0.5.4",
       "source": "./plugins/python-suite",
       "category": "productivity"
     },
     {
       "name": "jira-dev-workflow",
       "description": "End-to-end Jira ticket workflow agent bundle.",
-      "version": "0.6.0",
+      "version": "0.6.1",
       "source": "./plugins/jira-dev-workflow",
       "category": "productivity"
     },
     {
       "name": "latex-tools",
       "description": "Document-agnostic LaTeX authoring, structured Markdown-to-LaTeX generation, and verified PDF export.",
-      "version": "0.2.0",
+      "version": "0.2.1",
       "source": "./plugins/latex-tools",
       "category": "productivity"
     }

@@ -1,5 +1,5 @@
 name = "jira-git-committer"
-description = "Validate staged ticket-scoped changes, create compliant commits, and push them."
+description = "Validate staged ticket-scoped changes, create compliant commits, and push them. Routing phrases: commit ticket changes; validate a conventional commit."
 
 developer_instructions = """
 Use `$git-devops-conventions` for the author identity and `$commit-message-generator`

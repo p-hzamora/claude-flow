@@ -17,6 +17,10 @@ CLAUDE_MARKETPLACE = ROOT / ".claude-plugin" / "marketplace.json"
 CODEX_MARKETPLACE = ROOT / ".agents" / "plugins" / "marketplace.json"
 CODEX_AGENTS = ROOT / ".codex" / "agents"
 CODEX_INSTRUCTIONS = ROOT / "AGENTS.md"
+ROUTING_PHRASES_PATTERN = re.compile(r" Routing phrases: (?P<phrases>[^.]+)\.$")
+CLAUDE_ROUTING_PHRASES_PATTERN = re.compile(
+    r'^description:\s*"?Routing phrases: (?P<phrases>[^.]+)\.', re.MULTILINE
+)
 
 
 def load_json(path: Path) -> dict[str, Any]:
@@ -75,13 +79,46 @@ def claude_agent_names() -> set[str]:
     return names
 
 
-def validate_codex_agents(expected_names: set[str]) -> None:
+def claude_agent_routing_phrases() -> dict[str, set[str]]:
+    """Return the routing phrases at the start of each Claude description."""
+    agents: dict[str, set[str]] = {}
+    phrases_by_owner: dict[str, Path] = {}
+    for agent_path in PLUGIN_ROOT.glob("*/agents/*.md"):
+        text = agent_path.read_text()
+        name_match = re.search(r"^name:\s*[\"']?([^\"'\n]+)", text, re.MULTILINE)
+        routing_match = CLAUDE_ROUTING_PHRASES_PATTERN.search(text)
+        if name_match is None or routing_match is None:
+            raise ValueError(
+                f"{agent_path}: missing name or routing phrases in description"
+            )
+        name = name_match.group(1).strip()
+        raw_phrases = routing_match["phrases"].split(";")
+        phrases = {phrase.strip().casefold() for phrase in raw_phrases}
+        if len(phrases) != len(raw_phrases) or len(phrases) < 2 or not all(phrases):
+            raise ValueError(
+                f"{agent_path}: routing phrases must be unique non-empty strings"
+            )
+        if name in agents:
+            raise ValueError(f"{agent_path}: duplicate Claude agent name '{name}'")
+        for phrase in phrases:
+            if owner := phrases_by_owner.get(phrase):
+                raise ValueError(
+                    f"{agent_path}: routing phrase '{phrase}' is already owned by {owner}"
+                )
+            phrases_by_owner[phrase] = agent_path
+        agents[name] = phrases
+    return agents
+
+
+def validate_codex_agents(expected_names: set[str]) -> dict[str, set[str]]:
     if not CODEX_INSTRUCTIONS.is_file() or not CODEX_INSTRUCTIONS.read_text().strip():
         raise ValueError("AGENTS.md: missing or empty Codex project instructions")
     if not CODEX_AGENTS.is_dir():
         raise ValueError(f"{CODEX_AGENTS}: Codex agent directory is missing")
 
     actual_names: set[str] = set()
+    routing_phrases: dict[str, Path] = {}
+    phrases_by_agent: dict[str, set[str]] = {}
     skill_names = {
         skill_dir.name
         for plugin_dir in PLUGIN_ROOT.iterdir()
@@ -102,6 +139,27 @@ def validate_codex_agents(expected_names: set[str]) -> None:
         actual_names.add(name)
         if not description or not instructions:
             raise ValueError(f"{agent_path}: missing required Codex agent text")
+        routing_match = ROUTING_PHRASES_PATTERN.search(description)
+        if routing_match is None:
+            raise ValueError(
+                f"{agent_path}: description must end with unique 'Routing phrases: ...'"
+            )
+        phrases = [
+            phrase.strip().casefold() for phrase in routing_match["phrases"].split(";")
+        ]
+        if len(phrases) < 2 or any(not phrase for phrase in phrases):
+            raise ValueError(
+                f"{agent_path}: define at least two non-empty routing phrases"
+            )
+        if len(set(phrases)) != len(phrases):
+            raise ValueError(f"{agent_path}: repeats one of its routing phrases")
+        for phrase in phrases:
+            if owner := routing_phrases.get(phrase):
+                raise ValueError(
+                    f"{agent_path}: routing phrase '{phrase}' is already owned by {owner}"
+                )
+            routing_phrases[phrase] = agent_path
+        phrases_by_agent[name] = set(phrases)
         for skill_name in re.findall(r"\$([a-z0-9][a-z0-9-]*)", instructions):
             if skill_name not in skill_names:
                 raise ValueError(
@@ -115,14 +173,19 @@ def validate_codex_agents(expected_names: set[str]) -> None:
             "Claude/Codex agent profiles differ"
             f" (missing Codex: {missing or 'none'}; extra Codex: {extra or 'none'})"
         )
+    return phrases_by_agent
 
 
 def validate_codex_marketplace(expected_plugins: set[str]) -> None:
     marketplace = load_json(CODEX_MARKETPLACE)
     if required_string(marketplace, "name", CODEX_MARKETPLACE) != "claude-flow":
-        raise ValueError(f"{CODEX_MARKETPLACE}: expected marketplace name 'claude-flow'")
+        raise ValueError(
+            f"{CODEX_MARKETPLACE}: expected marketplace name 'claude-flow'"
+        )
     interface = marketplace.get("interface")
-    if not isinstance(interface, dict) or not isinstance(interface.get("displayName"), str):
+    if not isinstance(interface, dict) or not isinstance(
+        interface.get("displayName"), str
+    ):
         raise ValueError(f"{CODEX_MARKETPLACE}: missing interface.displayName")
 
     entries = marketplace.get("plugins")
@@ -146,7 +209,9 @@ def validate_codex_marketplace(expected_plugins: set[str]) -> None:
         if not isinstance(policy, dict) or policy.get("installation") != "AVAILABLE":
             raise ValueError(f"{CODEX_MARKETPLACE}: '{name}' must be AVAILABLE")
         if policy.get("authentication") not in {"ON_INSTALL", "ON_USE"}:
-            raise ValueError(f"{CODEX_MARKETPLACE}: invalid authentication policy for '{name}'")
+            raise ValueError(
+                f"{CODEX_MARKETPLACE}: invalid authentication policy for '{name}'"
+            )
         required_string(entry, "category", CODEX_MARKETPLACE)
     if actual_plugins != expected_plugins:
         raise ValueError("Codex marketplace and plugin folders differ")
@@ -162,11 +227,17 @@ def main() -> int:
         }
         plugin_versions = {
             name: version
-            for plugin_dir in sorted(path for path in PLUGIN_ROOT.iterdir() if path.is_dir())
+            for plugin_dir in sorted(
+                path for path in PLUGIN_ROOT.iterdir() if path.is_dir()
+            )
             for name, version in [validate_plugin(plugin_dir)]
         }
         validate_codex_marketplace(set(plugin_versions))
-        validate_codex_agents(claude_agent_names())
+        claude_names = claude_agent_names()
+        codex_routing_phrases = validate_codex_agents(claude_names)
+        claude_routing_phrases = claude_agent_routing_phrases()
+        if codex_routing_phrases != claude_routing_phrases:
+            raise ValueError("Claude and Codex agent routing phrases differ")
         if set(plugin_versions) != set(marketplace_plugins):
             raise ValueError("plugin folders and Claude marketplace entries differ")
         for name, version in plugin_versions.items():
@@ -174,14 +245,16 @@ def main() -> int:
                 raise ValueError(f"{name}: marketplace and manifest versions differ")
             expected_source = f"./plugins/{name}"
             if marketplace_plugins[name].get("source") != expected_source:
-                raise ValueError(f"{name}: marketplace source must be '{expected_source}'")
+                raise ValueError(
+                    f"{name}: marketplace source must be '{expected_source}'"
+                )
     except (OSError, TypeError, ValueError, KeyError) as error:
         print(f"multihost validation failed: {error}", file=sys.stderr)
         return 1
 
     print(
         "multihost validation passed "
-        f"({len(plugin_versions)} plugins, {len(claude_agent_names())} agent profiles)"
+        f"({len(plugin_versions)} plugins, {len(claude_names)} agent profiles)"
     )
     return 0
 

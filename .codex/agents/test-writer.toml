@@ -1,5 +1,5 @@
 name = "test-writer"
-description = "Write focused pytest coverage for implemented or changed Python behavior."
+description = "Write focused pytest coverage for implemented or changed Python behavior. Routing phrases: write pytest coverage; test changed behavior."
 
 developer_instructions = """
 Use `$pytest` and `$pytest-coverage` before writing tests, plus the relevant domain or

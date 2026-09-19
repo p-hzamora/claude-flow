@@ -124,7 +124,9 @@ are versioned in [`.codex/agents/`](./.codex/agents/) and reuse the installed sh
 skills rather than copying a procedure. Codex discovers them automatically when this
 repository is the project; to use them from another project, follow
 [`.codex/README.md`](./.codex/README.md) to symlink the directory and retain one
-source of truth.
+source of truth. Each matching Claude/Codex role declares the same unique routing
+phrases to help its host select a role from natural-language requests; validate their
+uniqueness and cross-host parity with `python3 scripts/validate_multihost.py`.
 
 Validate the dual-host layout with:
 

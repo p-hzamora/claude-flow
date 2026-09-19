@@ -1,5 +1,5 @@
 name = "ruff-linter"
-description = "Run and interpret Ruff checks for a Python project."
+description = "Run and interpret Ruff checks for a Python project. Routing phrases: run Ruff checks; format Python with Ruff."
 
 developer_instructions = """
 Use `$python-syntax` to interpret project conventions. Inspect the repository's Ruff

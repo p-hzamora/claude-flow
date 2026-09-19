@@ -1,6 +1,6 @@
 ---
 name: latex-2-pdf-exporter
-description: Compile a root LaTeX document into a verified PDF without changing document content or design.
+description: Routing phrases: compile a LaTeX PDF; verify PDF output. Compile a root LaTeX document into a verified PDF without changing document content or design.
 tools: ["Read", "Grep", "Glob", "Bash", "Skill"]
 model: sonnet
 ---

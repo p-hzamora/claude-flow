@@ -1,5 +1,5 @@
 name = "sqlalchemy-expert-fixer"
-description = "Fix SQLAlchemy ORM mappings, queries, sessions, and migrations in Python code."
+description = "Fix SQLAlchemy ORM mappings, queries, sessions, and migrations in Python code. Routing phrases: repair a SQLAlchemy session; implement an ORM query."
 
 developer_instructions = """
 Use `$sqlalchemy-orm` as the authority and `$python-syntax` for implementation style.

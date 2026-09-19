@@ -3,7 +3,7 @@
 Document-agnostic LaTeX authoring, including structured Markdown-to-LaTeX source
 generation and verified PDF export.
 
-**Version:** 0.2.0
+**Version:** 0.2.1
 **Dependencies:** none
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -11,14 +11,15 @@ reporting applicable work done.
 
 **Codex:** the portable `latex-expertise` skill is packaged through
 `../plugins/latex-tools/.codex-plugin/plugin.json`. The matching project-scoped Codex
-role adapters remain in [`../.codex/agents/`](../.codex/agents/).
+role adapters remain in [`../.codex/agents/`](../.codex/agents/). Matching
+Claude/Codex agent definitions carry the same unique routing phrases.
 
 ## Agent
 
-| Agent | Responsibility |
-|---|---|
-| `markdown-to-latex-author` | Preserves approved structured Markdown while producing an organized root LaTeX document and generated content source for a later export. |
-| `latex-2-pdf-exporter` | Compiles an approved root LaTeX document into a verified PDF without editing its content or design. |
+| Agent | Responsibility | Codex routing phrases |
+|---|---|---|
+| `markdown-to-latex-author` | Preserves approved structured Markdown while producing an organized root LaTeX document and generated content source for a later export. | `convert Markdown to LaTeX`; `author LaTeX source` |
+| `latex-2-pdf-exporter` | Compiles an approved root LaTeX document into a verified PDF without editing its content or design. | `compile a LaTeX PDF`; `verify PDF output` |
 
 ## Skill
 
