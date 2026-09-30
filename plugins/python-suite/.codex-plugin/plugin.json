@@ -1,7 +1,7 @@
 {
   "name": "python-suite",
   "description": "Reusable Python/DDD/FastAPI/SQLAlchemy skills: clean-ddd-hexagonal-python, fastapi-async-patterns, sqlalchemy-orm, python-syntax, pytest, and pytest-coverage.",
-  "version": "0.5.4",
+  "version": "1.0.0",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"
@@ -13,7 +13,10 @@
     "longDescription": "Reusable skills for designing, implementing, testing, and reviewing production Python systems with DDD, FastAPI, and SQLAlchemy.",
     "developerName": "Pablo Hernandez",
     "category": "Engineering",
-    "capabilities": ["Interactive", "Write"],
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
     "defaultPrompt": [
       "Review this Python module for DDD violations.",
       "Implement this FastAPI endpoint.",
