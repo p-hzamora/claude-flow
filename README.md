@@ -136,6 +136,12 @@ Validate the dual-host layout with:
 python3 scripts/validate_multihost.py
 ```
 
+Run the script tests (stdlib `unittest`, no install needed) with:
+
+```
+python3 -m unittest discover tests
+```
+
 ## Adding more later
 
 - New plugin: add a folder under `plugins/`, add one entry to
