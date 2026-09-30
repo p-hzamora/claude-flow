@@ -34,7 +34,7 @@ DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal
 - Aggregate — cluster of Entities/Value Objects; one Repository per aggregate, never per entity.
 - Port — interface declared in domain/application, implemented in infrastructure.
 - Handler — application-layer class implementing one Command or Query.
-_Avoid_: restating this checklist inside an agent file. `ddd-reviewer`, `ddd-implementer`, and `ddd-entity-generator` should point at `clean-ddd-hexagonal-python` as the single source of truth, not each carry their own copy.
+_Avoid_: restating this checklist inside an agent file. `ddd-reviewer` and `ddd-implementer` should point at `clean-ddd-hexagonal-python` as the single source of truth, not each carry their own copy.
 
 **DTO** / **Response (schema)**:
 Two more objects in the same skill's layering, sitting output-side of Entity/VO —

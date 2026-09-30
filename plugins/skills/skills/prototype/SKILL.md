@@ -54,7 +54,7 @@ reference point outside this skill:
   territory. If this repo also has `python-suite` installed, ground the prototype's
   vocabulary in the `clean-ddd-hexagonal-python` skill (Entity/Value Object/Aggregate
   semantics) so the REPL models the same concepts the real implementation will use,
-  and route the eventual real implementation through `ddd-entity-generator` /
+  and route the eventual real implementation through
   `ddd-implementer` rather than free-hand code. Without `python-suite` installed,
   proceed with the business-logic shape in §3 on its own — it doesn't require DDD.
 
@@ -103,7 +103,7 @@ Once the question is answered:
   matters is the decision, not the prototype's source.
 - Do not copy prototype code into the real project. Reimplement the settled
   direction properly there, through the project's normal build path (its own
-  agents/skills — e.g. `ddd-entity-generator`, `fastapi-endpoint-builder` — not by
+  agents/skills — e.g. `ddd-implementer`, `fastapi-endpoint-builder` — not by
   lifting throwaway code).
 - Leave the prototype directory in place until the user confirms they're done with
   it; it's disposable but not yours to delete unasked.
