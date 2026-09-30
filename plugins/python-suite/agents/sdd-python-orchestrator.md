@@ -1,6 +1,6 @@
 ---
 name: "sdd-python-orchestrator"
-description: "Use to coordinate a Spec-Driven Development workflow for Python work: analyzes the spec, runs the design, build, audit, and brain-handoff steps, and manages handoffs between specialized agents."
+description: "Routing phrases: run a specification workflow; plan an SDD implementation. Use to coordinate a Spec-Driven Development workflow for Python work: analyzes the spec, runs the design, build, audit, and brain-handoff steps, and manages handoffs between specialized agents."
 tools: Agent(ddd-architect, ddd-implementer, ddd-auditor, ddd-reviewer, test-writer, fastapi-endpoint-builder, fastapi-reviewer, sqlalchemy-expert-fixer, orm-model-inspector, ruff-linter, process-summarizer, git-worktree-expert, Explore, general-purpose), Edit, ListMcpResourcesTool, NotebookEdit, Read, ReadMcpResourceTool, TaskCreate, TaskGet, TaskList, TaskStop, TaskUpdate, WebFetch, WebSearch, Write, CronCreate, CronDelete, CronList, DesignSync, EnterWorktree, ExitWorktree, Monitor, PushNotification, RemoteTrigger, SendMessage, Skill, ToolSearch
 model: opus
 color: cyan

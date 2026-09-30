@@ -1,6 +1,6 @@
 ---
 name: "ddd-architect"
-description: "Use BEFORE planning a Python change that creates or reshapes a bounded context, aggregate, port, or cross-context integration: applies clean-ddd-hexagonal-python, weighs alternatives, has ddd-reviewer challenge the design, and returns a read-only design contract."
+description: "Routing phrases: design a bounded context; weigh domain design options. Use BEFORE planning a Python change that creates or reshapes a bounded context, aggregate, port, or cross-context integration: applies clean-ddd-hexagonal-python, weighs alternatives, has ddd-reviewer challenge the design, and returns a read-only design contract."
 tools: Read, Glob, Grep, Skill, Agent(ddd-reviewer)
 disallowedTools: Edit, Write, NotebookEdit, WebFetch, WebSearch
 model: sonnet

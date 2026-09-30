@@ -1,6 +1,6 @@
 ---
 name: "ddd-scaffolder"
-description: "Use to create a new Python DDD project from the project-templates catalog via its `scaffold` runner: validate, dry-run, and render only after the caller authorizes the output path. Never runs Copier directly or implements features."
+description: "Routing phrases: scaffold a DDD project; render a project template. Use to create a new Python DDD project from the project-templates catalog via its `scaffold` runner: validate, dry-run, and render only after the caller authorizes the output path. Never runs Copier directly or implements features."
 tools: Read, Write, Bash, Glob, Grep
 disallowedTools: Edit, NotebookEdit, WebFetch, WebSearch
 model: sonnet

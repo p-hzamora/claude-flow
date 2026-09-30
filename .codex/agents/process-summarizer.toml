@@ -1,5 +1,5 @@
 name = "process-summarizer"
-description = "Read-only summarizer that turns a finished SDD run into brain notes."
+description = "Read-only summarizer that turns a finished SDD run into brain notes. Routing phrases: summarize a finished run; file brain notes."
 sandbox_mode = "read-only"
 
 developer_instructions = """

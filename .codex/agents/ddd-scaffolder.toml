@@ -1,5 +1,5 @@
 name = "ddd-scaffolder"
-description = "Creates new Python DDD projects through the catalog's scaffold runner, with a dry run before rendering."
+description = "Creates new Python DDD projects through the catalog's scaffold runner, with a dry run before rendering. Routing phrases: scaffold a DDD project; render a project template."
 sandbox_mode = "workspace-write"
 
 developer_instructions = """

@@ -1,6 +1,6 @@
 ---
 name: "ddd-reviewer"
-description: "Use for a read-only review of Python code or a written design proposal against DDD hexagonal rules. Modes: full audit, scoped paths or diff, design review. Reports violations and never changes files."
+description: "Routing phrases: audit domain boundaries; check architecture layering. Use for a read-only review of Python code or a written design proposal against DDD hexagonal rules. Modes: full audit, scoped paths or diff, design review. Reports violations and never changes files."
 tools: Read, Glob, Grep, SendMessage, Skill
 disallowedTools: Edit, Write, NotebookEdit, WebFetch, WebSearch,ListMcpResourcesTool, ReadMcpResourceTool
 model: haiku

@@ -1,6 +1,6 @@
 ---
 name: "process-summarizer"
-description: "Use once an SDD run is done or blocked to turn its planning folder into brain notes (one run note, one per material decision). Read-only: emits the notes in its final message and a hook files them."
+description: "Routing phrases: summarize a finished run; file brain notes. Use once an SDD run is done or blocked to turn its planning folder into brain notes (one run note, one per material decision). Read-only: emits the notes in its final message and a hook files them."
 tools: Read, Glob, Grep
 disallowedTools: Edit, Write, Bash, NotebookEdit, WebFetch, WebSearch
 model: haiku

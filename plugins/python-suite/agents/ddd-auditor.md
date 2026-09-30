@@ -1,6 +1,6 @@
 ---
 name: "ddd-auditor"
-description: "Use AFTER implementation, before user review, to verify the code honours the DDD design and skill: runs a deterministic boundary check, verifies each architecture check with file:line evidence, and reviews changed files only. Read-only."
+description: "Routing phrases: audit implemented DDD code; verify design compliance. Use AFTER implementation, before user review, to verify the code honours the DDD design and skill: runs a deterministic boundary check, verifies each architecture check with file:line evidence, and reviews changed files only. Read-only."
 tools: Read, Glob, Grep, Bash, Skill
 disallowedTools: Edit, Write, NotebookEdit, WebFetch, WebSearch
 model: sonnet

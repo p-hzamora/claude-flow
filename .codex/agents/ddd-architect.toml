@@ -1,5 +1,5 @@
 name = "ddd-architect"
-description = "Read-only architect that designs Python DDD and hexagonal structure before planning."
+description = "Read-only architect that designs Python DDD and hexagonal structure before planning. Routing phrases: design a bounded context; weigh domain design options."
 sandbox_mode = "read-only"
 
 developer_instructions = """
