@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 0.5.4
+**Version:** 1.0.0
 **Dependencies:** `skills` (auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -22,9 +22,11 @@ definitions carry the same unique routing phrases.
 | Agent | Path | Codex routing phrases |
 |---|---|---|
 | `sdd-python-orchestrator` | `agents/sdd-python-orchestrator.md` | `run a specification workflow`; `plan an SDD implementation` |
+| `ddd-architect` | `agents/ddd-architect.md` — read-only design step before planning; the orchestrator runs it as a gate for new or reshaped contexts, aggregates, and ports. | `design a bounded context`; `weigh domain design options` |
+| `ddd-auditor` | `agents/ddd-auditor.md` — read-only post-implementation audit; runs `ddd-check.py`, verifies the design's architecture checks with `file:line` evidence, and reviews only changed files. The orchestrator runs it as a gate before user review. | `audit implemented DDD code`; `verify design compliance` |
+| `ddd-scaffolder` | `agents/ddd-scaffolder.md` — creates new DDD projects only through the project-templates `scaffold` runner: validate, dry-run, then render after explicit authorization of the output path. | `scaffold a DDD project`; `render a project template` |
 | `ddd-reviewer` | `agents/ddd-reviewer.md` | `audit domain boundaries`; `check architecture layering` |
 | `ddd-implementer` | `agents/ddd-implementer.md` | `build a bounded context`; `repair hexagonal layers` |
-| `ddd-entity-generator` | `agents/ddd-entity-generator.md` | `design a value object`; `model an aggregate` |
 | `fastapi-endpoint-builder` | `agents/fastapi-endpoint-builder.md` | `create a REST route`; `design an API resource` |
 | `fastapi-reviewer` | `agents/fastapi-reviewer.md` | `audit an async API`; `review an OpenAPI contract` |
 | `orm-model-inspector` | `agents/orm-model-inspector.md` | `map ORM relationships`; `inspect an Alembic schema` |
@@ -42,6 +44,12 @@ definitions carry the same unique routing phrases.
 | `pytest` | `skills/pytest/SKILL.md` |
 | `python-syntax` | `skills/python-syntax/SKILL.md` — single source of truth for Python language, typing, import, naming, and documentation conventions. |
 | `sqlalchemy-orm` | `skills/sqlalchemy-orm/SKILL.md` |
+
+## Script
+
+| Script | Path |
+|---|---|
+| `ddd-check.py` | `scripts/ddd-check.py` — zero-dependency AST check of layer, context, shared-kernel, and `Adapter`-suffix rules for the context-first topology; `--changed-since REF` limits it to files changed from a ref. Exit 0 clean, 1 violations, 3 topology not found. |
 
 ## Install standalone
 

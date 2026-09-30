@@ -2,7 +2,7 @@
 
 Cross-cutting, language-agnostic skills reused across the other plugins in this marketplace.
 
-**Version:** 1.0.1
+**Version:** 1.1.0
 **Dependencies:** none
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -19,6 +19,15 @@ Claude/Codex agents declare the same unique routing phrases, verified by
 | Agent | Responsibility | Codex routing phrases |
 |---|---|---|
 | `git-worktree-expert` | Exclusive specialist for Git worktree lifecycle operations; uses `git-worktree-management` as its authoritative procedure. | `allocate an isolated checkout`; `clean up a worktree` |
+| `process-summarizer` | Read-only summarizer for a finished SDD run; emits brain notes (one run note, one per material decision) in its final message, which the plugin's `SubagentStop` hook files into the vault via `scripts/brain-file.py`. Claude Code only. | `summarize a finished run`; `file brain notes` |
+
+### Brain filing
+
+The hook in `hooks/hooks.json` matches `process-summarizer` and runs `scripts/brain-file.py`,
+which validates each `<<<NOTE name.md ... NOTE>>>` block in the agent's final message
+(frontmatter, safe names), files it under `projects/` or `decisions/` in the vault
+(`$BRAIN_VAULT`, default `~/Documents/brain`), and appends run notes to `index.md`.
+Invalid notes block the agent once with the reason; a second failure goes to `_rejected/`.
 
 ### Worktree delegation flow
 

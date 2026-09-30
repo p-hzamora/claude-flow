@@ -10,14 +10,14 @@
     {
       "name": "skills",
       "description": "Cross-cutting, language-agnostic skills reused across plugins.",
-      "version": "1.0.1",
+      "version": "1.1.0",
       "source": "./plugins/skills",
       "category": "utility"
     },
     {
       "name": "python-suite",
       "description": "Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each independently usable. No Jira coupling.",
-      "version": "0.5.4",
+      "version": "1.0.0",
       "source": "./plugins/python-suite",
       "category": "productivity"
     },

@@ -9,7 +9,9 @@ applicable item before reporting skill-scoped work done.
 
 ## Plugins
 
-- **skills** — cross-cutting, language-agnostic skills reused across plugins:
+- **skills** — cross-cutting, language-agnostic skills reused across plugins, plus
+  `process-summarizer` (turns a finished SDD run into brain notes, filed by a `SubagentStop`
+  hook):
   `grill-with-context`, `commit-message-generator`, `claude-sdk-expert`, `graphify`,
   `api-rest-designer`, `git-worktree-management` (safe, deterministic Git worktree
   lifecycle management), `sdd-workflow` (stack-agnostic SDD orchestration methodology
@@ -29,8 +31,8 @@ applicable item before reporting skill-scoped work done.
   root document into a verified PDF without changing its content or design.
 - **python-suite** — reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each
   independently usable (not only reachable through an orchestrator):
-  - Agents: `sdd-python-orchestrator`, `ddd-reviewer`, `ddd-implementer`,
-    `ddd-entity-generator`, `fastapi-endpoint-builder`, `fastapi-reviewer`,
+  - Agents: `sdd-python-orchestrator`, `ddd-architect`, `ddd-auditor`, `ddd-scaffolder`, `ddd-reviewer`, `ddd-implementer`,
+    `fastapi-endpoint-builder`, `fastapi-reviewer`,
     `orm-model-inspector`, `ruff-linter`, `sqlalchemy-expert-fixer`, `test-writer`
   - Skills: `clean-ddd-hexagonal-python` (including bounded-context-first DDD/CQRS and ports/adapters topology guidance), `fastapi-async-patterns`, `sqlalchemy-orm`,
     `python-syntax` (the single source of truth for Python language and style rules), `pytest`, `pytest-coverage`
