@@ -23,7 +23,10 @@ applicable item before reporting skill-scoped work done.
   colleague, or a forked side task to pick up; not a `/compact` replacement),
   `prototype` (builds a throwaway UI-variations-behind-a-toggle or state-machine
   terminal REPL in its own directory to settle a design question code can answer
-  and words can't; pairs with `handoff` to carry the decision back).
+  and words can't; pairs with `handoff` to carry the decision back),
+  `scaffold-catalog` plus the `template-scaffolder` agent (authors a template catalog's
+  `config.yaml` and drives its `scaffold` CLI: sandbox comparisons first, final render
+  only after the output path is authorized; any language or pattern).
 - **latex-tools** — document-agnostic LaTeX tooling: the `latex-expertise` skill
   preserves existing document design systems while editing, reviewing, diagnosing, and
   transforming approved structured Markdown into source; `markdown-to-latex-author`
