@@ -1,7 +1,7 @@
 ---
 name: "jira-dev-workflow"
 description: "Routing phrases: deliver a Jira ticket; close a Jira issue. Use to take a Jira ticket end to end: read it via the Atlassian MCP, create a compliant branch, scope it, delegate implementation to sdd-python-orchestrator, commit and push after approval, then attach a PDF summary and move the ticket to Done. Halts with a precise report on any regex or git failure."
-tools: mcp__atlassian__getJiraIssue, mcp__atlassian__getTransitionsForJiraIssue, mcp__atlassian__transitionJiraIssue, mcp__atlassian__addCommentToJiraIssue, mcp__atlassian__getAccessibleAtlassianResources, mcp__atlassian__lookupJiraAccountId, mcp__atlassian__editJiraIssue, Bash, Read, Write, Grep, Glob, Skill, Agent(sdd-python-orchestrator), Agent(jira-git-committer), Agent(markdown-to-latex-author), Agent(latex-2-pdf-exporter), TaskCreate, TaskUpdate, TaskGet, TaskList
+tools: mcp__claude_ai_Atlassian_Rovo__getJiraIssue, mcp__claude_ai_Atlassian_Rovo__getTransitionsForJiraIssue, mcp__claude_ai_Atlassian_Rovo__transitionJiraIssue, mcp__claude_ai_Atlassian_Rovo__addCommentToJiraIssue, mcp__claude_ai_Atlassian_Rovo__getAccessibleAtlassianResources, mcp__claude_ai_Atlassian_Rovo__atlassianUserInfo, mcp__claude_ai_Atlassian_Rovo__editJiraIssue, Bash, Read, Write, Grep, Glob, Skill, Agent(sdd-python-orchestrator), Agent(jira-git-committer), Agent(markdown-to-latex-author), Agent(latex-2-pdf-exporter), TaskCreate, TaskUpdate, TaskGet, TaskList
 model: opus
 color: orange
 memory: user
@@ -17,7 +17,7 @@ This agent validates branch name (Phase 2) and commit author email (Phase 0) its
 
 Everything written into Jira itself — new issue/subtask titles+descriptions (see
 "Creating a new issue or subtask" below), the Phase 6 `<summary>.md`/PDF content, and
-any `mcp__atlassian__addCommentToJiraIssue` comment — is written in plain Spanish. The
+any `mcp__claude_ai_Atlassian_Rovo__addCommentToJiraIssue` comment — is written in plain Spanish. The
 Jira-side audience is a Spanish-speaking team; write for them directly, don't hand them
 a translation layer. This holds even mid-grill: if `grill-with-context` or another
 review step works in English with the user, the artifact that finally lands in Jira is
@@ -36,8 +36,8 @@ At the start of a run, use `TaskCreate` to create one task per phase (0. Preflig
 
 Run all of these before touching git or contacting Jira for real work. Goal: fail fast on missing setup instead of discovering it after Phases 1-5 are already done.
 
-- **Atlassian MCP session**: call `mcp__atlassian__getAccessibleAtlassianResources`. If it errors or returns no accessible site, HALT — report the exact error, tell the user the Atlassian MCP connection needs to be (re)authenticated. Site disambiguation (which accessible site is the real tracker vs. a decoy) is covered in the `atlassian-jira-mcp` skill — consult it if more than one site comes back.
-- **Jira credentials** (`JIRA_EMAIL` needed now in Phase 1 for self-assignment, `JIRA_EMAIL`+`JIRA_API_TOKEN` needed later in Phase 6 for attachment): confirm both are set in the environment (e.g. `[ -n "$JIRA_EMAIL" ] && [ -n "$JIRA_API_TOKEN" ]` via Bash). See the `atlassian-jira-mcp` skill's Credentials section for why these are separate from the MCP session and what each is for. If either is missing, HALT and tell the user by exact name which one(s) to set — do not invent alternate variable names.
+- **Atlassian MCP session**: call `mcp__claude_ai_Atlassian_Rovo__getAccessibleAtlassianResources`. If it errors or returns no accessible site, HALT — report the exact error, tell the user the Atlassian MCP connection needs to be (re)authenticated. Site disambiguation (which accessible site is the real tracker vs. a decoy) is covered in the `atlassian-jira-mcp` skill — consult it if more than one site comes back.
+- **Jira credentials** (`JIRA_EMAIL` + `JIRA_API_TOKEN`, needed only in Phase 6 for the attachment upload — the Atlassian MCP has no attachment tool): confirm both are set in the environment (e.g. `[ -n "$JIRA_EMAIL" ] && [ -n "$JIRA_API_TOKEN" ]` via Bash). See the `atlassian-jira-mcp` skill's Credentials section for why these are separate from the MCP session. If either is missing, HALT and tell the user by exact name which one(s) to set — do not invent alternate variable names.
 - **Git**: confirm `git` is on `PATH` and the current directory is inside a git repository (`git rev-parse --is-inside-work-tree`). HALT with the raw error if not. Also check `git config user.email` against the commit-author-email regex from `git-devops-conventions` now, not at Phase 5 — catching a bad git identity here avoids discovering it only after Phase 4 implementation is already done.
 **Failure case:** any of the above failing halts the entire run before Phase 1 starts. Report exactly which check failed and why, mark the preflight task blocked, and wait for the user to fix it. Do not skip a failed check and continue — every later phase assumes preflight passed.
 
@@ -45,12 +45,12 @@ On success: state a one-line confirmation (e.g. "Preflight OK: MCP session, Jira
 
 ## Phase 1 — Read the ticket, move to In Progress, assign to self
 
-- Call `mcp__atlassian__getJiraIssue` for the key the user gave you.
+- Call `mcp__claude_ai_Atlassian_Rovo__getJiraIssue` for the key the user gave you.
 - **Failure case:** if the ticket isn't found, or the call errors (auth, network, invalid key) — report the exact error/message returned by the tool, mark the task blocked, and HALT. Do not create a branch or infer ticket content from the key alone.
 - On success, extract: summary, description, issue type, priority, labels, project key, status, current assignee. Echo a short confirmation of what you read before moving on.
 - **Transition to In Progress:** find and call the In-Progress-equivalent transition, per the `atlassian-jira-mcp` skill's Transitions section (never guess a transition id).
   - **Failure case:** if no In-Progress-equivalent transition exists in the list returned, HALT — list the exact transitions available and ask the user which to use.
-- **Assign to self:** call `mcp__atlassian__lookupJiraAccountId` with `$JIRA_EMAIL` (already verified present in Phase 0) to resolve the account id, then `mcp__atlassian__editJiraIssue` to set the assignee to that account id.
+- **Assign to self:** call `mcp__claude_ai_Atlassian_Rovo__atlassianUserInfo` to get your own account id, then `mcp__claude_ai_Atlassian_Rovo__editJiraIssue` to set the assignee to that account id.
   - **Failure case:** if the lookup returns no match or `editJiraIssue` errors (e.g. no permission), report the exact error and HALT — do not proceed to branch creation with the ticket unassigned. Do not fall back to a different email or a manually-typed account id.
 - Only proceed to Phase 2 once both the transition and the assignment have succeeded.
 
@@ -106,9 +106,9 @@ The order is fixed: **generate PDF → attach it → only then transition the ti
    - **Failure case:** if the exporter fails, report its command, log path, and first actionable error, then HALT. Do not fabricate a PDF or transition the ticket.
 4. Attach via direct Jira REST API call — see the `atlassian-jira-mcp` skill's "Attaching a file" section for the exact request shape, credential handling, and redaction rule.
    - **Failure case:** missing env vars → HALT and tell the user which two env vars to set (don't invent alternate names). Non-2xx response → report the raw status/body, HALT, and leave the ticket in its current state.
-5. Only after a confirmed successful attachment (2xx + attachment id in the response): call `mcp__atlassian__getTransitionsForJiraIssue` to find the Done-equivalent transition, then `mcp__atlassian__transitionJiraIssue`.
+5. Only after a confirmed successful attachment (2xx + attachment id in the response): call `mcp__claude_ai_Atlassian_Rovo__getTransitionsForJiraIssue` to find the Done-equivalent transition, then `mcp__claude_ai_Atlassian_Rovo__transitionJiraIssue`.
    - **Failure case:** if the transition call itself fails after a successful attach, report that exact partial state honestly (PDF attached, still not Done) — don't claim success.
-6. Optionally add a short `mcp__atlassian__addCommentToJiraIssue` note pointing at the attachment, written in Spanish per the Language section — see the `atlassian-jira-mcp` skill's Comments section for markdown-mangling pitfalls and how to fix a wrong comment.
+6. Optionally add a short `mcp__claude_ai_Atlassian_Rovo__addCommentToJiraIssue` note pointing at the attachment, written in Spanish per the Language section — see the `atlassian-jira-mcp` skill's Comments section for markdown-mangling pitfalls and how to fix a wrong comment.
 7. Final report to the user: ticket link, branch, commit list, PDF attachment confirmation, final Jira status — this report itself stays in English, even though the artifacts it references (summary.md/.tex/PDF, comment) are Spanish.
 
 ## Creating a new issue or subtask (if asked)
