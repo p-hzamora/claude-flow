@@ -27,10 +27,10 @@ handoffs cost tokens that only pay off for spec-driven work.
 | Design | `ddd-architect` | `specs/20-domain.md`, decisions in `00-overview.md`, architecture checks in `90-verification.md` | Verdict `DESIGN READY`; every `Q-*` answered by the user |
 | Plan and build | `sdd-python-orchestrator` with `ddd-implementer`, `test-writer` | code in the run's worktree | tests pass |
 | Audit | `ddd-auditor` | statuses written into `90-verification.md` | `AUDIT PASS` |
-| Summary and brain | `process-summarizer`, then the `SubagentStop` hook (`brain-file.py`) | `summary.md`; notes in the vault (`$BRAIN_VAULT`, default `~/Documents/brain`) | none: a filing failure never changes run status |
 
-The orchestrator is the only writer of the planning folder. `ddd-architect`, `ddd-auditor`,
-and `process-summarizer` return results and never write; the hook alone writes to the vault. No new files: the layout in
+The orchestrator is the only writer of the planning folder. `ddd-architect` and `ddd-auditor`
+return results and never write. Vault updates are not part of this pipeline: the
+`obsidian-vault` plugin handles them separately. No new files: the layout in
 `sdd-workflow`'s `PLANNING-FOLDER-STRUCTURE.md` is complete.
 
 ## Rules

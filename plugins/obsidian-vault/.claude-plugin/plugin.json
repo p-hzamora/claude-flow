@@ -1,0 +1,9 @@
+{
+  "name": "obsidian-vault",
+  "description": "One shared Obsidian vault with a folder per repository: conventions skill, a read-only vault-reader and a vault-writer agent, and an opt-in hook that asks for a vault update after git push.",
+  "version": "0.1.0",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  }
+}

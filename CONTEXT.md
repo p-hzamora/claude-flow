@@ -27,6 +27,21 @@ _Avoid_: using "skill" and "agent" interchangeably when describing a plugin's co
 **Script**:
 An executable file under a plugin's `scripts/` folder — plain code (shell, Python, etc.) invoked via Bash, not read into context and not a persona. An Agent/Skill references it by an absolute, portable path (`${CLAUDE_PLUGIN_ROOT}/scripts/<name>`, the Claude Code env var that resolves to the installed plugin's own directory), never a bare relative path. Where an agent's instructions mark a script mandatory, that requirement is a hard constraint, not one option among several equivalent shell one-liners.
 
+**Vault**:
+The single Obsidian vault at `~/Documents/brain/` (override `$BRAIN_VAULT`), reached only
+through the Obsidian MCP, which serves just the vault open in Obsidian. It holds every
+repository's context plus other know-how areas, linked together.
+_Avoid_: one vault per repository (the MCP cannot serve several at once), and "brain" as a structural term.
+
+**Learning topic**:
+`learning/<topic>/` inside the Vault: own-words notes on one subject the user studied with the
+`learn` skill, kept self-contained so a skill can be generated from it later. Written only
+by `vault-writer` in learning mode, after the user approves each checkpoint.
+
+**Repo folder**:
+`repos/<repo>/` inside the Vault (`<repo>` is the repository's directory name): the durable
+context of exactly one repository, written only by `vault-writer`.
+
 **Entity** / **Value Object** / **Aggregate** / **Port** / **Handler**:
 DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal-python` skill (`plugins/python-suite/skills/`) — this file only anchors the names:
 - Entity — domain object with identity tracked across time.

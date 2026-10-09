@@ -1,0 +1,22 @@
+{
+  "name": "obsidian-vault",
+  "version": "0.1.0",
+  "description": "One shared Obsidian vault with a folder per repository: conventions skill, a read-only vault-reader and a vault-writer agent, and an opt-in hook that asks for a vault update after git push.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Obsidian Vault",
+    "shortDescription": "Keep one Obsidian vault with durable context per repository folder.",
+    "longDescription": "Conventions for creating, reading, and updating a per-repository folder in a shared Obsidian vault through the Obsidian MCP, with an admission rule that keeps only decisions, gotchas, run outcomes, and glossary terms.",
+    "developerName": "Pablo Hernandez",
+    "category": "Productivity",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "What does the vault say about this area of the repo?",
+      "Update the vault with what we decided in this session."
+    ]
+  }
+}

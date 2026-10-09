@@ -9,9 +9,7 @@ applicable item before reporting skill-scoped work done.
 
 ## Plugins
 
-- **skills** — cross-cutting, language-agnostic skills reused across plugins, plus
-  `process-summarizer` (turns a finished SDD run into brain notes, filed by a `SubagentStop`
-  hook):
+- **skills** — cross-cutting, language-agnostic skills reused across plugins:
   `grill-with-context`, `commit-message-generator`, `claude-sdk-expert`, `graphify`,
   `api-rest-designer`, `git-worktree-management` (safe, deterministic Git worktree
   lifecycle management), `sdd-workflow` (stack-agnostic SDD orchestration methodology
@@ -52,6 +50,15 @@ applicable item before reporting skill-scoped work done.
   ticket-closeout Markdown follows the C4 model structure (Context/Container/Component/
   Code, text sections only, no diagrams), is preserved as the canonical source, and is
   delegated to `latex-tools` for LaTeX authoring and verified PDF export.
+
+- **obsidian-vault** — one shared Obsidian vault with a `repos/<repo>/` folder of durable
+  context per repository, reached only through the Obsidian MCP: `obsidian-vault-conventions` (location, creation steps,
+  note schema, admission rule, retrieval protocol), `vault-writer` (the only writer) and
+  `vault-reader` (read-only, returns distilled answers), `learn` (`/learn <topic>`:
+  researches and teaches a topic, saving approved notes to `learning/<topic>/`),
+  `vault-push-sync` (per-repo
+  on/off for the opt-in `git push` hook that asks for a vault update). No dependencies;
+  the Obsidian MCP server is not bundled.
 
 ## Dependency graph
 
@@ -113,11 +120,12 @@ codex plugin list
 codex plugin add skills@claude-flow
 codex plugin add python-suite@claude-flow
 codex plugin add latex-tools@claude-flow
+codex plugin add obsidian-vault@claude-flow
 # Add jira-dev-workflow@claude-flow after its three dependencies above when needed.
 ```
 
 The native Codex catalog is [`.agents/plugins/marketplace.json`](./.agents/plugins/marketplace.json).
-It lists the same four plugin folders as the Claude marketplace, with Codex-specific
+It lists the same five plugin folders as the Claude marketplace, with Codex-specific
 availability metadata. Codex plugin manifests do not currently declare dependencies,
 so install `skills` explicitly before `python-suite`, then install `latex-tools`,
 and install `jira-dev-workflow` after its three dependencies.

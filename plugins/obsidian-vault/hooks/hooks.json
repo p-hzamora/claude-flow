@@ -1,0 +1,16 @@
+{
+  "hooks": {
+    "PostToolUse": [
+      {
+        "matcher": "Bash",
+        "hooks": [
+          {
+            "type": "command",
+            "if": "Bash(git push *)",
+            "command": "python3 \"${CLAUDE_PLUGIN_ROOT}/scripts/vault-push-sync.py\" hook"
+          }
+        ]
+      }
+    ]
+  }
+}
