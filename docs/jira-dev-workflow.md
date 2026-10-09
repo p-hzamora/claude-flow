@@ -10,7 +10,7 @@ summary.md/PDF, Jira comments) is written in plain Spanish for the Spanish-speak
 team. Everything else — chat with the user, halt/failure reports, task labels — stays in
 English.
 
-**Version:** 0.6.1
+**Version:** 0.7.0
 **Dependencies:** `skills`, `python-suite`, `latex-tools` (all auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
