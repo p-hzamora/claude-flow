@@ -86,7 +86,7 @@ Follow these DDD hexagonal architecture principles (subject to override by the s
 
 - Follow the python-syntax skill for all code style decisions.
 - Use type hints extensively.
-- Use modern Python 3.12+ syntax: `[T]` generics, `|` unions.
+- Use modern Python 3.13+ syntax: `[T]` generics, `|` unions.
 - Use `dataclasses` for entities, Pydantic `FrozenObject` for value objects/DTOs/commands.
 - Use Abstract Base Classes (`abc.ABC`, `abc.abstractmethod`) for ports.
 
