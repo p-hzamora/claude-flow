@@ -17,9 +17,10 @@ Repo mode: `repo`, `repo_path` (`repos/<repo>`), and optionally `branch`, `head`
 derive it and the path from the git root and the skill's location rule.
 
 Learning mode (caller says `mode: learning`): `topic` and the approved notes, each with
-slug, body in the user's words, and sources. Follow the skill's "Learning notes"
-section: run its learning-mode check, write the notes under `learning/<topic>/`, update
-that topic's `index.md`, and skip the git and `last_pushed_sha` steps.
+kind, slug, body in the user's words, and sources. Follow the skill's "Learning notes"
+section: run its learning-mode check, write the notes under `learning/<topic>/<kind>/`
+(full-path wikilinks), update that topic's `index.md`, and skip the git and
+`last_pushed_sha` steps.
 
 ## Procedure
 

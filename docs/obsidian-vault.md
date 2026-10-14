@@ -4,7 +4,7 @@ One shared Obsidian vault with a folder per repository (`repos/<repo>/`), reache
 through the Obsidian MCP. Other know-how areas live in their own top-level folders and
 link freely with the repo folders.
 
-**Version:** 0.1.0
+**Version:** 0.1.1
 **Dependencies:** none (the user configures the Obsidian MCP server; it is not bundled)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before

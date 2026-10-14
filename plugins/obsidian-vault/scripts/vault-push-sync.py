@@ -15,6 +15,8 @@ to start Obsidian; otherwise it injects context asking the main thread to delega
 
 import json
 import os
+import re
+import shlex
 import socket
 import subprocess
 import sys
@@ -59,7 +61,45 @@ def obsidian_up() -> bool:
         return False
 
 
+def is_push(payload: dict) -> bool:
+    """True only when the Bash command that ran was actually a git push.
+
+    The hooks.json `if` guard does not reliably hold, so the hook re-checks here;
+    without this it fires on every Bash call made inside an enabled repository.
+    """
+    command = (payload.get("tool_input") or {}).get("command")
+    if not isinstance(command, str):
+        return False
+    # Split on the separators that chain commands, so `cd x && git push` still matches
+    # while `echo "git push"` and `python3 vault-push-sync.py on` do not.
+    # Flags taking a separate value (`git -C <path> push`) mean this has to tokenise
+    # rather than pattern-match: find git's first non-flag token and test it.
+    takes_value = {"-C", "-c", "--git-dir", "--work-tree", "--namespace", "--exec-path"}
+    for part in re.split(r"&&|\|\||\||;|\n", command):
+        try:
+            tokens = shlex.split(part)
+        except ValueError:
+            continue
+        while tokens and tokens[0] == "sudo":
+            tokens.pop(0)
+        if not tokens or Path(tokens[0]).name != "git":
+            continue
+        tokens.pop(0)
+        while tokens:
+            if tokens[0] in takes_value:
+                tokens = tokens[2:]
+            elif tokens[0].startswith("-"):
+                tokens.pop(0)
+            else:
+                break
+        if tokens and tokens[0] == "push":
+            return True
+    return False
+
+
 def hook(payload: dict, reachable=obsidian_up) -> dict | None:
+    if not is_push(payload):
+        return None
     found = repo_of(Path(payload.get("cwd") or "."))
     if not found:
         return None

@@ -27,9 +27,10 @@ of letters, digits, and `-`.
    answers. Build on existing vault notes instead of repeating them.
 4. **Checkpoint when a concept is settled** (the user confirms they understand it or
    says to move on). List the notes you propose, one line each with its path under
-   `learning/<topic>/`, and ask for approval. On approval, delegate to `vault-writer`
-   with `mode: learning`, the `topic`, and for each note its slug, a body in the user's
-   words with the headings Explanation, Example, Pitfalls, Sources, and its sources.
+   `learning/<topic>/<kind>/`, and ask for approval. On approval, delegate to `vault-writer`
+   with `mode: learning`, the `topic`, and for each note its kind, slug, a body in the user's
+   words with the headings Explanation, Example, Pitfalls, Review Checklist, Related,
+   Sources, and its sources.
    Relay the writer's `created|updated` lines. In chat-only mode, show the same notes in
    chat instead.
 5. **Finish.** When the user says the topic is done, offer any unsaved concepts as a last
@@ -49,5 +50,5 @@ of letters, digits, and `-`.
 - [ ] The vault was checked before research, and Obsidian-down was handled as specified.
 - [ ] Every note was approved at a checkpoint before being written.
 - [ ] Every note cites sources and is in the user's distilled words.
-- [ ] `learning/<topic>/index.md` lists every concept note.
+- [ ] `learning/<topic>/index.md` lists every concept note, and each note sits in `learning/<topic>/<kind>/`.
 - [ ] Chat-only mode was entered only after a failed retry or the user's say-so.

@@ -1,6 +1,6 @@
 {
   "name": "obsidian-vault",
-  "version": "0.1.0",
+  "version": "0.1.1",
   "description": "One shared Obsidian vault with a folder per repository: conventions skill, a read-only vault-reader and a vault-writer agent, and an opt-in hook that asks for a vault update after git push.",
   "author": {
     "name": "Pablo Hernandez",

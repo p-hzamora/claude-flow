@@ -96,29 +96,47 @@ File name is `<slug>.md` (letters, digits, `-`). Link notes with the full vault 
 Add or update one line in `repos/<repo>/index.md` for every note created.
 Write `Not recorded` where a heading has no source; never fill gaps.
 
+## Bulk-ingest notes (schema v4)
+
+Repo notes imported in bulk (`architecture`, `dependency`, `context`, `component`, `module`,
+`drift` plus the types above) use a richer schema than the table above: ordered frontmatter
+with sources, line ranges and typed edges, and `id = <repo>--<type>--<slug>`. The gate for
+those is `scripts/validate-notes.py` (`${CLAUDE_PLUGIN_ROOT}/scripts/validate-notes.py`, see its
+docstring for usage). It rejects the lighter `run`-style notes above, so do not run it on
+notes written in repo mode. The import tooling lives in `~/Documents/brain-tools/`.
+
 ## Learning notes
 
 Written by the `learn` skill through `vault-writer`, into `learning/<topic>/`
 (`<topic>` is a slug: letters, digits, `-`). One topic is self-contained so a skill can
-later be generated from it: `index.md` plus one note per concept, `<slug>.md`.
+later be generated from it: `index.md` at the topic root plus one note per concept in a
+kind folder, `learning/<topic>/<kind>/<slug>.md`. `<kind>` is a slug that groups concepts
+(in use: `explanation`, `practice`, `architecture`, `pattern`, `principle`); the folder
+carries the kind, so the file name has no kind prefix. A topic with only a handful of
+notes may stay flat. Because the same slug can exist in two topics, links use full paths.
 
 ```yaml
 ---
 type: learning
 topic: <topic>
-id: learning-<topic>-<slug>
+id: learning-<topic>-<kind>-<slug>
 status: draft | done
 sources: [<url>, ...]
 date: YYYY-MM-DD
 updated: YYYY-MM-DD
-tags: [learning, <topic>]
+tags: [learning, <topic>, <kind>]
 ---
 ```
 
 `index.md` has the same keys (`id: learning-<topic>`), a two-line summary, and one
-`[[learning/<topic>/<slug>|label]]` line per concept. New notes are `draft`; set `done`
-only when the user says the topic is finished. Concept notes use the headings
-Explanation, Example, Pitfalls, Sources.
+`[[learning/<topic>/<kind>/<slug>|label]]` line per concept, grouped by kind. New notes
+are `draft`; set `done` only when the user says the topic is finished. Concept notes use
+the headings Explanation, Example, Pitfalls, Review Checklist, Related, Sources. Checklist
+items carry stable rule IDs (`<PREFIX>-NN`) so a skill can cite them.
+
+Moving a note: `vault_move` can time out and may not rewrite links. When a reorganization
+is explicitly approved, copy to the new path, verify, delete the old file, rewrite links,
+then confirm no note under `learning/` has `unresolvedLinks`.
 
 Admission rule for learning notes: the user's understanding in distilled, own words,
 with every claim traceable to a cited source. Reject raw page copies, long quotes,
