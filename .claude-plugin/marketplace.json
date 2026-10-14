@@ -17,7 +17,7 @@
     {
       "name": "python-suite",
       "description": "Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills, each independently usable. No Jira coupling.",
-      "version": "1.0.1",
+      "version": "1.0.2",
       "source": "./plugins/python-suite",
       "category": "productivity"
     },
@@ -38,8 +38,15 @@
     {
       "name": "obsidian-vault",
       "description": "One shared Obsidian vault with a folder per repository: conventions skill, vault-reader and vault-writer agents, and an opt-in hook that asks for a vault update after git push.",
-      "version": "0.1.0",
+      "version": "0.1.1",
       "source": "./plugins/obsidian-vault",
+      "category": "productivity"
+    },
+    {
+      "name": "playwright-tools",
+      "description": "Playwright Test (TypeScript/JavaScript) agents and skills for frontend end-to-end testing: write, review, and debug specs.",
+      "version": "0.1.0",
+      "source": "./plugins/playwright-tools",
       "category": "productivity"
     }
   ]

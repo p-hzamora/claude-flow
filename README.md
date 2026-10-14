@@ -60,6 +60,15 @@ applicable item before reporting skill-scoped work done.
   on/off for the opt-in `git push` hook that asks for a vault update). No dependencies;
   the Obsidian MCP server is not bundled.
 
+- **playwright-tools** — Playwright Test (TypeScript/JavaScript) tooling for frontend
+  end-to-end testing, self-contained:
+  - Agents: `playwright-test-writer`, `playwright-reviewer` (read-only), `playwright-debugger`
+    (read-only, returns a diff)
+  - Skills: `playwright-testing`, `playwright-config-and-ci`, `playwright-debugging`,
+    `playwright-network-and-auth`
+  - Script: `pw-check.py` (deterministic spec anti-pattern check, run before any review)
+  - No dependencies.
+
 ## Dependency graph
 
 ```

@@ -12,3 +12,4 @@ the dependency graph, and the non-negotiable regexes, see the root [README](../R
 | [latex-tools](./latex-tools.md) | 0.2.1 | — |
 | [jira-dev-workflow](./jira-dev-workflow.md) | 0.7.0 | `skills`, `python-suite`, `latex-tools` |
 | [obsidian-vault](./obsidian-vault.md) | 0.1.0 | — |
+| [playwright-tools](./playwright-tools.md) | 0.1.0 | — |

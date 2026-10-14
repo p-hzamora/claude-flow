@@ -1,0 +1,23 @@
+{
+  "name": "playwright-tools",
+  "version": "0.1.0",
+  "description": "Playwright Test (TypeScript/JavaScript) skills for frontend end-to-end testing: playwright-testing, playwright-config-and-ci, playwright-debugging, and playwright-network-and-auth.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Playwright Tools",
+    "shortDescription": "Write, review, and debug Playwright end-to-end tests.",
+    "longDescription": "Reusable Playwright Test guidance for authoring specs, configuring projects and CI, mocking networks and authentication, and diagnosing flaky tests.",
+    "developerName": "Pablo Hernandez",
+    "category": "Engineering",
+    "capabilities": ["Interactive", "Write"],
+    "defaultPrompt": [
+      "Write a Playwright test for this user flow.",
+      "Review these Playwright specs for flakiness risks.",
+      "Why is this Playwright test failing intermittently?"
+    ]
+  }
+}

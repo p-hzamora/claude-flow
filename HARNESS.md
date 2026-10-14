@@ -15,6 +15,9 @@ Load it from a consuming project or your user `CLAUDE.md` with an import such as
 | Ticket end to end | `jira-dev-workflow` |
 | Where is X, what calls Y | graphify, or Grep/Glob/Read directly |
 | Review a diff or branch | `ddd-reviewer`, `fastapi-reviewer`, `jira-tech-lead-reviewer` |
+| Write or extend Playwright end-to-end specs | `playwright-test-writer` |
+| Review Playwright specs or a test diff | `playwright-reviewer` |
+| Playwright test fails or is flaky | `playwright-debugger`, then `playwright-test-writer` applies the fix |
 | Edit inside one already-designed aggregate, or a 1-2 file change | direct, no orchestrator |
 
 Do not route questions, exploration, or small edits through the orchestrator: its
