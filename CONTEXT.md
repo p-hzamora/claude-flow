@@ -63,6 +63,15 @@ _Avoid_: a mapper method named `from_x` anywhere in this taxonomy — the conven
 `to_[destination]` (`to_orm`, `to_entity`, `to_dto`, `to_schema`) on `{Entity}Mapper` /
 `{Entity}ReadMapper` / `{Entity}Assembler` / `{Entity}ApiMapper` respectively.
 
+**Module** / **Integration contract**:
+Terms of the modular monolith profile in `clean-ddd-hexagonal-python`
+(`references/modular-monolith/`, [ADR-0003](./docs/adr/0003-modular-monolith-module-boundary.md)):
+- Module — `modules/<module>/`, the extraction unit (one future microservice), holding
+  one or more bounded contexts. Not a **Plugin**.
+- Integration contract — publisher-owned, versioned event in `modules/<module>/contracts/`
+  that other modules may import; the only permitted cross-module import.
+_Avoid_: using "module" for a Python file or a bounded context.
+
 ## Relationships
 
 - A **Plugin** holds many Claude Code **Agents**, many **Skills** shared by Claude

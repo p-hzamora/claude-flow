@@ -44,6 +44,15 @@ an opinionated context-first layout and the decisions behind it. Apply that layo
 when the project has adopted it; do not infer a project name or package root from an
 illustrative tree.
 
+## Modular Monolith Profile
+
+When one deployable holds several independent business areas that may later split into
+services, read [the modular monolith overview](references/modular-monolith/overview.md)
+and use [its topology](references/modular-monolith/project-topology.md) instead of the
+structural profile above; the inner layout of each context is shared. A single service,
+or services already separate, use the structural profile. Modules communicate only
+through integration events; the module boundary is the microservice boundary.
+
 Use `python-syntax` alongside this skill for Python syntax, typing, imports, and naming
 outside the architectural `Adapter` rule.
 
@@ -57,6 +66,9 @@ Read only the reference relevant to the decision at hand.
 | Context boundaries and cross-context integration | [Bounded contexts](references/ddd/bounded-contexts/overview.md), [shared kernel](references/ddd/bounded-contexts/shared-kernel.md), [context mapping](references/ddd/context-mapping.md) |
 | Entities, value objects, aggregates, repositories, services, factories, or UoW | [Tactical patterns](references/ddd/tactical-patterns.md) |
 | Command/query separation, outbox, projections, sagas, or idempotency | [CQRS events](references/cqrs/events.md), [CQRS implementation](references/cqrs/implementation.md) |
+| Modular monolith: modules, contracts, bootstrap, import rules | [Overview](references/modular-monolith/overview.md), [topology](references/modular-monolith/project-topology.md) |
+| Event-driven module communication, bus ports, ACL consumers, delivery guarantees | [Module communication](references/modular-monolith/module-communication.md) |
+| Splitting a module into a microservice | [Extraction playbook](references/modular-monolith/extraction-playbook.md) |
 | Layer responsibility or dependency direction | [Layers](references/architecture/layers.md), [Hexagonal architecture](references/architecture/hexagonal.md) |
 | Specifications, errors, or tests | [Specifications](references/patterns/specification.md), [errors](references/error-handling/errors.md), [testing](references/testing/strategy.md) |
 | Fast design check | [Cheatsheet](references/cheatsheet.md) |
@@ -68,4 +80,5 @@ Read only the reference relevant to the decision at hand.
 - [ ] Context-owned models remain local; cross-context integration uses IDs, contracts, events, or an ACL.
 - [ ] Handlers, ports, repositories, application services, and adapters have their correct ownership and direction.
 - [ ] Concrete infrastructure implementations use the `Adapter` suffix.
+- [ ] In a modular monolith, modules import only another module's `contracts/`, communicate by events, and own their data.
 - [ ] The relevant routed reference was consulted for each non-trivial architecture decision.

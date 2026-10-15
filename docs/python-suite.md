@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 1.0.2
+**Version:** 1.1.0
 **Dependencies:** `skills` (auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -38,7 +38,7 @@ definitions carry the same unique routing phrases.
 
 | Skill | Path |
 |---|---|
-| `clean-ddd-hexagonal-python` | `skills/clean-ddd-hexagonal-python/SKILL.md` — tactical DDD, CQRS, ports/adapters, and context-first topology guidance; delegates Python language and style rules to `python-syntax`. |
+| `clean-ddd-hexagonal-python` | `skills/clean-ddd-hexagonal-python/SKILL.md` — tactical DDD, CQRS, ports/adapters, context-first topology, and a decomposable modular-monolith profile (modules, integration events, extraction playbook); delegates Python language and style rules to `python-syntax`. |
 | `fastapi-async-patterns` | `skills/fastapi-async-patterns/SKILL.md` |
 | `pytest-coverage` | `skills/pytest-coverage/SKILL.md` |
 | `pytest` | `skills/pytest/SKILL.md` |
