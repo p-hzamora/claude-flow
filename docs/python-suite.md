@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 1.1.0
+**Version:** 1.1.6
 **Dependencies:** `skills` (auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -38,8 +38,8 @@ definitions carry the same unique routing phrases.
 
 | Skill | Path |
 |---|---|
-| `clean-ddd-hexagonal-python` | `skills/clean-ddd-hexagonal-python/SKILL.md` — tactical DDD, CQRS, ports/adapters, context-first topology, and a decomposable modular-monolith profile (modules, integration events, extraction playbook); delegates Python language and style rules to `python-syntax`. |
-| `fastapi-async-patterns` | `skills/fastapi-async-patterns/SKILL.md` |
+| `clean-ddd-hexagonal-python` | `skills/clean-ddd-hexagonal-python/SKILL.md` — tactical DDD, CQRS, ports/adapters, context-first topology, shared Python settings policy, API bootstrap naming, application-owned security DTOs and ports, an observability skeleton, and a decomposable modular-monolith profile (module-owned interfaces, exceptions, migrations, integration events, extraction playbook); delegates Python language and style rules to `python-syntax`. |
+| `fastapi-async-patterns` | `skills/fastapi-async-patterns/SKILL.md` — async resource lifecycle and typed FastAPI state, application, and request conventions. |
 | `pytest-coverage` | `skills/pytest-coverage/SKILL.md` |
 | `pytest` | `skills/pytest/SKILL.md` |
 | `python-syntax` | `skills/python-syntax/SKILL.md` — single source of truth for Python language, typing, import, naming, and documentation conventions. |

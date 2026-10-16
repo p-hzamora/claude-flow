@@ -14,7 +14,17 @@ exception is raised.
 
 ## 1. Exception Hierarchy
 
-All custom exceptions inherit from `AppException` (`app/exceptions/base.py`):
+For projects using this exception system, shared bases live in `app/exceptions/base.py`.
+In a modular monolith, module-specific custom errors belong in
+`modules/<module>/exceptions/`, separated by layer and context as needed. See the
+[modular topology](../modular-monolith/project-topology.md#placement-rules). Keep pure
+domain failures free of application/HTTP dependencies and translate them at the
+application edge; do not import application error modules through an exceptions
+package initializer used by domain code. Global exceptions contain only shared bases
+and service-wide failures. Custom HTTP mappings remain in the owning module's
+`interfaces/api/exceptions/` and are registered through its public bootstrap.
+
+Errors using the shared application exception hierarchy inherit from `AppException`:
 
 ```
 AppException (root)                        __http_error__ = 500 (root default)
@@ -146,7 +156,11 @@ Reach for (B) only when duplication is real — copy-pasting the same sentence i
 
 ### Step 2 — Write the exception class
 
-In `app/exceptions/<context>_errors.py`:
+In a modular monolith, use
+`app/modules/<module>/exceptions/<context>/<layer>.py` (for example,
+`application.py` or `infrastructure.py`). In a single-service project, use its
+established `app/exceptions/<context>_errors.py` layout. Global exceptions in the
+modular profile hold only shared bases and service-wide failures:
 
 ```python
 class ClientNotFoundError(InfrastructureException):
@@ -321,8 +335,13 @@ async def handle_unexpected_error(request: Request, exc: Exception) -> JSONRespo
 ## 6. File Checklist When Adding a New Error
 
 ```
-app/exceptions/<context>_errors.py   ← exception class(es), message inline (§2A)
-                                        or module message constants if reused (§2B)
+# Modular monolith: module-owned errors
+app/modules/<module>/exceptions/<context>/<layer>.py
+
+# Single service, or shared bases/service-wide failures in the modular host
+app/exceptions/<context>_errors.py
+
+# In either case: message inline (§2A), or module message constants if reused (§2B)
 ```
 
 One file, not two — there is no separate i18n/message-catalog file to keep in sync. Then

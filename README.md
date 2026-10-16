@@ -35,7 +35,7 @@ applicable item before reporting skill-scoped work done.
   - Agents: `sdd-python-orchestrator`, `ddd-architect`, `ddd-auditor`, `ddd-scaffolder`, `ddd-reviewer`, `ddd-implementer`,
     `fastapi-endpoint-builder`, `fastapi-reviewer`,
     `orm-model-inspector`, `ruff-linter`, `sqlalchemy-expert-fixer`, `test-writer`
-  - Skills: `clean-ddd-hexagonal-python` (including bounded-context-first DDD/CQRS and ports/adapters topology guidance), `fastapi-async-patterns`, `sqlalchemy-orm`,
+  - Skills: `clean-ddd-hexagonal-python` (including bounded-context-first DDD/CQRS, ports/adapters topology, shared Python settings policy, API bootstrap naming, application-owned security DTOs and ports, module-owned interfaces, exceptions, and migrations, and an observability skeleton), `fastapi-async-patterns` (including typed application state and request access), `sqlalchemy-orm`,
     `python-syntax` (the single source of truth for Python language and style rules), `pytest`, `pytest-coverage`
   - No Jira coupling. Depends on `skills` (for `sdd-workflow` plus the general ones).
 - **jira-dev-workflow** — `jira-dev-workflow` + `jira-git-committer` +

@@ -20,7 +20,10 @@ fix belongs in the monolith.
 1. **Cut the folder.** Move `modules/<module>/` into a new repository, with the parts of
    `core/` and `shared_kernel/` it uses. The new service adopts the
    [single-service topology](../architecture/project-topology.md): the module's
-   `bounded_context/` folders become its contexts.
+   `bounded_context/` folders become its contexts. Move its existing `interfaces/`,
+   `exceptions/`, and `migrations/` with them; do not reconstruct these from global
+   host folders. Reconnect module migration metadata and revision locations to the
+   new service's Alembic runner without changing the revision graph.
 2. **Resolve the contracts it consumes.** Publish each upstream `contracts/` package as
    a versioned package, or vendor a copy, and add a contract test against the JSON
    schema. After extraction, a copied schema is acceptable because transport is now
@@ -47,7 +50,9 @@ fix belongs in the monolith.
 6. **Sever the monolith.** Remove `init_<module>_module(...)` from the monolith's API
    composition and delete the module folder. Other modules keep consuming through the
    broker, whose published contracts did not change.
-7. **Expose any HTTP API** the service needs through its own `interfaces/api`.
+7. **Mount its existing HTTP API** through the module's registration entry point in
+   the new host; preserve paths, schemas, error responses, and auth behavior. Add new
+   endpoints only when extraction requirements call for them.
 
 ## What Should Not Be Needed
 
@@ -60,3 +65,4 @@ rule was broken inside the monolith; fix the rule violation first and record it.
 - [ ] Only the bus adapter, serialization, and composition changed; handlers and domain are untouched.
 - [ ] Consumed contracts are versioned and covered by a contract test.
 - [ ] The monolith no longer references the extracted module.
+- [ ] Module-owned HTTP adapters, errors, and revisions moved with the module; API compatibility and existing migration stamps were preserved.

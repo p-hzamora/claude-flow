@@ -19,17 +19,40 @@ for integration.
 definitions in `core/configurations/` and environment parsing in `core/env.py`. It
 does not import FastAPI or infrastructure packages.
 
-When FastAPI is the selected delivery adapter, all FastAPI-dependent code is in
-`interfaces/api/`. Its bootstrap owns the web application: `composition.py` accepts
+When FastAPI is the selected delivery adapter, HTTP delivery code lives in
+`interfaces/api/`. Its bootstrap owns the web application: `bootstrap.py` accepts
 and mutates the `FastAPI` instance while wiring process-scoped resources, and
-`registry.py` manages their startup/shutdown lifecycle.
+`registry.py` manages their startup/shutdown lifecycle. In the
+[modular monolith profile](../modular-monolith/project-topology.md), each module owns
+its custom delivery adapters under `modules/<module>/interfaces/`; global API
+bootstrap mounts them through public module entry points.
+
+For typed application state and request access, follow the
+[FastAPI application types convention](../../../fastapi-async-patterns/SKILL.md#typed-application-state-and-request-access).
 
 `shared_kernel/` is exclusively for deliberately shared cross-context technical
 capabilities: for example, transactional-outbox support, security-token validation,
 and generic connection lifecycle hooks. Keep shared driven contracts in
 `shared_kernel/application/ports/` and their implementations in
-`shared_kernel/infrastructure/`. Domain primitives such as a shared `UserIdentity`
-may live there when their ownership and stability are explicit.
+`shared_kernel/infrastructure/`. Application-owned authentication context, token metadata, permissions, and user
+profile DTOs belong in `shared_kernel/application/security/dtos/`; token-validator ports stay
+in `shared_kernel/application/ports/security/`, with concrete validators in
+`shared_kernel/infrastructure/security/`. These are application security contracts,
+not domain models or value objects. Define these DTOs in the application using its
+DTO base; do not re-export user/security models from
+`ddd_contracts.core.security.value_objects`. Own the token-validator port locally so
+its return type references the application DTO. Map external identity-provider results
+to these DTOs inside infrastructure adapters. Preserve the application's actual claims
+and authorization behavior rather than copying another service's permissions.
+A genuine domain identity primitive may remain in
+`shared_kernel/domain/` when its business meaning and ownership are explicit; domain
+code must not import application security contracts.
+
+Process-wide telemetry configuration belongs in the outer
+`shared_kernel/infrastructure/telemetry/` wrapper; `main.py` only gates and invokes it.
+That wrapper may depend on the delivery framework for instrumentation. Follow the
+[observability skeleton](../observability/skeleton.md) for ownership, settings mapping,
+and lifecycle verification.
 
 ## Layout
 
@@ -41,13 +64,15 @@ src/
 │   └── env.py
 ├── interfaces/api/                 # only when FastAPI is used
 │   ├── bootstrap/
-│   │   ├── composition.py
+│   │   ├── bootstrap.py
 │   │   └── registry.py
 │   ├── middleware/
 │   └── routers/
 ├── shared_kernel/
-│   ├── domain/security/value_objects/
-│   ├── application/ports/
+│   ├── domain/                     # genuine shared domain primitives only
+│   ├── application/
+│   │   ├── security/dtos/
+│   │   └── ports/
 │   └── infrastructure/
 │       ├── resilience/
 │       └── resources/
@@ -77,6 +102,31 @@ src/
 
 Create a package only when it has a present, cohesive responsibility; the layout does
 not authorize empty folders.
+
+## Shared Python Settings Policy
+
+When a Python application uses Pydantic Settings and several settings classes share
+one environment-loading and validation policy, define that policy once in a narrowly
+scoped `AppBaseSettings(BaseSettings)` class. Its `model_config = SettingsConfigDict(...)`
+owns the shared options, such as `env_file`, `env_file_encoding`, `extra`,
+`hide_input_in_errors`, and field-name population. Concern-specific settings inherit
+that base and retain their own fields, aliases, defaults, and validators.
+
+Use the project's existing configuration package; for example, an adopted
+`core/settings/` package can own `base_settings.py`. This is an application-wide
+technical policy, not a domain abstraction or a reason to move settings into
+`shared_kernel/`. Pydantic Settings is appropriate at this configuration boundary
+when adopted by the project; keep it out of the domain and keep settings free of
+FastAPI dependencies and service connections.
+
+Before extracting the base, compare every class's configuration. Preserve intentional
+subclass overrides and explicitly account for behavior changes such as enabling
+`hide_input_in_errors` where it was previously absent. Verify inherited configuration,
+dotenv loading, aliases and construction by field name, and validation-error rendering.
+Do not force identical policy onto independently configured components or introduce
+base classes solely because unrelated domain models look similar. The preference for
+small duplication between independent bounded contexts does not justify repeating a
+single application-owned settings policy.
 
 ## Ports and Implementations
 
@@ -122,3 +172,6 @@ versus another):
 - [ ] Handlers are inbound actions; outbound, write, and read contracts have their prescribed ownership.
 - [ ] Infrastructure direction is hybrid where necessary, with no redundant adapters nesting.
 - [ ] Every changed concrete infrastructure class has the `Adapter` suffix.
+- [ ] Shared Python settings policies have one owner; repeated configuration, intentional overrides, and inherited behavior have been reviewed when applicable.
+- [ ] API startup composition lives in `interfaces/api/bootstrap/bootstrap.py`; typed FastAPI state follows the linked application types convention when used.
+- [ ] Authentication context, token metadata, permissions, and profiles are application-owned DTOs in `shared_kernel/application/security/dtos/`, not domain value objects or external security-model re-exports; the validator port returns the local DTO.

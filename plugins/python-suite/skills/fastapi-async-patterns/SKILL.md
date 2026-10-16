@@ -1,12 +1,36 @@
 ---
 name: fastapi-async-patterns
-description: Use when FastAPI async patterns for building high-performance APIs. Use when handling concurrent requests and async operations.
+description: Use when FastAPI async patterns for building high-performance APIs. Use when handling concurrent requests, async operations, or typed FastAPI application state and request access.
 ---
 
 # FastAPI Async Patterns
 
 Master async patterns in FastAPI for building high-performance,
 concurrent APIs with optimal resource usage.
+
+## Typed Application State and Request Access
+
+When application resources are stored on `app.state`, define the project's typed
+API boundary in `interfaces/api/mixin.py`: `MixinState(State)`,
+`MixinFastAPI(FastAPI)` with `state: MixinState`, and `MixinRequest(Request)` with
+`app: MixinFastAPI`. These are typed subclasses; they need not contain reusable
+behavior. Preserve equivalent established project types instead of creating a
+second set.
+
+Declare only resources the application actually owns, using precise types and
+abstract contracts where available. Use these types consistently in the app factory,
+lifespan, API bootstrap, and request dependencies that access those resources.
+Instantiate the application subclass in the factory. A request annotation alone does
+not make the framework instantiate a custom request class; keep `MixinRequest` a
+compatible typing view unless the project explicitly installs a custom request factory.
+
+Type annotations do not initialize state. Bootstrap must assign every required
+resource before requests can use it and release resources during shutdown. Model
+optional resources explicitly and handle their absence. Verify startup assignments,
+request access, and cleanup through a relevant lifecycle or integration check.
+Keep these FastAPI/Starlette-dependent types within the API boundary; domain and
+application contracts must not depend on them. This convention supplies typed state,
+not a reason to introduce unrelated mixin hierarchies.
 
 ## Basic Async Route Handlers
 
@@ -792,3 +816,4 @@ Use fastapi-async-patterns when:
 - [ ] Concurrent work has a bounded lifetime, cancellation behavior, and error handling appropriate to the request.
 - [ ] Async clients, sessions, streams, and background resources are closed through their intended lifecycle.
 - [ ] The chosen async pattern is covered by a meaningful async test or an equivalent observable verification.
+- [ ] Where application resources use `app.state`, API state/application/request types are consistent, startup initializes required attributes, and optional resources and cleanup are explicit.

@@ -15,14 +15,26 @@ src/
 ├── core/                              # as in the single-service topology
 ├── interfaces/api/                    # only when FastAPI is used
 │   └── bootstrap/
-│       ├── composition.py             # calls init_<module>_module(...) per module
-│       └── registry.py
+│       ├── bootstrap.py             # calls public module bootstrap/API registration
+│       └── registry.py              # shared lifecycle runner
 ├── shared_kernel/                     # technical capabilities only
 │   ├── application/ports/             # IEventPublisher, IEventSubscriber
 │   └── infrastructure/                # InMemoryEventBusAdapter
 └── modules/
     └── <module>/
-        ├── bootstrap.py               # init_<module>_module(...)
+        ├── bootstrap.py               # public startup and HTTP registration entry points
+        ├── exceptions/                # module-only errors, separated by layer/context
+        │   └── <context>/
+        │       ├── domain.py          # pure domain failures
+        │       └── application.py     # safe use-case errors
+        ├── interfaces/api/            # module-owned delivery adapters
+        │   ├── exceptions/            # custom HTTP mappings, when needed
+        │   └── v1/
+        │       ├── routers/
+        │       ├── schemas/
+        │       └── dependencies/
+        ├── migrations/                # module-owned revisions and metadata contribution
+        │   └── <context>/versions/    # optional subdivision for independent branches
         ├── contracts/                 # public integration events, nothing else
         │   └── <event>_event.py
         └── bounded_context/<context_name>/
@@ -45,7 +57,10 @@ src/
 
 Inside `bounded_context/<context_name>/`, `domain/`, `application/`, and
 `infrastructure/` follow the single-service topology exactly; abbreviated here. Create
-a package only when it has a present, cohesive responsibility.
+a package only when it has a present, cohesive responsibility. A module is a small
+DDD application: its exceptions, delivery adapters, and migration history travel with
+its bounded contexts when it is extracted. The host supplies process-wide facilities;
+it does not own every module's customizations.
 
 ## Placement Rules
 
@@ -56,8 +71,12 @@ a package only when it has a present, cohesive responsibility.
   contracts and are not importable from another module.
 - **`modules/<module>/bootstrap.py`** exposes `init_<module>_module(...)`. It receives
   the ports it needs (publisher, subscriber, session factory), builds its handlers,
-  and registers its subscriptions. `interfaces/api/bootstrap` calls it and sees nothing
-  deeper.
+  and registers its subscriptions. It also exposes module API registration when HTTP
+  is used; that function mounts the module's router and any custom exception mappings.
+  `interfaces/api/bootstrap/bootstrap.py` calls these public entry points and does not
+  import module handlers, routers, schemas, or repositories directly. Resource-based
+  asynchronous startup is also valid when the module needs managed lifecycle work;
+  the host registers the module's public resource rather than its individual adapters.
 - **`handlers/events/`** holds the consumer of another module's event. The consumer is
   the ACL: it maps the contract to a local command and dispatches it. See
   [module communication](module-communication.md#consumer-as-acl).
@@ -65,6 +84,28 @@ a package only when it has a present, cohesive responsibility.
   explicit ownership. The event bus ports and the in-memory adapter live here;
   see [shared kernel](../ddd/bounded-contexts/shared-kernel.md). It never holds a
   module's aggregates, events, or business rules.
+- **`modules/<module>/interfaces/`** owns the module's delivery adapters, including
+  routers, request/response schemas, dependency factories, and custom HTTP error
+  mappings. Inner layers never import them. Global `interfaces/api/` owns the host
+  application, middleware, shared authentication dependencies, health endpoints, shared
+  error formatting, and module mounting. Importing public module bootstrap entry
+  points from the host is a composition exception to cross-module isolation; modules
+  must not use that exception to import another module's bootstrap or interfaces.
+- **`modules/<module>/exceptions/`** owns module-specific custom errors. Separate
+  domain failures from application and infrastructure errors, grouping by context when
+  a module has several. Keep package initializers free of imports that pull outer-layer
+  errors into the domain. Domain code may import only the pure domain subset. Global
+  `exceptions/` keeps shared bases and genuinely service-wide errors; do not accumulate
+  module business errors there or re-export them through a global registry.
+- **`modules/<module>/migrations/`** owns the module's revision history and metadata
+  contribution, optionally grouped by context when independent branches already exist.
+  Keep the shared Alembic runner, environment, and revision template in global
+  `migrations/`; configure its `version_locations` to the module revision directories.
+  The runner consumes metadata through module migration entry points instead of
+  importing individual ORM models. Relocating revisions must preserve revision IDs,
+  parent IDs, branch labels, and upgrade/downgrade behavior, including databases already
+  stamped with those revisions. Do not create migration folders for modules without
+  persisted data.
 - **Persistence** is per module: its own tables or schema, its own migrations, its own
   ORM models. No ORM relationship or foreign key crosses a module.
 
@@ -98,23 +139,42 @@ def init_billing_module(
 ```
 
 ```python
-# interfaces/api/bootstrap/composition.py
+# interfaces/api/bootstrap/bootstrap.py
 def compose(app: FastAPI, session_factory: async_sessionmaker[AsyncSession]) -> None:
     bus = InMemoryEventBusAdapter()
     init_ordering_module(publisher=bus, session_factory=session_factory)
     init_billing_module(subscriber=bus, session_factory=session_factory)
 ```
 
-The composition knows two function names and one bus; it knows no handler or event.
+The composition knows public module entry points and the bus; it knows no handler or
+event. For HTTP, the module also owns its registration function:
+
+```python
+# modules/billing/bootstrap.py
+from fastapi import FastAPI
+
+
+def register_billing_api(app: FastAPI, *, prefix: str = "/api/v1") -> None:
+    from .interfaces.api.v1.routers import router
+
+    app.include_router(router, prefix=prefix)
+```
+
+The host calls `register_billing_api(app)` from its API bootstrap. Shared auth dependencies
+and error response schemas may be reused from the host API boundary; business schemas,
+dependency factories, and routes stay in the module. Keep registration free of service
+connections so constructing the app and its OpenAPI document does not start resources.
 
 ## Import Rules
 
 | From | May import | May not import |
 | --- | --- | --- |
-| `domain` | itself, `shared_kernel/domain` | `application`, `infrastructure`, any other module |
-| `application` | its context's `domain`, `shared_kernel` ports | `infrastructure`, any other module except `contracts/` |
+| `domain` | itself, `shared_kernel/domain`, its module's pure domain exceptions | application exceptions, `application`, `infrastructure`, all interfaces, any other module |
+| `application` | its context's `domain`, its module's domain/application exceptions, `shared_kernel` ports | `infrastructure`, all interfaces, any other module except `contracts/` |
 | `infrastructure` | its context's `domain` and `application`, `shared_kernel` | any other module |
 | `modules.A` anything | `modules.B.contracts` | `modules.B` anything else |
+| Host API bootstrap | public `modules.<module>.bootstrap` entry points | module handlers, business schemas, routers, repositories |
+| Global migration runner | `modules.<module>.migrations` metadata entry points | individual module ORM model packages |
 
 Contexts inside one module may use each other's application contracts directly. If that
 coupling stops being acceptable, split the module.
@@ -154,10 +214,14 @@ does not change `scripts/ddd-check.py`.
 
 ## Review Checklist
 
-- [ ] Every module has `bootstrap.py`, and the API bootstrap calls only `init_<module>_module(...)`.
+- [ ] Each module owns startup and API registration entry points in `bootstrap.py`; host API composition imports no module internals.
 - [ ] `contracts/` contains only integration events and imports nothing from its module's contexts.
 - [ ] Command, query, and DTO classes live in their handler's file, not in `contracts/`.
 - [ ] The only cross-module import is `modules.<other>.contracts`.
 - [ ] Each module owns its persistence; nothing relates tables across modules.
 - [ ] `shared_kernel/` holds only technical capabilities, never module business objects.
 - [ ] The inner layout of each context matches the single-service topology.
+- [ ] Module routes, schemas, dependency factories, and custom HTTP mappings live under that module's `interfaces/`; global interfaces contain only host concerns.
+- [ ] Module-specific errors live in its `exceptions/`, with a pure domain subset and no outer-layer imports through package initializers.
+- [ ] Revisions live under `modules/<module>/migrations/`; the global runner uses module metadata entry points and configured version locations.
+- [ ] Moves preserve the HTTP/OpenAPI contract, error behavior, and migration graph; architecture checks scan module interfaces and exceptions rather than stale global paths.

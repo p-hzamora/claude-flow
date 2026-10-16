@@ -16,7 +16,8 @@ not a replacement: tactical DDD, CQRS, and hexagonal layering stay exactly as de
 ## Vocabulary
 
 - **Module**: the extraction unit. One `modules/<module>/` folder is one future
-  microservice. It holds one or more bounded contexts.
+  microservice. It owns one or more bounded contexts together with its exceptions,
+  interfaces, migrations, and bootstrap customizations.
 - **Bounded context**: the model boundary defined in
   [bounded contexts](../ddd/bounded-contexts/overview.md). Inside one module, contexts
   may call each other through application contracts.
@@ -45,8 +46,10 @@ modules run in different processes.
    events.
 6. **Data ownership.** Each module owns its tables or schema. No cross-module foreign
    key, join, or ORM relationship.
-7. **Composition at the edge.** The API bootstrap calls one `init_<module>_module(...)`
-   per module and knows nothing about individual handlers or subscriptions.
+7. **Composition at the edge.** The host API bootstrap calls public startup and API
+   registration entry points in each module's `bootstrap.py`. Each module owns its
+   delivery adapters, exceptions, and migrations; the host knows nothing about
+   individual handlers, business schemas, or subscriptions.
 
 CQRS command, query, and DTO classes stay in their handler's file. `contracts/` is for
 events only.
@@ -65,3 +68,4 @@ events only.
 - [ ] Every module boundary is a plausible service boundary.
 - [ ] No module imports another module except its `contracts/`.
 - [ ] No cross-module synchronous call, foreign key, join, or shared aggregate exists.
+- [ ] Each module owns its interfaces, custom errors, and migration history; the host only provides shared facilities and invokes public composition entry points.
