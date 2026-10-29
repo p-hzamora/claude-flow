@@ -62,6 +62,13 @@
       "version": "0.1.0",
       "source": "./plugins/typescript-suite",
       "category": "productivity"
+    },
+    {
+      "name": "omarchy-tools",
+      "description": "Hyprland on Omarchy: live inspection, binding conflict checks, and config validation. Depends on nothing; works best next to the built-in omarchy skill.",
+      "version": "0.1.0",
+      "source": "./plugins/omarchy-tools",
+      "category": "productivity"
     }
   ]
 }

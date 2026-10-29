@@ -1,0 +1,23 @@
+{
+  "name": "omarchy-tools",
+  "version": "0.1.0",
+  "description": "Skills and helper scripts for working with Hyprland on Omarchy: live inspection, binding conflict checks, and config validation.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "Omarchy Tools",
+    "shortDescription": "Inspect and validate Hyprland changes on Omarchy.",
+    "longDescription": "Guidance and a read-only helper for changing Hyprland on Omarchy safely: find who owns a key binding, read window classes for rules, check monitor layout, and validate every change with a reload plus configerrors.",
+    "developerName": "Pablo Hernandez",
+    "category": "Productivity",
+    "capabilities": ["Interactive"],
+    "defaultPrompt": [
+      "Check whether SUPER SHIFT B is already bound before I add a binding.",
+      "Show my monitor layout and help me change it.",
+      "Find the window class I need for a Hyprland window rule."
+    ]
+  }
+}

@@ -82,6 +82,11 @@ applicable item before reporting skill-scoped work done.
   language rules; `typescript-practices` remains a compatibility entry point only.
   Both plugins ship local references without external URLs.
   See [frontend-tools](docs/frontend-tools.md).
+- **omarchy-tools** — Hyprland on Omarchy: the `hyprland-workflow` skill and the
+  read-only `hypr-inspect.sh` helper (who owns a key binding, focused window class for
+  rules, monitor layout, reload plus `configerrors` check). Complements the built-in
+  `omarchy` skill. No dependencies; install only on Omarchy machines.
+  See [omarchy-tools](docs/omarchy-tools.md).
 
 ## Dependency graph
 
