@@ -42,6 +42,31 @@ by `vault-writer` in learning mode, after the user approves each checkpoint.
 `repos/<repo>/` inside the Vault (`<repo>` is the repository's directory name): the durable
 context of exactly one repository, written only by `vault-writer`.
 
+**Personal skill**:
+A `SKILL.md` kept outside every Plugin, in `~/.dotfiles/.agents/skills/<name>/` and linked
+into `~/.agents/skills/` by GNU Stow. It carries details private to one machine or
+person (paths, monitor layout, the `~/.zshenv.local` secrets file), so it never ships in
+the marketplace and never reaches other accounts. Synced across laptops by the dotfiles
+repo, not by `/plugin update`.
+_Avoid_: mirroring a Plugin skill under the same name — a Personal skill that points at
+a Plugin skill refers to it by name instead.
+
+**Skill home**:
+Where a Skill lives, chosen by who should receive it:
+
+| Skill is… | Home | Reaches |
+|---|---|---|
+| Useful on any laptop or account, not tied to a stack | the `skills` Plugin | everything that installs the marketplace |
+| Useful on one kind of machine, nothing private in it | a dedicated Plugin (e.g. `omarchy-tools`) | machines that install that Plugin |
+| Contains private setup details | **Personal skill** (dotfiles) | your own laptops only |
+
+Knowledge that changes (machine state, settings, gotchas) lives in the **Vault**; a Skill
+holds the stable procedure and points at the Vault note path instead of copying it. A
+Skill reads the Vault through the `vault-reader` Agent and must fail soft when Obsidian
+is not running. Deterministic chores (e.g. appending a zsh alias) belong in a **Script**,
+with at most a few lines of Skill text saying when to run it.
+_Avoid_: a fourth home, or one folder holding every skill regardless of audience.
+
 **Entity** / **Value Object** / **Aggregate** / **Port** / **Handler**:
 DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal-python` skill (`plugins/python-suite/skills/`) — this file only anchors the names:
 - Entity — domain object with identity tracked across time.
