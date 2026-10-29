@@ -1,0 +1,26 @@
+{
+  "name": "typescript-suite",
+  "version": "0.1.0",
+  "description": "Framework-independent TypeScript skills and agents: mandatory syntax conventions, clean code and SOLID, unit/contract/type testing, implementation, and read-only review.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "skills": "./skills/",
+  "interface": {
+    "displayName": "TypeScript Suite",
+    "shortDescription": "Strict TypeScript conventions, design, testing, and review.",
+    "longDescription": "Framework-independent TypeScript skills and agents: mandatory syntax conventions, clean code and SOLID, unit/contract/type testing, implementation, and read-only review.",
+    "developerName": "Pablo Hernandez",
+    "category": "Engineering",
+    "capabilities": [
+      "Interactive",
+      "Write"
+    ],
+    "defaultPrompt": [
+      "Implement this TypeScript behavior using our conventions.",
+      "Review this TypeScript module.",
+      "Test this TypeScript contract."
+    ]
+  }
+}
