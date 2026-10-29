@@ -24,7 +24,9 @@ applicable item before reporting skill-scoped work done.
   and words can't; pairs with `handoff` to carry the decision back),
   `scaffold-catalog` plus the `template-scaffolder` agent (authors a template catalog's
   `config.yaml` and drives its `scaffold` CLI: sandbox comparisons first, final render
-  only after the output path is authorized; any language or pattern).
+  only after the output path is authorized; any language or pattern), `zsh-shell`
+  (portable zsh aliases, functions, and secrets placement for macOS, Linux, and WSL;
+  the `zsh-alias.sh` helper adds, removes, and lists aliases deterministically).
 - **latex-tools** — document-agnostic LaTeX tooling: the `latex-expertise` skill
   preserves existing document design systems while editing, reviewing, diagnosing, and
   transforming approved structured Markdown into source; `markdown-to-latex-author`

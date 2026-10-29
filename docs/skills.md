@@ -2,7 +2,7 @@
 
 Cross-cutting, language-agnostic skills reused across the other plugins in this marketplace.
 
-**Version:** 2.0.0
+**Version:** 2.1.0
 **Dependencies:** none
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -74,6 +74,7 @@ that path is the only directory where the requesting agent performs the task's w
 | `sdd-workflow` | `skills/sdd-workflow/SKILL.md` — stack-agnostic SDD orchestration methodology with planning-ID-bound worktree isolation, auditable records, and uniform, traceable specification templates; any stack orchestrator (e.g. `sdd-python-orchestrator`) invokes this first, then layers its own stack context on top |
 | `handoff` | `skills/handoff/SKILL.md` — compacts the conversation into a portable handoff markdown file (written to the OS temp dir) for a fresh agent, colleague, or forked side task to pick up; user-invoked only (`/handoff`), never model-triggered |
 | `prototype` | `skills/prototype/SKILL.md` — builds a throwaway prototype (UI variations behind a toggle, or a terminal REPL for a state machine) in its own directory to settle a design question code can answer and words can't; pairs with `handoff` to carry the settled decision back to the originating session |
+| `zsh-shell` | `skills/zsh-shell/SKILL.md` — portable zsh customisation for macOS, Linux, and WSL: where aliases, setup, and secrets live, alias-versus-function rules, OS guards; adds, removes, and lists aliases through the `zsh-alias.sh` helper script instead of hand edits |
 | `scaffold-catalog` | `skills/scaffold-catalog/SKILL.md` — procedure for authoring a catalog `config.yaml` from the template's schema and driving the `scaffold` CLI: sandbox compare/verify renders, then an authorized final render; defers fields and commands to the catalog's own docs and schema |
 
 ## Install standalone
