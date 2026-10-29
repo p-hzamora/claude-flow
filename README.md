@@ -1,6 +1,6 @@
 # claude-flow
 
-Private multi-host plugin marketplace for the SDD/Jira/Python workflows. Claude Code
+Private multi-host plugin marketplace for SDD/Jira/Python and frontend workflows. Claude Code
 and OpenAI Codex reuse the same skill files; each plugin has a host-specific manifest
 only where the host requires one.
 
@@ -69,9 +69,22 @@ applicable item before reporting skill-scoped work done.
   - Script: `pw-check.py` (deterministic spec anti-pattern check, run before any review)
   - No dependencies.
 
+- **typescript-suite** — framework-independent TypeScript conventions, design, and testing:
+  `typescript-syntax` (mandatory, detailed language profile), `typescript-clean-code`
+  (SOLID and responsibility boundaries), and `typescript-testing` (unit/contract/type
+  tests), plus `typescript-implementer` and read-only `typescript-reviewer` agents.
+  No dependencies. See [typescript-suite](docs/typescript-suite.md).
+- **frontend-tools** — React and feature-based application development:
+  `react-practices`, `feature-architecture`, `react-feature-integration`,
+  `frontend-scaffolding`, and `frontend-testing`. Depends on `typescript-suite` for
+  language rules; `typescript-practices` remains a compatibility entry point only.
+  Both plugins ship local references without external URLs.
+  See [frontend-tools](docs/frontend-tools.md).
+
 ## Dependency graph
 
 ```
+frontend-tools    --depends on-->  typescript-suite
 jira-dev-workflow  --depends on-->  skills
                    --depends on-->  python-suite  --depends on-->  skills
                    --depends on-->  latex-tools
@@ -130,14 +143,17 @@ codex plugin add skills@claude-flow
 codex plugin add python-suite@claude-flow
 codex plugin add latex-tools@claude-flow
 codex plugin add obsidian-vault@claude-flow
+codex plugin add typescript-suite@claude-flow
+codex plugin add frontend-tools@claude-flow
 # Add jira-dev-workflow@claude-flow after its three dependencies above when needed.
 ```
 
 The native Codex catalog is [`.agents/plugins/marketplace.json`](./.agents/plugins/marketplace.json).
-It lists the same five plugin folders as the Claude marketplace, with Codex-specific
+It lists the same plugin folders as the Claude marketplace, with Codex-specific
 availability metadata. Codex plugin manifests do not currently declare dependencies,
 so install `skills` explicitly before `python-suite`, then install `latex-tools`,
-and install `jira-dev-workflow` after its three dependencies.
+and install `jira-dev-workflow` after its three dependencies. Install `typescript-suite`
+before `frontend-tools`; standalone TypeScript work needs only `typescript-suite`.
 
 Codex loads the shared skills with the selected OpenAI model. The Claude Code
 `agents/` definitions are not advertised as Codex skills: the two hosts have different

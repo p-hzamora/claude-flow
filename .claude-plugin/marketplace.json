@@ -48,6 +48,20 @@
       "version": "0.1.0",
       "source": "./plugins/playwright-tools",
       "category": "productivity"
+    },
+    {
+      "name": "frontend-tools",
+      "description": "React and feature-based frontend development; depends on typescript-suite for language conventions.",
+      "version": "0.2.0",
+      "source": "./plugins/frontend-tools",
+      "category": "productivity"
+    },
+    {
+      "name": "typescript-suite",
+      "description": "Framework-independent TypeScript conventions, clean code, testing, implementation, and review.",
+      "version": "0.1.0",
+      "source": "./plugins/typescript-suite",
+      "category": "productivity"
     }
   ]
 }
