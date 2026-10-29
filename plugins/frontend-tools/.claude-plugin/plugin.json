@@ -1,0 +1,12 @@
+{
+  "name": "frontend-tools",
+  "version": "0.2.0",
+  "description": "React, feature architecture, React/TS integration, scaffolding, and component testing skills. Language conventions are owned by typescript-suite; includes a compatibility entry point.",
+  "author": {
+    "name": "Pablo Hernandez",
+    "email": "pablo.hernandez@grupo-st.es"
+  },
+  "dependencies": [
+    "typescript-suite"
+  ]
+}
