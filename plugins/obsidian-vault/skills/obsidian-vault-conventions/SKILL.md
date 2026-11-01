@@ -5,7 +5,7 @@ description: How this team creates, reads, and updates a repository's folder or 
 
 # Obsidian vault conventions
 
-One vault, `~/Documents/brain/` (override: `$BRAIN_VAULT`), holds everything. Each
+One vault, `~/brain/` (override: `$BRAIN_VAULT`), holds everything. Each
 repository owns one folder, `repos/<repo>/`, and other areas of know-how live in their
 own top-level folders. Notes link across folders. Reach the vault only through the
 Obsidian MCP (`mcp__obsidian__*`); never write the vault directory with Bash or file
@@ -24,37 +24,40 @@ The Obsidian MCP serves whichever vault is open in Obsidian, and only while the 
 running. Before every read or write, call `vault_read` on `repos/<repo>/brain.config.json`:
 
 1. If the call cannot connect, stop and tell the user: "Obsidian is not running or its
-   MCP is unreachable. Start Obsidian with the vault `~/Documents/brain` open, then retry."
+   MCP is unreachable. Start Obsidian with the vault `~/brain` open, then retry."
 2. If the file is missing, stop and tell the user: "No `repos/<repo>/` setup found. Open
-   `~/Documents/brain` as the vault in Obsidian; if it is already open, run the
-   `vault-push-sync` skill's `on` command in the repo first."
+   `~/brain` as the vault in Obsidian; if it is already open, confirm and I will set up
+   `repos/<repo>/`." Continue with "Setting up a repo folder" only after the user confirms.
 3. If its `repo` field is not `<repo>`, stop and report the mismatch. Write nothing.
 
 Learning mode has no repo, so the check is `vault_list` on the vault root: a connection
 failure gets message 1. If the listing shows neither `repos/` nor `learning/`, ask the
-user to confirm the open vault is `~/Documents/brain` before the first write.
+user to confirm the open vault is `~/brain` before the first write.
 
 ## Setting up a repo folder
 
 Run once per repository, in this order:
 
-1. The user runs `vault-push-sync on` in the repo. It creates
-   `~/Documents/brain/repos/<repo>/brain.config.json` (schema below).
-2. The user has `~/Documents/brain` open as a vault in Obsidian. Obsidian owns
+1. The user has `~/brain` open as a vault in Obsidian. Obsidian owns
    `.obsidian/`; never write it.
-3. The writer passes the check above, then creates, through the MCP,
-   `repos/<repo>/index.md`: a map of content, one line per note, grouped by type.
-   Type folders (`decisions/`, `gotchas/`, `runs/`, `glossary/`) appear with their first note.
-4. Ask the user to confirm the structure before adding any note beyond `index.md`.
+2. After the user confirms, the writer creates, through the MCP,
+   `repos/<repo>/brain.config.json` (schema below) and `repos/<repo>/index.md`: a map of
+   content, one line per note, grouped by type. Type folders (`decisions/`, `gotchas/`,
+   `runs/`, `glossary/`) appear with their first note.
+3. Ask the user to confirm the structure before adding any note beyond `index.md`.
 
 ### `brain.config.json`
 
 ```json
-{ "repo": "<repo>", "update_on_push": false, "last_pushed_sha": null }
+{ "repo": "<repo>", "last_pushed_sha": null }
 ```
 
-`update_on_push` is flipped only by the `vault-push-sync` skill. The writer updates
-`last_pushed_sha` after a successful run and preserves every other key.
+The writer updates `last_pushed_sha` after a successful repo-mode run and preserves every
+other key (older configs may still carry `update_on_push`; leave it alone).
+
+Automatic capture after commits is not part of this plugin: use
+[noesis](https://github.com/p-hzamora/noesis) (`noesis capture on`), which writes its own
+notes into the same vault.
 
 ## What belongs in the repo folder
 

@@ -1,6 +1,6 @@
 ---
 name: vault-writer
-description: Routing phrases: update the vault; record project context. Use to populate or update a repository's folder in the shared Obsidian vault with durable context (decisions, gotchas, run outcomes, glossary terms) from the commits just pushed or from what the user asks to record. Applies the admission rule so the vault stays small, and tells the user when Obsidian is not running.
+description: Routing phrases: update the vault; record project context. Use to populate or update a repository's folder in the shared Obsidian vault with durable context (decisions, gotchas, run outcomes, glossary terms) from recent commits or from what the user asks to record. Applies the admission rule so the vault stays small, and tells the user when Obsidian is not running.
 tools: ["Read", "Grep", "Glob", "Bash", "Skill", "mcp__obsidian__vault_read", "mcp__obsidian__vault_write", "mcp__obsidian__vault_append", "mcp__obsidian__vault_patch", "mcp__obsidian__vault_list", "mcp__obsidian__vault_get_document_map", "mcp__obsidian__search_simple", "mcp__obsidian__search_query", "mcp__obsidian__tag_list"]
 model: sonnet
 ---

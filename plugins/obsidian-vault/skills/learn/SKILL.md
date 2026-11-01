@@ -15,7 +15,7 @@ of letters, digits, and `-`.
    topic and no repository. It checks that Obsidian is reachable and returns what the
    vault already holds under `learning/<topic>/` and elsewhere.
    - If it reports Obsidian is down, tell the user to start Obsidian with
-     `~/Documents/brain` open and wait for their reply. Write no drafts while waiting.
+     `~/brain` open and wait for their reply. Write no drafts while waiting.
      Re-run the reader once when they say it is up.
    - If it still fails after that retry, or the user says to go on without it, run the
      rest in **chat-only mode**: teach as usual, and at each checkpoint present the

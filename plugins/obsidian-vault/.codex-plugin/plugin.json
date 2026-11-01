@@ -1,7 +1,7 @@
 {
   "name": "obsidian-vault",
-  "version": "0.1.1",
-  "description": "One shared Obsidian vault with a folder per repository: conventions skill, a read-only vault-reader and a vault-writer agent, and an opt-in hook that asks for a vault update after git push.",
+  "version": "1.0.0",
+  "description": "One shared Obsidian vault with a folder per repository: conventions skill, a read-only vault-reader and a vault-writer agent, and a /learn skill. Automatic capture lives in noesis.",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"

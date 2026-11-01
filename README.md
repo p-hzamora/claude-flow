@@ -57,10 +57,9 @@ applicable item before reporting skill-scoped work done.
   context per repository, reached only through the Obsidian MCP: `obsidian-vault-conventions` (location, creation steps,
   note schema, admission rule, retrieval protocol), `vault-writer` (the only writer) and
   `vault-reader` (read-only, returns distilled answers), `learn` (`/learn <topic>`:
-  researches and teaches a topic, saving approved notes to `learning/<topic>/`),
-  `vault-push-sync` (per-repo
-  on/off for the opt-in `git push` hook that asks for a vault update). No dependencies;
-  the Obsidian MCP server is not bundled.
+  researches and teaches a topic, saving approved notes to `learning/<topic>/`). No
+  dependencies; the Obsidian MCP server is not bundled. Automatic capture after commits
+  lives in the standalone [noesis](https://github.com/p-hzamora/noesis) tool, not here.
 
 - **playwright-tools** — Playwright Test (TypeScript/JavaScript) tooling for frontend
   end-to-end testing, self-contained:
