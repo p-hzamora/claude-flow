@@ -68,29 +68,41 @@ with at most a few lines of Skill text saying when to run it.
 _Avoid_: a fourth home, or one folder holding every skill regardless of audience.
 
 **Entity** / **Value Object** / **Aggregate** / **Port** / **Handler**:
-DDD hexagonal-architecture terms. Full ruleset lives in the `clean-ddd-hexagonal-python` skill (`plugins/python-suite/skills/`) — this file only anchors the names:
+DDD hexagonal-architecture terms. Full ruleset lives in the `ddd-hexagonal-python` skill (`plugins/python-suite/skills/`) — this file only anchors the names:
 - Entity — domain object with identity tracked across time.
 - Value Object — immutable domain object defined by its attributes, not identity.
 - Aggregate — cluster of Entities/Value Objects; one Repository per aggregate, never per entity.
 - Port — interface declared in domain/application, implemented in infrastructure.
 - Handler — application-layer class implementing one Command or Query.
-_Avoid_: restating this checklist inside an agent file. `ddd-reviewer` and `ddd-implementer` should point at `clean-ddd-hexagonal-python` as the single source of truth, not each carry their own copy.
+_Avoid_: restating this checklist inside an agent file. `ddd-reviewer` and `ddd-implementer` should point at `ddd-hexagonal-python` as the single source of truth, not each carry their own copy.
 
 **DTO** / **Response (schema)**:
 Two more objects in the same skill's layering, sitting output-side of Entity/VO —
-`clean-ddd-hexagonal-python` again owns the full ruleset ([ADR-0001](./docs/adr/0001-four-mapper-naming.md)):
+`ddd-hexagonal-python` again owns the full ruleset ([ADR-0001](./docs/adr/0001-four-mapper-naming.md)):
 - DTO — application-layer output contract a Command/Query handler returns; never a VO or
   Entity itself.
-- Response — interface-layer schema an API route returns; sourced from a DTO only
-  (`model_validate`, or an `{Entity}ApiMapper` in the rare case that needs real
-  transform logic), never straight from a DTO-less Entity/VO.
+- Response — interface-layer output model: the response schema an API route returns
+  (`*_schema.py`), or the model a CLI command prints (`responses/*_response.py`); sourced
+  from a DTO only (`model_validate`, or a dedicated interface mapper in the rare case that
+  needs real transform logic), never straight from a DTO-less Entity/VO.
 _Avoid_: a mapper method named `from_x` anywhere in this taxonomy — the convention is
 `to_[destination]` (`to_orm`, `to_entity`, `to_dto`, `to_schema`) on `{Entity}Mapper` /
 `{Entity}ReadMapper` / `{Entity}Assembler` / `{Entity}ApiMapper` respectively.
 
+**Foundation skill** / **Interface skill**:
+How the Python DDD guidance is split ([ADR-0004](./docs/adr/0004-ddd-foundation-and-interface-skills.md)):
+- Foundation skill — `ddd-hexagonal-python`: everything inside the hexagon plus
+  topology, composition root, error model, deployment shapes, and the interface adapter
+  contract. Imports no delivery framework.
+- Interface skill — `ddd-interface-<kind>` (`ddd-interface-fastapi`, `ddd-interface-cli`):
+  one per delivery mechanism; answers only the rows of the adapter contract for that
+  kind and links to the foundation for everything else.
+_Avoid_: adding interface-specific rules to the foundation, or restating foundation rules
+inside an interface skill. A new interface kind gets a new interface skill.
+
 **Module** / **Integration contract**:
-Terms of the modular monolith profile in `clean-ddd-hexagonal-python`
-(`references/modular-monolith/`, [ADR-0003](./docs/adr/0003-modular-monolith-module-boundary.md)):
+Terms of the modular monolith profile in `ddd-hexagonal-python`
+(`references/deployment/`, [ADR-0003](./docs/adr/0003-modular-monolith-module-boundary.md)):
 - Module — `modules/<module>/`, the extraction unit (one future microservice), holding
   one or more bounded contexts. Not a **Plugin**.
 - Integration contract — publisher-owned, versioned event in `modules/<module>/contracts/`
@@ -103,7 +115,7 @@ _Avoid_: using "module" for a Python file or a bounded context.
   Code and Codex, and optionally **Scripts**. The repository's `.codex/agents/`
   profiles make matching roles available to Codex as project configuration; Codex does
   not currently load custom agents from a plugin manifest.
-- An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `clean-ddd-hexagonal-python`), may delegate to another Agent (e.g. `jira-dev-workflow` delegates Markdown-to-LaTeX authoring and PDF export to `latex-tools` in Phase 6), and may be required to invoke a **Script** as a fixed tool.
+- An **Agent** may consume one or more **Skills** as reference material (e.g. `ddd-implementer` reads `ddd-hexagonal-python`), may delegate to another Agent (e.g. `jira-dev-workflow` delegates Markdown-to-LaTeX authoring and PDF export to `latex-tools` in Phase 6), and may be required to invoke a **Script** as a fixed tool.
 - A **Plugin** may declare `dependencies` on other **Plugins** (`jira-dev-workflow` depends on `skills` and `python-suite`; `python-suite` depends on `skills`).
 
 ## Flagged ambiguities

@@ -52,7 +52,7 @@ reference point outside this skill:
   side by side (`/design` produces one direction at a time, not a toggleable set).
 - **Backend** — business-logic, state-machine, and entity questions live in DDD
   territory. If this repo also has `python-suite` installed, ground the prototype's
-  vocabulary in the `clean-ddd-hexagonal-python` skill (Entity/Value Object/Aggregate
+  vocabulary in the `ddd-hexagonal-python` skill (Entity/Value Object/Aggregate
   semantics) so the REPL models the same concepts the real implementation will use,
   and route the eventual real implementation through
   `ddd-implementer` rather than free-hand code. Without `python-suite` installed,
