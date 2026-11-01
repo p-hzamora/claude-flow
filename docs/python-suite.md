@@ -3,7 +3,7 @@
 Reusable Python/DDD/FastAPI/SQLAlchemy agents and skills. Each agent is independently
 usable, not only reachable through the orchestrator. No Jira coupling.
 
-**Version:** 1.1.6
+**Version:** 2.0.0
 **Dependencies:** `skills` (auto-enabled on install)
 
 Every shared skill has a task-specific `Review Checklist` that agents complete before
@@ -38,7 +38,9 @@ definitions carry the same unique routing phrases.
 
 | Skill | Path |
 |---|---|
-| `clean-ddd-hexagonal-python` | `skills/clean-ddd-hexagonal-python/SKILL.md` — tactical DDD, CQRS, ports/adapters, context-first topology, shared Python settings policy, API bootstrap naming, application-owned security DTOs and ports, an observability skeleton, and a decomposable modular-monolith profile (module-owned interfaces, exceptions, migrations, integration events, extraction playbook); delegates Python language and style rules to `python-syntax`. |
+| `ddd-hexagonal-python` | `skills/ddd-hexagonal-python/SKILL.md` — the framework-agnostic DDD foundation: tactical DDD, CQRS, ports/adapters, context-first topology and naming, composition root and interface-neutral process resources, the `raised`-based error model, the interface adapter contract every interface skill implements, and deployment shapes (single service, decomposable modular monolith, microservices: what stays the same, what changes, communication, extraction playbook); delegates Python language and style rules to `python-syntax`. |
+| `ddd-interface-fastapi` | `skills/ddd-interface-fastapi/SKILL.md` — FastAPI delivery on the foundation: app factory and lifespan, interface bootstrap, routers and `*_schema.py`, `*_dpd.py` dependency factories, `raised` RFC 9457 error handling, HTTP tests, module API registration. |
+| `ddd-interface-cli` | `skills/ddd-interface-cli/SKILL.md` — Typer CLI delivery on the foundation: per-invocation bootstrap, command design, `--json` envelope and `responses/`, exit codes, agent integration (version-matched guides, hooks on stdin), CLI tests. |
 | `fastapi-async-patterns` | `skills/fastapi-async-patterns/SKILL.md` — async resource lifecycle and typed FastAPI state, application, and request conventions. |
 | `pytest-coverage` | `skills/pytest-coverage/SKILL.md` |
 | `pytest` | `skills/pytest/SKILL.md` |
