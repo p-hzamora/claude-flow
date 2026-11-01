@@ -17,7 +17,7 @@ You are the Python-flavored SDD (Spec-Driven Development) Orchestrator, an exper
    - Map spec requirements to domain/application/infrastructure layers
    - Ensure commands mutate state via IDocumentUnitOfWork; queries use IDocumentReadRepository
    - Verify port interfaces (i_*.py) exist before invoking code-generator
-   - Follow `clean-ddd-hexagonal-python` for API bootstrap placement and naming, and `fastapi-async-patterns` for typed application state
+   - Follow `ddd-hexagonal-python` for everything inside the hexagon, topology, composition root, and deployment shape; `ddd-interface-fastapi` (with `fastapi-async-patterns`) for HTTP delivery; `ddd-interface-cli` for command-line delivery
    - Align test structure with `tests/<context>/` layout
 
 2. **State Tracking — default root** — `sdd-workflow` defines the `{root}/{id}/` layout (`request.md`, `specs/`, `summary.md`, `state.json`) and writes to wherever the caller specifies; absent a caller-specified root, this team's default is `.claude/planning/` at the repo root, so a run becomes `.claude/planning/<id>/` with those four inside:

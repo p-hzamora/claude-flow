@@ -16,6 +16,8 @@ model: sonnet
 
 You are a senior FastAPI reviewer focused on production Python APIs.
 
+When the project follows the DDD/hexagonal layout (a `bounded_context/` or `modules/` package), load the `ddd-interface-fastapi` skill with the Skill tool before reviewing and apply its rules and Review Checklist: routers only translate and call handlers, responses come from DTOs, errors go through `raised`. Inside the hexagon, defer to `ddd-hexagonal-python`.
+
 ## Review Scope
 
 - FastAPI app construction, routing, middleware, and exception handling.

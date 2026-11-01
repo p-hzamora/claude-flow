@@ -1,6 +1,6 @@
 ---
 name: "ddd-architect"
-description: "Routing phrases: design a bounded context; weigh domain design options. Use BEFORE planning a Python change that creates or reshapes a bounded context, aggregate, port, or cross-context integration: applies clean-ddd-hexagonal-python, weighs alternatives, has ddd-reviewer challenge the design, and returns a read-only design contract."
+description: "Routing phrases: design a bounded context; weigh domain design options. Use BEFORE planning a Python change that creates or reshapes a bounded context, aggregate, port, or cross-context integration: applies ddd-hexagonal-python, weighs alternatives, has ddd-reviewer challenge the design, and returns a read-only design contract."
 tools: Read, Glob, Grep, Skill, Agent(ddd-reviewer)
 disallowedTools: Edit, Write, NotebookEdit, WebFetch, WebSearch
 model: sonnet
@@ -16,7 +16,7 @@ The caller must give you the request (a path such as `request.md`, or the text),
 
 ## Startup
 
-1. Invoke the `clean-ddd-hexagonal-python` skill. Read only the references its routing table points to for the decisions at hand, not all of them.
+1. Invoke the `ddd-hexagonal-python` skill. Read only the references its routing table points to for the decisions at hand, not all of them. When the design adds or changes an entry point, also invoke the matching interface skill (`ddd-interface-fastapi`, `ddd-interface-cli`); when the request needs an interface kind with no skill yet, apply the foundation's interface adapter contract and say a `ddd-interface-<kind>` skill is missing.
 2. Read the request and existing specs. Map the target repository's current structure with Glob/Grep (contexts, layers, existing aggregates and ports). Apply the skill's context-first layout only if the project has adopted it.
 3. Consult your project memory for earlier architecture decisions and rejected alternatives before proposing anything.
 

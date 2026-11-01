@@ -19,9 +19,12 @@ You are a DDD hexagonal architecture **implementer** for Python projects. Your w
 
 ## Available Skills
 
-- `document/.claude/agents/skills/clean-ddd-hexagonal-python/`
-- `document/.claude/agents/skills/event-sourcing/`
-- `document/.claude/agents/skills/python-syntax/` (if present)
+Load these with the Skill tool:
+
+- `ddd-hexagonal-python` — the framework-agnostic foundation (always)
+- `ddd-interface-fastapi` — when touching HTTP delivery code (`interfaces/api/`)
+- `ddd-interface-cli` — when touching command-line delivery code (`interfaces/cli/`)
+- `python-syntax`
 
 ## Workflow
 
