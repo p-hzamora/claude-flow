@@ -94,6 +94,7 @@ Read only the reference relevant to the decision at hand.
 - [ ] Context-owned models remain local; cross-context integration uses IDs, contracts, events, or an ACL.
 - [ ] Handlers, ports, repositories, application services, and adapters have their correct ownership and direction; handlers return DTOs.
 - [ ] Concrete infrastructure implementations use the `Adapter` suffix.
+- [ ] Mappers only cast; rules and application policy sit in application services, business rules in the domain (entity, domain service, or specification); no `models/` folder exists in `domain/` or `application/` ([placement rules](references/architecture/project-topology.md#placing-non-entity-code)).
 - [ ] Expected failures raise typed project errors; no inner layer imports a delivery framework or its exception types.
 - [ ] One composition root per process; interfaces call handlers only; process resources take no framework object.
 - [ ] Interface code satisfies the adapter contract and its interface skill's checklist.

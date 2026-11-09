@@ -132,6 +132,9 @@ not authorize empty folders.
 | Command / query + handler | `application/handlers/{commands,queries}/<verb>_<noun>_handler.py` | `PlaceOrderCommand` + `PlaceOrderHandler` |
 | DTO | `application/dtos/<name>_dto.py` | `OrderDTO` |
 | Assembler (Entity/VO -> DTO) | `application/mappers/<aggregate>_assembler.py` | `OrderAssembler.to_dto` |
+| Domain service | `domain/services/<name>_service.py` | `PricingService` |
+| Application service | `application/services/<capability>/<role>.py` | `SecretRedactor`, `BriefingGrounder` (named for their role, no `Mapper`/`Helper` suffix) |
+| Specification | `domain/specifications/<rule>_specification.py` | `OverdueOrderSpecification` |
 | ORM model | `infrastructure/outbound/persistence/models/<table>_model.py` | `OrderModel` |
 | Persistence mapper (ORM <-> Entity) | `.../persistence/mappers/<aggregate>_mapper.py` | `OrderMapper.to_orm` / `to_entity` |
 | Read mapper (ORM -> DTO) | `.../persistence/mappers/read_mappers/<name>_read_mapper.py` | `OrderReadMapper.to_dto` |
@@ -175,6 +178,49 @@ domain or application meaning: write repositories, Units of Work, read repositor
 gateways. Structural technical ports shared by many implementations (`IHandler`,
 `IResource`, event-bus ports) are `typing.Protocol`. A project that already uses one style
 for a port kind keeps it consistently.
+
+## Placing Non-Entity Code
+
+Place code by what it does, not by the folder it resembles or the word in its name. Take
+the first row that fits:
+
+| The code... | Example | Goes to |
+| --- | --- | --- |
+| Converts one type into another, with no decision | Entity/VO -> DTO, ORM <-> Entity, contract -> domain (`to_domain`) | Mapper or assembler in its layer's `mappers/` |
+| Decides a business invariant, rule, or state transition over entities or value objects | Order total; "shippable only when paid" | Entity or aggregate method. `domain/services/` when stateless and it spans several objects or aggregates |
+| Answers yes/no for one object against a named business rule reused in 2+ places | "is overdue"; "eligible for discount" | Specification in `domain/specifications/` |
+| Application-specific policy or processing: extraction, parsing of input, text processing, redaction, grounding, ranking, query building, strategy or prompt selection | Keyword extraction with stopwords; regex secret redaction; citation grounding | Application service in `application/services/<capability>/` |
+| Orchestrates one use case: load, call the domain, persist, return a DTO | `PlaceOrderHandler` | Handler in `application/handlers/` |
+| Talks to a concrete technology, or parses its payload | ORM query; SDK call; webhook payload | Adapter in `infrastructure/` |
+| Turns delivery input into a command or query, or a DTO into a response | HTTP body -> command; DTO -> response schema | Interface in `interfaces/<kind>/` |
+
+Decision test for a business rule: if a domain expert would state it without naming the
+feature, the use case, or the technology, it belongs in the domain. Otherwise it is
+application policy and belongs in an application service.
+
+Rules:
+
+- **Mapper or assembler: cast only.** Its methods build the destination from the source's
+  fields. No rules, no branching that encodes a decision, no defaults that encode policy,
+  no I/O, no calls to services, no text processing. Methods are named `to_<destination>`.
+  When a conversion needs a rule, move the rule to a domain method or an application
+  service, and let the mapper call it.
+- **Application service: policy, stateless.** It lives in `application/services/<capability>/`,
+  is named by role, takes already-loaded data and abstract ports, and never imports a
+  concrete adapter. Services hold no state between calls.
+- **Domain service: domain rule over domain objects.** Stateless, no I/O; the caller passes
+  in what it loaded. It is not a mapper and it is not application policy.
+- **Specification: a predicate, not an operation.** It answers `is_satisfied_by(candidate)`
+  for one object and is reused. It is not a service (it performs no operation and returns
+  no value) and not a mapper. See [specifications](../patterns/specification.md).
+- **No `models/` folder in `domain/` or `application/`.** ORM models exist only in
+  `infrastructure/outbound/persistence/models/`. Domain code uses `entities/`,
+  `value_objects/`, `enums/`, `events/`, `services/`, `specifications/`, and `repositories/`;
+  application code uses `dtos/`, `handlers/`, `mappers/`, `services/`, and `ports/`. A helper
+  never gets a `models/` folder: pick the role folder above.
+  `scripts/ddd-check.py` reports a `models/` folder there as `DDD-MDL-01`.
+- **A rule found in `application/mappers/` is a misplaced service.** Move it to
+  `application/services/<capability>/`, or to the domain if the decision test says so.
 
 ## Hybrid Infrastructure Direction
 

@@ -304,7 +304,7 @@ Orchestrates use cases by coordinating domain objects. Contains **application-sp
 - **DTOs**: Immutable output contracts (`FrozenObject`), shared by several handlers
 - **Mappers/Assemblers**: Entity/VO → DTO conversion, one direction only
 - **Outbound ports**: read repositories (`ports/read_repositories/`), Unit of Work (`ports/transactions/`), other capabilities (`ports/<capability>/`)
-- **Application services**: workflows orchestrated through abstract contracts
+- **Application services**: workflows orchestrated through abstract contracts, and application-specific policy (extraction, redaction, grounding). Not casts and not domain rules; see [placement rules](project-topology.md#placing-non-entity-code)
 
 ### Rules
 
@@ -885,7 +885,8 @@ class OrderReadMapper:
 
 **Purpose**: Convert a domain Entity or Value Object into a DTO for the application layer.
 One direction only — a DTO is a read-side contract, not a source of domain state to
-rebuild an Entity from, so an Assembler never runs in reverse.
+rebuild an Entity from, so an Assembler never runs in reverse. It is a cast only: any rule
+it needs belongs in a domain method or an application service ([placement rules](project-topology.md#placing-non-entity-code)).
 
 **When to use**: In command handlers when returning results
 

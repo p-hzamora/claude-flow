@@ -89,6 +89,14 @@ Does it orchestrate one use case (load, call the domain, persist, return a DTO)?
 ├── YES → application/handlers/{commands,queries,events}/
 └── NO ↓
 
+Is it only a cast from one type to another, with no decision?
+├── YES → mapper/assembler in the layer's mappers/ folder
+└── NO ↓
+
+Is it application-specific policy or processing (extraction, redaction, grounding, ranking, strategy or prompt selection)?
+├── YES → application/services/<capability>/ (see placement rules in project topology)
+└── NO ↓
+
 Is it a contract the application needs from the outside world?
 ├── YES → application/ports/<capability>/ (aggregate write repository: domain/repositories/)
 └── NO ↓
@@ -287,6 +295,7 @@ Ports are prefixed with `I`: `abc.ABC` for repositories, Units of Work, and gate
 | Interface skips the handler | Route or command calls a repository or adapter | Call handlers received from the composition root |
 | Framework in an inner layer | `fastapi`, `typer`, or SQLAlchemy in domain/application | Keep frameworks in `interfaces/<kind>/` and adapters |
 | Built-in exception for expected failure | `raise ValueError("not found")` | Typed error with a stable code |
+| Rules in a mapper, or a `models/` helper folder | Mapper stops being a cast; helpers hide in `models/` | Cast-only mapper; rules to domain or application services; no `models/` outside persistence |
 | Repository per table | Persistence shape drives the model | One write repository per aggregate root |
 | God aggregate | Contention and huge transactions | Split by invariant; reference by ID |
 | Cross-aggregate transaction | Several aggregates in one commit | One aggregate per transaction; events for the rest |

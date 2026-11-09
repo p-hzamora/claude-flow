@@ -22,8 +22,8 @@ flowchart TB
         subgraph AggRoot["Aggregate Root (Entity)"]
             E1["Entity"]
             E2["Entity"]
-            VO1["Value Object"]
-            VO2["Value Object"]
+            VO1["Value Object 1"]
+            VO2["Value Object 2"]
             DE["Domain Event"]
         end
     end
@@ -1043,7 +1043,10 @@ A named, reusable business predicate (`is_satisfied_by(candidate) -> bool`), com
 via AND/OR/NOT. Use it when the same business rule is checked in 2+ places (validating
 a candidate, selecting from a collection/repository, or constraining what a factory
 builds) — not for a one-off `if`, and not as a substitute for an ordinary CQRS query
-filter. See [the specification pattern](../patterns/specification.md) for the full pattern, all three uses,
+filter. It lives in `domain/specifications/<rule>_specification.py`. It is neither a domain
+service (it answers yes/no instead of performing an operation) nor a mapper; see
+[placement rules](../architecture/project-topology.md#placing-non-entity-code). See
+[the specification pattern](../patterns/specification.md) for the full pattern, all three uses,
 and the composable base classes.
 
 ---
