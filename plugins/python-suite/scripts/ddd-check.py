@@ -113,6 +113,11 @@ def check_file(path: Path, root: Path, repo: Path) -> list[str]:
     except SyntaxError as error:
         return [f"DDD-PARSE {shown}:{error.lineno or 0} cannot parse file"]
     out = []
+    if place[2] in ("domain", "application") and "models" in package:
+        out.append(
+            f"DDD-MDL-01 {shown}:1 `models/` is only for ORM models under infrastructure persistence; "
+            "use the role folder (entities, dtos, services, ...)"
+        )
     in_infrastructure = place[2] == "infrastructure"
     for node in ast.walk(tree):
         for target in import_targets(node, package):

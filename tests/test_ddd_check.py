@@ -64,6 +64,20 @@ class DddCheckTest(unittest.TestCase):
         self.assertEqual(result.returncode, 0, result.stdout)
         self.assertIn("violations=0", result.stdout)
 
+    def test_models_folder_outside_persistence_is_reported(self):
+        bc = "src/bounded_context/billing"
+        write(self.repo, f"{bc}/application/models/helper.py", "class Helper: ...\n")
+        write(self.repo, f"{bc}/domain/models/invoice.py", "class Invoice: ...\n")
+        write(self.repo, f"{bc}/application/services/recall/secret_redactor.py", "class SecretRedactor: ...\n")
+        write(self.repo, f"{bc}/infrastructure/outbound/persistence/models/invoice_model.py", "class InvoiceModel: ...\n")
+        result = check(self.repo)
+        self.assertEqual(result.returncode, 1)
+        self.assertEqual(rules(result), {"DDD-MDL-01"})
+        self.assertIn("application/models/helper.py:1", result.stdout)
+        self.assertIn("domain/models/invoice.py:1", result.stdout)
+        self.assertNotIn("secret_redactor.py", result.stdout)
+        self.assertNotIn("invoice_model.py", result.stdout)
+
     def test_no_topology_exits_3(self):
         write(self.repo, "src/app/main.py", "import fastapi\n")
         result = check(self.repo)
