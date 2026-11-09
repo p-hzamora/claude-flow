@@ -1,7 +1,7 @@
 {
   "name": "python-suite",
   "description": "Reusable Python/DDD/FastAPI/SQLAlchemy skills: ddd-hexagonal-python, ddd-interface-fastapi, ddd-interface-cli, fastapi-async-patterns, sqlalchemy-orm, python-syntax, pytest, and pytest-coverage.",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "author": {
     "name": "Pablo Hernandez",
     "email": "pablo.hernandez@grupo-st.es"
